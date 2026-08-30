@@ -456,9 +456,6 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .jmfbar:has(.jmf-knapp input:checked) .heatmap span { background: var(--bg2); }
 .jmfbar:has(.jmf-knapp input:checked) .spark span { height: 100%; }
 .jmfbar:has(.jmf-knapp input:checked) .ld-box { background: #17141c; color: #f4efe6; }
-/* corner-shape-demot styrs nu av formväljaren nedan i stället för av
-   jämföraren, så alla fem värden går att prova mot varandra. */
-.jmfbar:has(.jmf-knapp input:checked) .squircle-row .prov-form { corner-shape: round; }
 /* BUGGFIX 2026-08-30: off-läget var "display: grid" — men Chrome saknar
    grid-lanes och faller redan tillbaka på grid, så reglaget gjorde inget alls.
    Off-läget visar nu det riktiga alternativet demot jämför sig med:
@@ -4775,7 +4772,7 @@ body { counter-reset: visade; }
 @keyframes rotera-kant {--border-angle: 1turn;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge jmfbar" id="corner-shape-squircle">
+    <article class="demo sup-chrome sup-edge" id="corner-shape-squircle">
       <h3 class="demo-titel">corner-shape: squircle</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome 139 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge 139 · stöds</span></li><li class="bx s-nej"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds ej</span></li><li class="bx s-nej"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds ej</span></li><li class="stod-summa"><b>2</b>/4</li></ul>
       <p class="demo-beskrivning">En sann superellips i hörnen — mjukare än <code>border-radius</code>, som bara böjer cirkelbågar.</p>
       <div class="fig"><svg viewBox="0 0 200 70"><title>Cirkelbåge jämfört med superellips i samma hörn</title>
@@ -4795,11 +4792,6 @@ body { counter-reset: visade; }
         <input type="radio" name="cs-form" id="cs-bevel"><label for="cs-bevel">bevel</label>
         <input type="radio" name="cs-form" id="cs-notch"><label for="cs-notch">notch</label>
         <input type="radio" name="cs-form" id="cs-scoop"><label for="cs-scoop">scoop</label>
-      </div>
-    
-      <div class="jmf">
-        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>corner-shape</label>
-        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="15" aria-label="Kod för corner-shape: squircle Chrome/Edge">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta squircle-row"&gt;
