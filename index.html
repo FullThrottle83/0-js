@@ -398,6 +398,103 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .labb-hint b { color: var(--acc); font-weight: 600; }
 
 /* ============================================================
+   AV/PÅ-JÄMFÖRAREN
+   ------------------------------------------------------------
+   För tekniker där poängen är SKILLNADEN mot att inte använda dem.
+   En kryssruta stänger av egenskapen, så man ser båda lägena i samma
+   ruta i stället för att behöva föreställa sig alternativet.
+   ============================================================ */
+.jmf { margin-top: 1rem; display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .9rem; }
+.jmf-knapp { display: inline-flex; align-items: center; gap: .5rem; cursor: pointer; font-family: var(--mono); font-size: .72rem; color: var(--dim); }
+.jmf-knapp input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.jmf-knapp .spar { width: 38px; height: 21px; border-radius: 99px; border: 1px solid var(--acc); background: var(--acc-soft); position: relative; flex: none; transition: background .25s, border-color .25s; }
+.jmf-knapp .spar::after { content: ""; position: absolute; top: 2px; left: 2px; width: 15px; height: 15px; border-radius: 50%; background: var(--acc); transition: translate .25s cubic-bezier(.2,.8,.2,1), background .25s; translate: 15px 0; }
+.jmf-knapp:has(input:checked) .spar { background: var(--bg2); border-color: var(--line); }
+.jmf-knapp:has(input:checked) .spar::after { translate: 0 0; background: var(--dim); }
+.jmf-knapp:has(input:focus-visible) .spar { outline: 2px solid var(--acc); outline-offset: 2px; }
+.jmf-lage {
+  font-family: var(--mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
+  padding: .18rem .5rem; border-radius: 4px; background: var(--acc); color: #0a0a0a; font-weight: 700;
+}
+.jmfbar:has(.jmf-knapp input:checked) .jmf-lage { background: var(--line); color: var(--dim); }
+.jmf-lage::after { content: "på"; }
+.jmfbar:has(.jmf-knapp input:checked) .jmf-lage::after { content: "av"; }
+
+/* AV-läget: varje teknik neutraliseras på sitt eget sätt. */
+.jmfbar:has(.jmf-knapp input:checked) .layer-box { all: unset; display: block; padding: 1rem; border-radius: 10px; border: 1px dashed var(--line); font-family: var(--mono); font-size: .84rem; text-align: center; color: var(--dim); }
+.jmfbar:has(.jmf-knapp input:checked) .etikett { color: inherit !important; font-weight: 400 !important; }
+.jmfbar:has(.jmf-knapp input:checked) .spec-btn { background: var(--acc-soft); border: 1px solid var(--acc); color: var(--acc); }
+.jmfbar:has(.jmf-knapp input:checked) .nth-row .nth-box:nth-child(even of .mal) { background: var(--bg2); color: var(--dim); font-weight: 400; border-color: var(--line); }
+.jmfbar:has(.jmf-knapp input:checked) .shape-float { shape-outside: none; }
+.jmfbar:has(.jmf-knapp input:checked) .trim-on { text-box: normal; }
+.jmfbar:has(.jmf-knapp input:checked) .hyphen-demo { hyphens: none; }
+.jmfbar:has(.jmf-knapp input:checked) .nd-fvn .tab { font-variant-numeric: normal; }
+.jmfbar:has(.jmf-knapp input:checked) .nd-fvn .ord { font-variant-numeric: normal; }
+.jmfbar:has(.jmf-knapp input:checked) .nd-fvn .zero { font-variant-numeric: normal; }
+.jmfbar:has(.jmf-knapp input:checked) .nd-clamp { -webkit-line-clamp: none; line-clamp: none; display: block; }
+.jmfbar:has(.jmf-knapp input:checked) .nd-emph { text-emphasis: none; }
+.jmfbar:has(.jmf-knapp input:checked) .subgrid-card { grid-template-rows: none; grid-row: auto; }
+.jmfbar:has(.jmf-knapp input:checked) .subgrid-wrap { grid-template-rows: none; align-items: start; }
+.jmfbar:has(.jmf-knapp input:checked) .data-tbl thead th { position: static; }
+.jmfbar:has(.jmf-knapp input:checked) .nd-sb { scrollbar-width: auto; scrollbar-color: auto; }
+.jmfbar:has(.jmf-knapp input:checked) .cc-romersk { list-style: decimal; }
+.jmfbar:has(.jmf-knapp input:checked) .cc-hakparentes { list-style: decimal; }
+.jmfbar:has(.jmf-knapp input:checked) .dropcap::first-letter { initial-letter: normal; font-size: inherit; }
+.jmfbar:has(.jmf-knapp input:checked) .nd-cv-list div { content-visibility: visible; }
+.jmfbar:has(.jmf-knapp input:checked) .autofit-grid { grid-template-columns: repeat(6, 1fr); }
+.jmfbar:has(.jmf-knapp input:checked) .edge-scroll { -webkit-mask-image: none; mask-image: none; }
+.jmfbar:has(.jmf-knapp input:checked) .fn-card { padding: 1rem; }
+.jmfbar:has(.jmf-knapp input:checked) .nd-bb { background-blend-mode: normal; }
+.jmfbar:has(.jmf-knapp input:checked) .scrim-demo span { mix-blend-mode: normal; }
+.jmfbar:has(.jmf-knapp input:checked) .chip { color: #0a0a0a; }
+.jmfbar:has(.jmf-knapp input:checked) .vertical-heading,
+.jmfbar:has(.jmf-knapp input:checked) .nd-vert { writing-mode: horizontal-tb; height: auto; }
+.jmfbar:has(.jmf-knapp input:checked) .glow-card { animation: none; }
+.jmfbar:has(.jmf-knapp input:checked) .donut { -webkit-mask: none; mask: none; }
+.jmfbar:has(.jmf-knapp input:checked) .gantt-row { grid-column: auto / span 12; }
+.jmfbar:has(.jmf-knapp input:checked) .stack-bar span { flex-basis: auto; flex: 1; }
+.jmfbar:has(.jmf-knapp input:checked) .heatmap span { background: var(--bg2); }
+.jmfbar:has(.jmf-knapp input:checked) .spark span { height: 100%; }
+.jmfbar:has(.jmf-knapp input:checked) .ld-box { background: #17141c; color: #f4efe6; }
+.jmfbar:has(.jmf-knapp input:checked) .squircle-row button { corner-shape: round; }
+.jmfbar:has(.jmf-knapp input:checked) .lanes { display: grid; }
+
+/* ---------- Labb-varianter per kapitel (2026-08-30) ----------
+   Varje regel kopplar --lv till den parameter som gör tekniken begriplig. */
+
+/* Layout */
+.labbar .autofit-grid { grid-template-columns: repeat(auto-fit, minmax(calc(3.5rem + var(--lv) * 1.1rem), 1fr)); }
+.enh-minmax .labb-varde::after { content: "minmax(" counter(minmax) "px, 1fr)"; }
+.labbar .nd-cv-list { max-height: calc(4rem + var(--lv) * 1.2rem); }
+.enh-hojd .labb-varde::after { content: counter(hojd) "px hög lista"; }
+.labbar .edge-scroll {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 calc(var(--lv) * 3%), #000 calc(100% - var(--lv) * 3%), transparent);
+          mask-image: linear-gradient(to right, transparent, #000 calc(var(--lv) * 3%), #000 calc(100% - var(--lv) * 3%), transparent);
+}
+.enh-mask .labb-varde::after { content: counter(pct3) "% mjuk kant"; }
+
+/* Typografi */
+.labbar .nd-clamp { -webkit-line-clamp: var(--lv); line-clamp: var(--lv); }
+.enh-rader .labb-varde::after { content: counter(lv) " rader"; }
+.labbar .dropcap::first-letter { initial-letter: var(--lvmin) var(--lvmin); }
+.labbar { --lvmin: max(1, var(--lv)); }
+.enh-dropcap .labb-varde::after { content: counter(lvmin) " rader hög"; }
+.labbar .hyphen-demo { columns: var(--lvmin); }
+.enh-spalter .labb-varde::after { content: counter(lvmin) " spalter"; }
+.labbar .nd-vert, .labbar .vertical-heading { letter-spacing: calc(var(--lv) * .05em); }
+.enh-sparr .labb-varde::after { content: "0." counter(lv5) "em spärr"; }
+.labbar .nd-emph { text-emphasis-color: color-mix(in oklch, var(--acc) calc(var(--lv) * 12.5%), var(--dim)); font-size: calc(.85rem + var(--lv) * .06rem); }
+.enh-emph .labb-varde::after { content: counter(pct125) "% styrka"; }
+.labbar .nd-fvn { font-size: calc(.85rem + var(--lv) * .09rem); }
+.enh-grad .labb-varde::after { content: counter(fvn) "px"; }
+
+/* Data */
+.labbar .heatmap span { width: calc(.9rem + var(--lv) * .12rem); height: calc(.9rem + var(--lv) * .12rem); }
+.enh-cell .labb-varde::after { content: counter(cell) "px celler"; }
+.labbar .spark { height: calc(2.2rem + var(--lv) * .45rem); }
+.enh-spark .labb-varde::after { content: counter(spark) "px hög"; }
+
+/* ============================================================
    KAPITEL 01 · FÄRG
    ============================================================ */
 /* BUGGFIX 2026-08-30: .swatch-yta är ett <span> och alltså inline — height
@@ -542,7 +639,11 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
     pct50 calc(var(--lv) * 50) pct125 calc(var(--lv) * 12.5)
     deg45 calc(var(--lv) * 45) px2 calc(var(--lv) * 2)
     pct10 calc(var(--lv) * 10) pct12 calc(var(--lv) * 12)
-    band calc(2 + var(--lv) * 2) grader calc(var(--lv) * 45);
+    band calc(2 + var(--lv) * 2) grader calc(var(--lv) * 45)
+    minmax calc(56 + var(--lv) * 17.6) hojd calc(64 + var(--lv) * 19.2)
+    pct3 calc(var(--lv) * 3) lvmin max(1, var(--lv)) lv5 calc(var(--lv) * 5)
+    fvn calc(13.6 + var(--lv) * 1.44) cell calc(14.4 + var(--lv) * 1.92)
+    spark calc(35 + var(--lv) * 7.2);
 }
 
 .blend-row { display:grid; gap:.6rem; grid-template-columns:repeat(auto-fit,minmax(90px,1fr)); }
@@ -1720,9 +1821,14 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .wrap-compare div { max-width: 19rem; }
 .wrap-compare h4 { font-family: var(--disp); font-size: 1.15rem; font-weight: 700; line-height: 1.15; background: var(--bg2); padding: .3rem .5rem; border-radius: 6px; }
 .wrap-compare span { display:block; margin-top:.3rem; font-family: var(--mono); font-size: .7rem; color: var(--acc); }
-.wc-normal h4 { text-wrap: normal; }
+.wc-normal h4 { text-wrap: wrap; }
 .wc-balance h4 { text-wrap: balance; }
 .wc-pretty h4 { text-wrap: pretty; }
+/* Av-läget måste stå EFTER basreglerna ovan för att vinna på källordning.
+   OBS: text-wrap har inget "normal" — initialvärdet heter wrap. Med normal
+   kastades hela deklarationen, så både .wc-normal och av-läget var döda. */
+.jmfbar:has(.jmf-knapp input:checked) .wc-balance h4,
+.jmfbar:has(.jmf-knapp input:checked) .wc-pretty h4 { text-wrap: wrap; }
 
 .trim-compare { display:flex; gap: 1.5rem; flex-wrap: wrap; align-items: flex-start; }
 .trim-compare p { background: var(--acc-soft); padding: 0 .4rem; font-size: 1.05rem; }
@@ -3128,7 +3234,7 @@ body { counter-reset: visade; }
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="light-dark">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="light-dark">
       <h3 class="demo-titel">light-dark() <span class="stod">— tvåfärgat i en deklaration</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Samma regel ger olika färg beroende på <code>color-scheme</code> — ingen dubblerad CSS för ljust/mörkt.</p>
       <div class="fig">
@@ -3146,6 +3252,11 @@ body { counter-reset: visade; }
       <div class="demo-yta ld-row">
         <div class="ld-box ld-light">color-scheme: light</div>
         <div class="ld-box ld-dark">color-scheme: dark</div>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>light-dark()</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="16" aria-label="Kod för light-dark() — tvåfärgat i en deklaration">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta ld-row"&gt;
@@ -4443,7 +4554,7 @@ body { counter-reset: visade; }
 @keyframes rotera-kant {--border-angle: 1turn;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge" id="corner-shape-squircle">
+    <article class="demo sup-chrome sup-edge jmfbar" id="corner-shape-squircle">
       <h3 class="demo-titel">corner-shape: squircle</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome 139 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge 139 · stöds</span></li><li class="bx s-nej"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds ej</span></li><li class="bx s-nej"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds ej</span></li><li class="stod-summa"><b>2</b>/4</li></ul>
       <p class="demo-beskrivning">En sann superellips i hörnen — mjukare än <code>border-radius</code>, som bara böjer cirkelbågar.</p>
       <div class="fig"><svg viewBox="0 0 200 70"><title>Cirkelbåge jämfört med superellips i samma hörn</title>
@@ -4455,6 +4566,11 @@ body { counter-reset: visade; }
       <div class="demo-yta squircle-row">
         <button type="button">Squircle</button>
         <button type="button">Chip</button>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>corner-shape</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="15" aria-label="Kod för corner-shape: squircle Chrome/Edge">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta squircle-row"&gt;
@@ -4473,7 +4589,7 @@ body { counter-reset: visade; }
 }</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="contrast-color">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="contrast-color">
       <h3 class="demo-titel">contrast-color()</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome 147 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge 147 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari 26.0 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox 146 · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Webbläsaren väljer svart eller vit text åt dig, baserat på bakgrundens ljushet — ingen manuell kontrastberäkning.</p>
       <div class="fig"><svg viewBox="0 0 200 70"><title>Ljushet avgör om texten blir svart eller vit</title>
@@ -4486,6 +4602,11 @@ body { counter-reset: visade; }
         <span class="chip" style="--chip-bg: var(--acc)">Ny</span>
         <span class="chip dark-bg" style="--chip-bg: #2b2833">Arkiv</span>
         <span class="chip" style="--chip-bg: #d9ff3d">Rea</span>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>contrast-color()</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="18" aria-label="Kod för contrast-color() Chrome/Edge">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta chip-row"&gt;
@@ -4507,7 +4628,7 @@ body { counter-reset: visade; }
 }</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-overlapp" id="mix-blend-mode-difference-27">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="mix-blend-mode-difference-27">
       <h3 class="demo-titel">mix-blend-mode: difference <span class="stod">— självinverterande text</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Texten inverterar sig själv mot vad som än ligger bakom — alltid läsbar, oavsett mönster.</p>
       <div class="fig"><svg viewBox="0 0 200 70"><title>Vit text tar |vitt − bakgrund| = alltid synligt</title>
@@ -4518,25 +4639,10 @@ body { counter-reset: visade; }
         <p class="fig-cap">Samma vita text, två helt olika bakgrunder — färgen räknas om per pixel.</p></div>
       <div class="demo-yta scrim-demo"><span>LÄSBAR</span></div>
     
-      <div class="labb">
-        <div class="labb-rad">
-          <span class="labb-etikett">difference — överlappning</span>
-          <span class="labb-varde" aria-hidden="true"></span>
-        </div>
-        <div class="labb-rad">
-          <div class="labb-steg" role="radiogroup" aria-label="difference — överlappning">
-          <label><input type="radio" name="lab-mix-blend-mode-difference-27" data-v="0"><span>0</span></label>
-          <label><input type="radio" name="lab-mix-blend-mode-difference-27" data-v="1"><span>1</span></label>
-          <label><input type="radio" name="lab-mix-blend-mode-difference-27" data-v="2"><span>2</span></label>
-          <label><input type="radio" name="lab-mix-blend-mode-difference-27" data-v="3"><span>3</span></label>
-          <label><input type="radio" name="lab-mix-blend-mode-difference-27" data-v="4" checked><span>4</span></label>
-          <label><input type="radio" name="lab-mix-blend-mode-difference-27" data-v="5"><span>5</span></label>
-          <label><input type="radio" name="lab-mix-blend-mode-difference-27" data-v="6"><span>6</span></label>
-          <label><input type="radio" name="lab-mix-blend-mode-difference-27" data-v="7"><span>7</span></label>
-          <label><input type="radio" name="lab-mix-blend-mode-difference-27" data-v="8"><span>8</span></label>
-          </div>
-          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
-        </div>
+      
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>mix-blend-mode</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="10" aria-label="Kod för mix-blend-mode: difference — självinverterande text">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta scrim-demo"&gt;&lt;span&gt;LÄSBAR&lt;/span&gt;&lt;/div&gt;
@@ -4575,10 +4681,15 @@ body { counter-reset: visade; }
 body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="background-blend-mode">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="background-blend-mode">
       <h3 class="demo-titel">background-blend-mode <span class="stod">— lager som möts i bakgrunden</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Samma blandningslägen som <code>mix-blend-mode</code>, men mellan ett elements egna bakgrundslager — ingen extra markup.</p>
       <div class="demo-yta nd-bb"></div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>background-blend-mode</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="7" aria-label="Kod för background-blend-mode — lager som möts i bakgrunden">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta nd-bb"&gt;&lt;/div&gt;
 
@@ -4621,7 +4732,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   </header>
   <div class="inre demo-grid">
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="repeat-auto-fit-minmax">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-minmax jmfbar" id="repeat-auto-fit-minmax">
       <h3 class="demo-titel">repeat(auto-fit, minmax()) <span class="stod">— responsivt utan brytpunkter</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Rutnätet fyller raden och radbryter av sig självt när kort inte längre får plats — dra ihop fönstret.</p>
       <div class="fig"><svg viewBox="0 0 220 76"><title>Samma rutnät om­flödar från tre till två kolumner</title>
@@ -4633,6 +4744,32 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <p class="fig-cap">minmax(7rem, 1fr) sätter golvet — auto-fit räknar ut resten.</p></div>
       <div class="demo-yta autofit-grid">
         <div>01</div><div>02</div><div>03</div><div>04</div><div>05</div><div>06</div>
+      </div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">minsta kortbredd</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="minsta kortbredd">
+          <label><input type="radio" name="lab-af" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-af" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-af" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-af" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-af" data-v="4" checked><span>4</span></label>
+          <label><input type="radio" name="lab-af" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-af" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-af" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-af" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>auto-fit + minmax()</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="15" aria-label="Kod för repeat(auto-fit, minmax()) — responsivt utan brytpunkter">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta autofit-grid"&gt;
@@ -4651,7 +4788,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   background: var(--bg2);}</textarea></details>
     </article>
 
-    <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="grid-template-rows-subgrid">
+    <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="grid-template-rows-subgrid">
       <h3 class="demo-titel">grid-template-rows: subgrid <span class="stod">— radjustering över flera kort</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Tre kort med olika lång rubrik — ändå ligger fotraden i exakt samma höjd i alla tre, eftersom korten delar förälderns radspår.</p>
       <div class="fig stor-fig"><svg viewBox="0 0 260 76"><title>Tre kort ärver förälderns tre radspår</title>
@@ -4675,6 +4812,11 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
           <p>Subgrid ärver förälderns radspår rakt av.</p>
           <p class="fot">→ fotnot</p>
         </div>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>subgrid</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för grid-template-rows: subgrid — radjustering över flera kort">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta subgrid-wrap"&gt;
@@ -4875,7 +5017,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .rtl-scope:has(#rtl-toggle:checked) .rtl-demo {direction: rtl;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="shape-outside">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="shape-outside">
       <h3 class="demo-titel">shape-outside <span class="stod">— text som flyter runt en form</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">En flytande cirkel med <code>shape-outside</code> gör att texten böjer sig runt formen, inte bara runt en fyrkantig box.</p>
       <div class="fig"><svg viewBox="0 0 220 66"><title>Text följer formens kurva, inte dess ruta</title>
@@ -4885,6 +5027,11 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
       <div class="demo-yta shape-demo">
         <span class="shape-float" aria-hidden="true"></span>
         <p>Det här stycket böjer sig runt cirkeln till vänster eftersom <code>shape-outside: circle(50%)</code> beskriver formen för radbrytningen, medan <code>clip-path</code> beskär själva elementet till samma form.</p>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>shape-outside</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="13" aria-label="Kod för shape-outside — text som flyter runt en form">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta shape-demo"&gt;
@@ -4997,7 +5144,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @keyframes cf-rotate {transform: rotateY(52deg) scale(.82); border-color: var(--line); opacity: .55;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="mask-image">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-mask jmfbar" id="mask-image">
       <h3 class="demo-titel">mask-image <span class="stod">— sömlös kant-fade på scrollers</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Radens egna kanter blir bokstavligen transparenta — fungerar oavsett bakgrund, till skillnad från en påklistrad gradient.</p>
       <div class="fig"><svg viewBox="0 0 220 50"><title>Masken tonar kanterna till transparent</title>
@@ -5006,6 +5153,32 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <p class="fig-cap">mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent)</p></div>
       <div class="demo-yta edge-scroll">
         <span>Ett</span><span>Två</span><span>Tre</span><span>Fyra</span><span>Fem</span><span>Sex</span>
+      </div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">kantmjukhet</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="kantmjukhet">
+          <label><input type="radio" name="lab-mask" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-mask" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-mask" data-v="2" checked><span>2</span></label>
+          <label><input type="radio" name="lab-mask" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-mask" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-mask" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-mask" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-mask" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-mask" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>mask-image</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="14" aria-label="Kod för mask-image — sömlös kant-fade på scrollers">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta edge-scroll"&gt;
@@ -5023,7 +5196,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   display: grid; place-items: center; font-family: var(--mono); font-size: .78rem; color: var(--dim);}</textarea></details>
     </article>
 
-    <article class="demo sup-safari" id="display-grid-lanes">
+    <article class="demo sup-safari jmfbar" id="display-grid-lanes">
       <h3 class="demo-titel">display: grid-lanes</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-nej"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds ej</span></li><li class="bx s-nej"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds ej</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari 26.4 · stöds</span></li><li class="bx s-nej"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds ej</span></li><li class="stod-summa"><b>1</b>/4</li></ul><p class="stod-not">Safari 26.4+, ännu ej i Chrome</p>
       <p class="demo-beskrivning">Pinterest-packning i CSS — fyller den kortaste kolumnen i DOM-ordning, till skillnad från <code>column-count</code> som läser fel håll.</p>
       <div class="fig"><svg viewBox="0 0 220 66"><title>grid-lanes packar i DOM-ordning, column-count i kolumnordning</title>
@@ -5041,6 +5214,11 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <div>Ett kort med betydligt mer text som gör det högre</div>
         <div>Kort</div>
         <div>Mellanlångt kort med lite mer text</div>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>grid-lanes</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="16" aria-label="Kod för display: grid-lanes Chrome/Edge">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta lanes"&gt;
@@ -5153,10 +5331,36 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .fig.stor-fig {padding: 1.1rem 1.2rem .9rem;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="content-visibility-auto">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-hojd jmfbar" id="content-visibility-auto">
       <h3 class="demo-titel">content-visibility: auto <span class="stod">— rendera bara det synliga</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Hoppar över layout och målning av rader utanför vyn — stora listor utan prestandastraff. <code>contain-intrinsic-size</code> reserverar platsen.</p>
       <div class="demo-yta nd-cv-list"><div>Rad 01 · content-visibility:auto</div><div>Rad 02 · content-visibility:auto</div><div>Rad 03 · content-visibility:auto</div><div>Rad 04 · content-visibility:auto</div><div>Rad 05 · content-visibility:auto</div><div>Rad 06 · content-visibility:auto</div><div>Rad 07 · content-visibility:auto</div><div>Rad 08 · content-visibility:auto</div><div>Rad 09 · content-visibility:auto</div><div>Rad 10 · content-visibility:auto</div><div>Rad 11 · content-visibility:auto</div><div>Rad 12 · content-visibility:auto</div><div>Rad 13 · content-visibility:auto</div><div>Rad 14 · content-visibility:auto</div><div>Rad 15 · content-visibility:auto</div><div>Rad 16 · content-visibility:auto</div><div>Rad 17 · content-visibility:auto</div><div>Rad 18 · content-visibility:auto</div><div>Rad 19 · content-visibility:auto</div><div>Rad 20 · content-visibility:auto</div><div>Rad 21 · content-visibility:auto</div><div>Rad 22 · content-visibility:auto</div><div>Rad 23 · content-visibility:auto</div><div>Rad 24 · content-visibility:auto</div><div>Rad 25 · content-visibility:auto</div><div>Rad 26 · content-visibility:auto</div><div>Rad 27 · content-visibility:auto</div><div>Rad 28 · content-visibility:auto</div><div>Rad 29 · content-visibility:auto</div><div>Rad 30 · content-visibility:auto</div><div>Rad 31 · content-visibility:auto</div><div>Rad 32 · content-visibility:auto</div><div>Rad 33 · content-visibility:auto</div><div>Rad 34 · content-visibility:auto</div><div>Rad 35 · content-visibility:auto</div><div>Rad 36 · content-visibility:auto</div><div>Rad 37 · content-visibility:auto</div><div>Rad 38 · content-visibility:auto</div><div>Rad 39 · content-visibility:auto</div><div>Rad 40 · content-visibility:auto</div></div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">listhöjd</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="listhöjd">
+          <label><input type="radio" name="lab-cv" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-cv" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-cv" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-cv" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-cv" data-v="4" checked><span>4</span></label>
+          <label><input type="radio" name="lab-cv" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-cv" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-cv" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-cv" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>content-visibility</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="9" aria-label="Kod för content-visibility: auto — rendera bara det synliga">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta nd-cv-list"&gt;&lt;div&gt;Rad 01 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 02 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 03 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 04 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 05 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 06 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 07 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 08 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 09 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 10 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 11 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 12 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 13 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 14 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 15 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 16 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 17 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 18 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 19 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 20 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 21 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 22 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 23 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 24 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 25 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 26 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 27 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 28 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 29 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 30 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 31 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 32 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 33 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 34 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 35 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 36 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 37 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 38 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 39 · content-visibility:auto&lt;/div&gt;&lt;div&gt;Rad 40 · content-visibility:auto&lt;/div&gt;&lt;/div&gt;
 
@@ -5180,7 +5384,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   </header>
   <div class="inre demo-grid">
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="layer">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="layer">
       <h3 class="demo-titel">@layer <span class="stod">— lagerordning slår källordning</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning"><code>demo-vinnare</code>-lagret deklareras sist och vinner därför — trots att dess regel står <em>före</em> <code>demo-bas</code> i filen.</p>
       <div class="fig"><svg viewBox="0 0 220 66"><title>Senare lager vinner, oavsett var reglerna står i filen</title>
@@ -5190,6 +5394,11 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <p class="fig-cap">Deklarationsordningen i @layer-satsen avgör — inte var i filen reglerna faktiskt står.</p></div>
       <div class="demo-yta">
         <p class="layer-box">Den här rutans färg avgörs av lagerordning</p>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>@layer-ordningen</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="20" aria-label="Kod för @layer — lagerordning slår källordning">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta"&gt;
@@ -5213,7 +5422,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 }</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="scope">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="scope">
       <h3 class="demo-titel">@scope <span class="stod">— stilar med bäst-före-datum</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Regeln gäller inuti <code>.scope-a</code> — men slutar gälla så fort <code>.scope-b</code> börjar.</p>
       <div class="fig"><svg viewBox="0 0 220 66"><title>Räckvidden är ett skal mellan två gränser</title>
@@ -5229,6 +5438,11 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
             <p class="etikett">Inuti scope-b — utanför räckvidden igen</p>
           </div>
         </div>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>@scope-gränsen</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="20" aria-label="Kod för @scope — stilar med bäst-före-datum">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta scope-outer"&gt;
@@ -5252,7 +5466,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 }</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="where">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="where">
       <h3 class="demo-titel">:where() <span class="stod">— nollställd specificitet</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Knappens basfärg sätts inuti <code>:where()</code>, som alltid räknas som specificitet noll — en enda vanlig klass räcker för att skriva över den.</p>
       <div class="fig"><svg viewBox="0 0 220 60"><title>:where() väger noll, en vanlig klass väger mer</title>
@@ -5263,6 +5477,11 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <p class="fig-cap">:where() ärver aldrig sina argument specificitet — bara sin egen, som är noll.</p></div>
       <div class="demo-yta spec-demo">
         <button class="spec-btn spec-vinn">Överskriven av en vanlig klass</button>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>:where()-nollspecificitet</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="12" aria-label="Kod för :where() — nollställd specificitet">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta spec-demo"&gt;
@@ -5312,7 +5531,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .fig.stor-fig {padding: 1.1rem 1.2rem .9rem;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge" id="function">
+    <article class="demo sup-chrome sup-edge jmfbar" id="function">
       <h3 class="demo-titel">@function</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome 139 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge 139 · stöds</span></li><li class="bx s-snart"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari TP · på väg</span></li><li class="bx s-nej"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds ej</span></li><li class="stod-summa"><b>2</b>/4</li></ul>
       <p class="demo-beskrivning">En egen, typad CSS-funktion — samlar en <code>clamp()</code>-beräkning på ett ställe istället för att upprepa den i varje regel.</p>
       <div class="fig"><svg viewBox="0 0 220 66"><title>Ett anrop, återanvänt från flera regler</title>
@@ -5323,6 +5542,11 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
       <div class="demo-yta fn-card">
         <p class="eyebrow">Kvartalsrapport</p>
         <p>Padding räknas av <code>--fluid-rytm()</code>, definierad en gång och återanvändbar överallt.</p>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>@function</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="15" aria-label="Kod för @function Chrome/Edge">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta fn-card"&gt;
@@ -5341,7 +5565,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 }</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="nth-child-an-b-of-s">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="nth-child-an-b-of-s">
       <h3 class="demo-titel">:nth-child(An+B of S) <span class="stod">— filtrera före du räknar</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">”Varannan ruta som har klassen <code>.mal</code>” — CSS räknar bara bland de element som matchar <code>S</code>, inte bland alla syskon.</p>
       <div class="fig"><svg viewBox="0 0 220 50"><title>Räkningen hoppar över det som inte matchar S</title>
@@ -5359,6 +5583,11 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <div class="nth-box"></div>
         <div class="nth-box mal">3</div>
         <div class="nth-box mal">4</div>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>of .mål-filtret</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="17" aria-label="Kod för :nth-child(An+B of S) — filtrera före du räknar">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta nth-row"&gt;
@@ -8115,7 +8344,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .vf-hover:hover {--w: 900; color: var(--acc);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari" id="initial-letter">
+    <article class="demo sup-chrome sup-edge sup-safari labbar enh-dropcap jmfbar" id="initial-letter">
       <h3 class="demo-titel">initial-letter <span class="stod">— försänkt initial</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome 110 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge 110 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari 9 · stöds</span></li><li class="bx s-nej"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds ej</span></li><li class="stod-summa"><b>3</b>/4</li></ul>
       <p class="demo-beskrivning">En äkta dropcap, satt med en enda deklaration på <code>::first-letter</code>.</p>
       <div class="fig"><svg viewBox="0 0 160 44"><title>Initialen spänner tre textrader i höjd</title>
@@ -8123,6 +8352,31 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <line x1="46" y1="12" x2="150" y2="12" class="strk" /><line x1="46" y1="24" x2="150" y2="24" class="strk" /><line x1="46" y1="36" x2="130" y2="36" class="strk" /></svg>
         <p class="fig-cap">initial-letter: 3 3 — tre rader högt, tre rader brett stöd.</p></div>
       <p class="dropcap">Det här stycket inleds med en initial som spänner över tre rader — ingen extra markup för själva bokstaven krävs, bara <code>initial-letter: 3 3</code>.</p>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">initial-letter</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="initial-letter">
+          <label><input type="radio" name="lab-il" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-il" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-il" data-v="3" checked><span>3</span></label>
+          <label><input type="radio" name="lab-il" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-il" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-il" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-il" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-il" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>initial-letter</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="24" aria-label="Kod för initial-letter — försänkt initial">&lt;!-- HTML --&gt;
 &lt;div class="fig"&gt;&lt;svg viewBox="0 0 160 44"&gt;&lt;title&gt;Initialen spänner tre textrader i höjd&lt;/title&gt;
         &lt;text x="10" y="38" font-family="var(--disp)" font-weight="800" font-size="34" class="acc"&gt;D&lt;/text&gt;
@@ -8149,13 +8403,18 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .dropcap::first-letter {initial-letter: 3 3; font-family: var(--disp); font-weight: 800; color: var(--acc); margin-inline-end: .08em;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari" id="text-wrap">
+    <article class="demo sup-chrome sup-edge sup-safari jmfbar" id="text-wrap">
       <h3 class="demo-titel">text-wrap <span class="stod">— normal / balance / pretty</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome 117 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge 117 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari 26.0 · stöds</span></li><li class="bx s-nej"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds ej</span></li><li class="stod-summa"><b>3</b>/4</li></ul><p class="stod-not">balance: alla · pretty: ej Firefox</p>
       <p class="demo-beskrivning">Samma rubrik, tre radbrytningsstrategier, vid samma bredd.</p>
       <div class="demo-yta wrap-compare">
         <div class="wc-normal"><h4>En rubrik som radbryter helt slumpmässigt</h4><span>normal</span></div>
         <div class="wc-balance"><h4>En rubrik som radbryter helt slumpmässigt</h4><span>balance</span></div>
         <div class="wc-pretty"><h4>En rubrik som radbryter helt slumpmässigt</h4><span>pretty</span></div>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>balance / pretty</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="17" aria-label="Kod för text-wrap — normal / balance / pretty">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta wrap-compare"&gt;
@@ -8176,13 +8435,18 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .wc-pretty h4 {text-wrap: pretty;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="text-box-trim">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="text-box-trim">
       <h3 class="demo-titel">text-box-trim <span class="stod">— bort med typsnittets luft</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome 133 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge 133 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari 18.2 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox 154 · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Bakgrunden avslöjar hur mycket osynligt utrymme som normalt sitter ovanför en rad.</p>
       <figure class="demo-yta trim-compare">
         <div><p>Otrimmad rad</p><figcaption>standard</figcaption></div>
         <div><p class="trim-on">Trimmad rad</p><figcaption>text-box: trim-start</figcaption></div>
       </figure>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>text-box: trim-start</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="13" aria-label="Kod för text-box-trim — bort med typsnittets luft">&lt;!-- HTML --&gt;
 &lt;figure class="demo-yta trim-compare"&gt;
         &lt;div&gt;&lt;p&gt;Otrimmad rad&lt;/p&gt;&lt;figcaption&gt;standard&lt;/figcaption&gt;&lt;/div&gt;
@@ -8198,7 +8462,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .trim-compare figcaption {font-family: var(--mono); font-size: .7rem; color: var(--dim); margin-top: .3rem;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="writing-mode">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-sparr jmfbar" id="writing-mode">
       <h3 class="demo-titel">writing-mode <span class="stod">— vertikal text</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Hela textflödet vrids 90°, med korrekt teckenorientering.</p>
       <div class="fig"><svg viewBox="0 0 160 40"><title>Textens blockriktning vrids, men bokstäverna behåller sin egen orientering</title>
@@ -8207,6 +8471,32 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <text x="112" y="26" font-size="10" class="acc" transform="rotate(90 112 26)">vertical-rl</text></svg>
         <p class="fig-cap">text-orientation: mixed håller latinska tecken upprätta i den vertikala strömmen.</p></div>
       <p class="vertical-heading">LODRÄT TEXT</p>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">letter-spacing</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="letter-spacing">
+          <label><input type="radio" name="lab-wm" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-wm" data-v="1" checked><span>1</span></label>
+          <label><input type="radio" name="lab-wm" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-wm" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-wm" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-wm" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-wm" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-wm" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-wm" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>writing-mode</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="24" aria-label="Kod för writing-mode — vertikal text">&lt;!-- HTML --&gt;
 &lt;div class="fig"&gt;&lt;svg viewBox="0 0 160 40"&gt;&lt;title&gt;Textens blockriktning vrids, men bokstäverna behåller sin egen orientering&lt;/title&gt;
         &lt;text x="10" y="24" font-size="10" class="dim"&gt;horizontal-tb&lt;/text&gt;
@@ -8233,7 +8523,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .vertical-heading {writing-mode: vertical-rl; text-orientation: mixed; height: 11rem; font-family: var(--disp); font-weight: 700; font-size: 1.5rem; letter-spacing: .05em; margin-inline: auto;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="counter-style">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="counter-style">
       <h3 class="demo-titel">@counter-style <span class="stod">— egna listmarkörer</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Två egendefinierade räknesystem: ett fast (romerskt) och ett numeriskt (hakparenteser).</p>
       <div class="fig"><svg viewBox="0 0 200 30"><title>Symbolerna och separatorn är fritt valbara</title>
@@ -8242,6 +8532,11 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
       <div class="demo-yta counter-compare">
         <ol class="cc-romersk"><li>Första</li><li>Andra</li><li>Tredje</li></ol>
         <ol class="cc-hakparentes"><li>Första</li><li>Andra</li><li>Tredje</li></ol>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>@counter-style</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="15" aria-label="Kod för @counter-style — egna listmarkörer">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta counter-compare"&gt;
@@ -8374,7 +8669,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .roll-link:hover .roll-char, .roll-link:focus-visible .roll-char {transform: rotateX(90deg);}</textarea></details>
     </article>
 
-    <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="hyphens-auto">
+    <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox labbar enh-spalter jmfbar" id="hyphens-auto">
       <h3 class="demo-titel">hyphens: auto <span class="stod">— smart avstavning</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Långa sammansatta svenska ord bryts vid rätt stavelse i smala spalter — kräver bara <code>lang="sv"</code> och en deklaration.</p>
       <div class="demo-yta hyphen-compare">
@@ -8386,6 +8681,31 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
           <div class="hyphen-demo no-hyphen">Kommunikationsavdelningens tillgänglighetsanpassning av användargränssnittskomponenter.</div>
           <figcaption>hyphens: none</figcaption>
         </figure>
+      </div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">spalter</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="spalter">
+          <label><input type="radio" name="lab-hy" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-hy" data-v="2" checked><span>2</span></label>
+          <label><input type="radio" name="lab-hy" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-hy" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-hy" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-hy" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-hy" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-hy" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>hyphens: auto</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="19" aria-label="Kod för hyphens: auto — smart avstavning">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta hyphen-compare"&gt;
@@ -8434,10 +8754,35 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @keyframes raknare {--num-count: 92;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="line-clamp">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-rader jmfbar" id="line-clamp">
       <h3 class="demo-titel">line-clamp <span class="stod">— bryt efter N rader med ellips</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome 6 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge 79 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari 5 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox 68 · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul><p class="stod-not">Prefix -webkit- krävs ännu</p>
       <p class="demo-beskrivning">Klippet visar tre rader och en ellips. <code>-webkit-line-clamp</code> krävs ännu på flera håll.</p>
       <div class="demo-yta nd-clamp">Detta är en längre brödtext som demonstrerar radklämning. Efter tredje raden ersätts resten av en ellips så att korta utdrag håller sig kompakta och jämna i ett rutnät.</div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">line-clamp</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="line-clamp">
+          <label><input type="radio" name="lab-lc" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-lc" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-lc" data-v="3" checked><span>3</span></label>
+          <label><input type="radio" name="lab-lc" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-lc" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-lc" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-lc" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-lc" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>line-clamp</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="7" aria-label="Kod för line-clamp — bryt efter N rader med ellips">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta nd-clamp"&gt;Detta är en längre brödtext som demonstrerar radklämning. Efter tredje raden ersätts resten av en ellips så att korta utdrag håller sig kompakta och jämna i ett rutnät.&lt;/div&gt;
 
@@ -8447,10 +8792,36 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .nd-clamp {max-width:22rem; font-size:.86rem; color:var(--dim); display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; line-clamp:3;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="text-emphasis">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-emph jmfbar" id="text-emphasis">
       <h3 class="demo-titel">text-emphasis <span class="stod">— ostasiatiska betoningsprickar</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Sätter små markörer ovanför tecken — här som dekoration på latin.</p>
       <div class="demo-yta"><p class="nd-emph">Betonade ord med prickar ovanför.</p></div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">markörstyrka</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="markörstyrka">
+          <label><input type="radio" name="lab-te" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-te" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-te" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-te" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-te" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-te" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-te" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-te" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-te" data-v="8" checked><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>text-emphasis</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="7" aria-label="Kod för text-emphasis — ostasiatiska betoningsprickar">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta"&gt;&lt;p class="nd-emph"&gt;Betonade ord med prickar ovanför.&lt;/p&gt;&lt;/div&gt;
 
@@ -8460,10 +8831,36 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .nd-emph {font-size:1rem; color:var(--ink); text-emphasis: filled dot var(--acc); text-emphasis-style: filled dot;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="font-variant-numeric">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-grad jmfbar" id="font-variant-numeric">
       <h3 class="demo-titel">font-variant-numeric <span class="stod">— tabell-, ordinal- och nollformer</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Justerar siffrors form: tabulära för kolumner, ordinala suffix, genomskuren nolla.</p>
       <div class="demo-yta nd-fvn"><span class="tab">1 234 567,89 (tabular)</span><span class="ord">1st 2nd 3rd (ordinal)</span><span class="zero">0123456789 (slashed-zero)</span></div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">teckengrad</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="teckengrad">
+          <label><input type="radio" name="lab-fvn" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-fvn" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-fvn" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-fvn" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-fvn" data-v="4" checked><span>4</span></label>
+          <label><input type="radio" name="lab-fvn" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-fvn" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-fvn" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-fvn" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>font-variant-numeric</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="13" aria-label="Kod för font-variant-numeric — tabell-, ordinal- och nollformer">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta nd-fvn"&gt;&lt;span class="tab"&gt;1 234 567,89 (tabular)&lt;/span&gt;&lt;span class="ord"&gt;1st 2nd 3rd (ordinal)&lt;/span&gt;&lt;span class="zero"&gt;0123456789 (slashed-zero)&lt;/span&gt;&lt;/div&gt;
 
@@ -8479,10 +8876,36 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .nd-fvn .zero {font-variant-numeric: slashed-zero;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="text-orientation-upright">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-sparr jmfbar" id="text-orientation-upright">
       <h3 class="demo-titel">text-orientation: upright <span class="stod">— res varje tecken</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">I vertikal text står varje bokstav upprätt istället för att roteras.</p>
       <div class="demo-yta"><p class="nd-vert">UPPRÄTT</p></div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">letter-spacing</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="letter-spacing">
+          <label><input type="radio" name="lab-to" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-to" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-to" data-v="2" checked><span>2</span></label>
+          <label><input type="radio" name="lab-to" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-to" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-to" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-to" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-to" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-to" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>writing-mode</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="7" aria-label="Kod för text-orientation: upright — res varje tecken">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta"&gt;&lt;p class="nd-vert"&gt;UPPRÄTT&lt;/p&gt;&lt;/div&gt;
 
@@ -8504,7 +8927,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   </header>
   <div class="inre demo-grid">
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="sparklinje">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-spark jmfbar" id="sparklinje">
       <h3 class="demo-titel">Sparklinje <span class="stod">— inline --v per stapel</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">En minimal stapelgraf där varje stapels höjd sätts av sin egen anpassade egenskap.</p>
       <div class="fig"><svg viewBox="0 0 200 34"><title>Varje stapel läser sin egen inline-variabel</title>
@@ -8514,6 +8937,32 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <p class="fig-cap">Datan bor i markupen — CSS ritar, ingen JS-loop bygger staplarna.</p></div>
       <div class="demo-yta spark" role="img" aria-label="Försäljning per kvartal: 34, 58, 41, 72, 66, 90 procent">
         <span style="--v:34"></span><span style="--v:58"></span><span style="--v:41"></span><span style="--v:72"></span><span style="--v:66"></span><span style="--v:90"></span>
+      </div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">diagramhöjd</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="diagramhöjd">
+          <label><input type="radio" name="lab-sp" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-sp" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-sp" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-sp" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-sp" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-sp" data-v="5" checked><span>5</span></label>
+          <label><input type="radio" name="lab-sp" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-sp" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-sp" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>stapelhöjd från --v</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="14" aria-label="Kod för Sparklinje — inline --v per stapel">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta spark" role="img" aria-label="Försäljning per kvartal: 34, 58, 41, 72, 66, 90 procent"&gt;
@@ -8531,7 +8980,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .spark span:last-child {background: var(--acc);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="donutdiagram">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="donutdiagram">
       <h3 class="demo-titel">Donutdiagram <span class="stod">— conic-gradient + mask</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">En konisk gradient ritar tårtbitarna, en radiell mask klipper ut mitten.</p>
       <div class="fig"><svg viewBox="0 0 200 40"><title>Konisk gradient plus mask ger en donut</title>
@@ -8543,6 +8992,11 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
       <div class="demo-yta">
         <div class="donut" role="img" aria-label="Fördelning: 65% kärna, 20% admin, 15% forskning" style="--p1:65; --p2:20;"><span>100%</span></div>
         <p class="donut-legend"><span><b style="background:var(--acc)"></b>Kärna</span><span><b style="background:#6ea8ff"></b>Admin</span><span><b style="background:var(--bg2)"></b>FoU</span></p>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>mask (hålet)</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="17" aria-label="Kod för Donutdiagram — conic-gradient + mask">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta"&gt;
@@ -8563,7 +9017,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .donut-legend b {display: inline-block; width: .6rem; height: .6rem; border-radius: 2px; margin-right: .3rem;}</textarea></details>
     </article>
 
-    <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="gantt-schema">
+    <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="gantt-schema">
       <h3 class="demo-titel">Gantt-schema <span class="stod">— grid-template-columns</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Ett 12-kolumners rutnät blir en projekttidslinje; varje rad spänner det antal kolumner den behöver.</p>
       <div class="fig stor-fig"><svg viewBox="0 0 240 30"><title>Varje rad börjar vid en kolumn och spänner N kolumner</title>
@@ -8576,6 +9030,11 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <div class="gantt-row" style="--start:1; --span:3;">Research</div>
         <div class="gantt-row alt" style="--start:3; --span:5;">Utveckling</div>
         <div class="gantt-row" style="--start:8; --span:4;">Lansering</div>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>grid-column-placering</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="13" aria-label="Kod för Gantt-schema — grid-template-columns">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta gantt" role="region" aria-label="Projekttidslinje"&gt;
@@ -8592,7 +9051,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .gantt-row.alt {background: #6ea8ff;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="heatmap">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-cell jmfbar" id="heatmap">
       <h3 class="demo-titel">Heatmap <span class="stod">— color-mix() per cell</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Varje cells färgintensitet räknas proportionellt med <code>color-mix()</code> mot ett numeriskt värde.</p>
       <div class="fig"><svg viewBox="0 0 200 24"><title>Ju högre värde, desto mer accentfärg blandas in</title>
@@ -8603,6 +9062,32 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <span style="--val:10"></span><span style="--val:85"></span><span style="--val:40"></span><span style="--val:60"></span>
         <span style="--val:95"></span><span style="--val:20"></span><span style="--val:55"></span><span style="--val:75"></span>
         <span style="--val:30"></span><span style="--val:65"></span><span style="--val:15"></span><span style="--val:88"></span>
+      </div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">cellstorlek</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="cellstorlek">
+          <label><input type="radio" name="lab-hm" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-hm" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-hm" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-hm" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-hm" data-v="4" checked><span>4</span></label>
+          <label><input type="radio" name="lab-hm" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-hm" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-hm" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-hm" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>color-mix per cell</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="12" aria-label="Kod för Heatmap — color-mix() per cell">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta heatmap" role="img" aria-label="Aktivitetsmatris"&gt;
@@ -8618,7 +9103,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .heatmap span {width: 1.6rem; height: 1.6rem; border-radius: 3px; background: color-mix(in oklch, var(--acc) calc(var(--val, 0) * 1%), var(--bg2));}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="staplad-kpi-bar">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="staplad-kpi-bar">
       <h3 class="demo-titel">Staplad KPI-bar <span class="stod">— flex + color-mix()</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Segmenten sätter sin egen bredd via <code>flex-basis</code> — ingen procenträkning i förväg.</p>
       <div class="fig"><svg viewBox="0 0 200 24"><title>flex-basis i procent, flex-boxen räknar resten</title>
@@ -8628,6 +9113,11 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
       <div class="demo-yta stack-bar" role="img" aria-label="Fördelning: 40% drift, 60% försäljning">
         <span style="--v:40; background:var(--acc); color:#0a0a0a;">40%</span>
         <span style="--v:60; background:#6ea8ff;">60%</span>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>flex-basis per andel</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="11" aria-label="Kod för Staplad KPI-bar — flex + color-mix()">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta stack-bar" role="img" aria-label="Fördelning: 40% drift, 60% försäljning"&gt;
@@ -8704,7 +9194,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @keyframes kpi-fyll {width: var(--kpi);}</textarea></details>
     </article>
 
-    <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="klistrad-tabellrubrik">
+    <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="klistrad-tabellrubrik">
       <h3 class="demo-titel">Klistrad tabellrubrik <span class="stod">— sticky + zebra-rader</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Rubrikraden sitter kvar vid scroll, raderna alternerar ton — grundmönstret för varje datatät tabell.</p>
       <div class="fig"><svg viewBox="0 0 200 40"><title>Rubrikraden fastnar i toppen av sin egen scrollbehållare</title>
@@ -8722,6 +9212,11 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
             <tr><td>2026-08-19</td><td>Bris AB</td><td>21 700 kr</td></tr>
           </tbody>
         </table>
+      </div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>position: sticky</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="23" aria-label="Kod för Klistrad tabellrubrik — sticky + zebra-rader">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta data-tbl-scroll"&gt;
@@ -8935,10 +9430,15 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 }</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="scrollbar-width-color">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="scrollbar-width-color">
       <h3 class="demo-titel">scrollbar-width / -color <span class="stod">— tematiska rullningslister</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Standardiserade rullningslister utan <code>::-webkit-scrollbar</code>.</p>
       <div class="demo-yta nd-sb">Rulla här för att se den tunna, accentfärgade rullningslisten. Rulla här för att se den tunna, accentfärgade rullningslisten. Rulla här för att se den tunna, accentfärgade rullningslisten. Rulla här för att se den tunna, accentfärgade rullningslisten. Rulla här för att se den tunna, accentfärgade rullningslisten. Rulla här för att se den tunna, accentfärgade rullningslisten.</div>
+    
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>tematisk rullningslist</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="7" aria-label="Kod för scrollbar-width / -color — tematiska rullningslister">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta nd-sb"&gt;Rulla här för att se den tunna, accentfärgade rullningslisten. Rulla här för att se den tunna, accentfärgade rullningslisten. Rulla här för att se den tunna, accentfärgade rullningslisten. Rulla här för att se den tunna, accentfärgade rullningslisten. Rulla här för att se den tunna, accentfärgade rullningslisten. Rulla här för att se den tunna, accentfärgade rullningslisten.&lt;/div&gt;
 
