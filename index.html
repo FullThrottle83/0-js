@@ -456,8 +456,19 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .jmfbar:has(.jmf-knapp input:checked) .heatmap span { background: var(--bg2); }
 .jmfbar:has(.jmf-knapp input:checked) .spark span { height: 100%; }
 .jmfbar:has(.jmf-knapp input:checked) .ld-box { background: #17141c; color: #f4efe6; }
-.jmfbar:has(.jmf-knapp input:checked) .squircle-row button { corner-shape: round; }
-.jmfbar:has(.jmf-knapp input:checked) .lanes { display: grid; }
+/* corner-shape-demot styrs nu av formväljaren nedan i stället för av
+   jämföraren, så alla fem värden går att prova mot varandra. */
+.jmfbar:has(.jmf-knapp input:checked) .squircle-row .prov-form { corner-shape: round; }
+/* BUGGFIX 2026-08-30: off-läget var "display: grid" — men Chrome saknar
+   grid-lanes och faller redan tillbaka på grid, så reglaget gjorde inget alls.
+   Off-läget visar nu det riktiga alternativet demot jämför sig med:
+   column-count, som fyller kolumn för kolumn i stället för i DOM-ordning. */
+.jmfbar:has(.jmf-knapp input:checked) .lanes {
+  display: block; columns: 2; column-gap: .6rem;
+}
+.jmfbar:has(.jmf-knapp input:checked) .lanes > div {
+  break-inside: avoid; margin-bottom: .6rem;
+}
 
 /* ============================================================
    LEVANDE MEDIA-DEMOS
@@ -623,6 +634,25 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 #media-print.jmfbar:has(.jmf-knapp input:checked) .jmf-lage::after { content: "utskrift"; }
 .p-brytmark { margin-top: .8rem; border-top: 2px dashed #b9b4ab; padding-top: .35rem; font-family: var(--mono); font-size: .62rem; color: #8a857d; display: none; }
 .jmfbar:has(.jmf-knapp input:checked) .p-brytmark { display: block; }
+
+/* Formväljare: corner-shape har fem nyckelord och ett reglage med siffror
+   passar dåligt. Fem radioknappar, samma pure-CSS-mönster som labben. */
+.formval { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .8rem; }
+.formval input { position: absolute; opacity: 0; pointer-events: none; }
+.formval label {
+  padding: .4rem .7rem; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--bg2); color: var(--dim);
+  font-family: var(--mono); font-size: .72rem; transition: background .2s, color .2s, border-color .2s;
+}
+.formval label:hover { border-color: var(--acc); color: var(--acc); }
+.formval input:checked + label { background: var(--acc); color: #0a0a0a; border-color: var(--acc); font-weight: 600; }
+.formval input:focus-visible + label { outline: 2px solid var(--acc); outline-offset: 2px; }
+.squircle-row .prov-form { transition: corner-shape .3s, border-radius .3s; }
+#corner-shape-squircle:has(#cs-round:checked)    .prov-form { corner-shape: round; }
+#corner-shape-squircle:has(#cs-squircle:checked) .prov-form { corner-shape: squircle; }
+#corner-shape-squircle:has(#cs-bevel:checked)    .prov-form { corner-shape: bevel; }
+#corner-shape-squircle:has(#cs-notch:checked)    .prov-form { corner-shape: notch; }
+#corner-shape-squircle:has(#cs-scoop:checked)    .prov-form { corner-shape: scoop; }
 
 /* ---------- Labb-varianter per kapitel (2026-08-30) ----------
    Varje regel kopplar --lv till den parameter som gör tekniken begriplig. */
@@ -849,12 +879,19 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 @keyframes rotera-kant { to { --border-angle: 1turn; } }
 
 .squircle-row { display:flex; flex-wrap:wrap; gap:.6rem; }
-.squircle-row button {
-  padding: .6rem 1.2rem; border-radius: 1.4rem; border: 1px solid var(--line);
+.squircle-row .prov-form {
+  padding: .9rem 1.6rem; border-radius: 1.4rem; border: 1px solid var(--line);
   background: var(--bg2); color: var(--dim); font-family: var(--mono); font-size: .82rem;
 }
 @supports (corner-shape: squircle) {
-  .squircle-row button { corner-shape: squircle; border-color: var(--acc); color: var(--ink); }
+  .squircle-row .prov-form { border-color: var(--acc); color: var(--ink);
+    background: color-mix(in srgb, var(--acc) 14%, var(--bg2)); }
+}
+/* Utan corner-shape-stöd blir det vanliga rundade hörn — formväljaren
+   syns fortfarande, men rutorna ändrar då inte form. */
+@supports not (corner-shape: squircle) {
+  .squircle-row::after { content: "din webbläsare saknar corner-shape — rutorna visas med border-radius";
+    flex: 1 0 100%; font-family: var(--mono); font-size: .68rem; color: var(--dim); }
 }
 
 .chip-row { display:flex; flex-wrap:wrap; gap:.5rem; }
@@ -4742,8 +4779,16 @@ body { counter-reset: visade; }
         <text x="120" y="62" font-size="7" class="acc">corner-shape: squircle</text></svg>
         <p class="fig-cap">Samma hörn-radie, olika kurva — superellipsen böjer jämnare in mot kanten.</p></div>
       <div class="demo-yta squircle-row">
-        <button type="button">Squircle</button>
-        <button type="button">Chip</button>
+        <span class="prov-form">Knapp</span>
+        <span class="prov-form">Chip</span>
+        <span class="prov-form">Bricka</span>
+      </div>
+      <div class="formval" role="group" aria-label="Välj hörnform">
+        <input type="radio" name="cs-form" id="cs-round"><label for="cs-round">round</label>
+        <input type="radio" name="cs-form" id="cs-squircle" checked><label for="cs-squircle">squircle</label>
+        <input type="radio" name="cs-form" id="cs-bevel"><label for="cs-bevel">bevel</label>
+        <input type="radio" name="cs-form" id="cs-notch"><label for="cs-notch">notch</label>
+        <input type="radio" name="cs-form" id="cs-scoop"><label for="cs-scoop">scoop</label>
       </div>
     
       <div class="jmf">
