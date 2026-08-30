@@ -459,6 +459,133 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .jmfbar:has(.jmf-knapp input:checked) .squircle-row button { corner-shape: round; }
 .jmfbar:has(.jmf-knapp input:checked) .lanes { display: grid; }
 
+/* ============================================================
+   LEVANDE MEDIA-DEMOS
+   ------------------------------------------------------------
+   En @media-fråga kan bara besvaras av det riktiga fönstret, och ingen
+   kryssruta i världen kan förfalska det. Men frågans LOGIK går att visa:
+   en behållare man drar i ställer samma fråga mot sin egen bredd via
+   @container. Dra i handtaget så ser du brytpunkten passera.
+   ============================================================ */
+.drag-ruta {
+  resize: horizontal; overflow: auto; container-type: inline-size;
+  width: 100%; min-width: 8rem; max-width: 100%;
+  border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.1rem 1.4rem;
+  background: linear-gradient(var(--bg2) 0 0) padding-box,
+    repeating-linear-gradient(-45deg, transparent 0 12px, color-mix(in srgb, var(--acc) 6%, transparent) 12px 13px);
+  position: relative;
+}
+.drag-ruta::after {
+  content: "⤡ dra"; position: absolute; right: .55rem; bottom: .2rem;
+  font-family: var(--mono); font-size: .62rem; color: var(--acc); pointer-events: none;
+}
+.drag-mat { font-family: var(--mono); font-size: .74rem; color: var(--dim); display: grid; gap: .45rem; }
+.drag-mat .sv { display: none; padding: .5rem .7rem; border-radius: 8px; font-weight: 600; }
+.drag-mat .sv.ja { background: var(--acc); color: #0a0a0a; }
+.drag-mat .sv.nej { background: var(--bg2); border: 1px dashed var(--line); color: var(--dim); }
+@container (min-width: 640px) { .mq-640 .sv.ja { display: block; } }
+@container not (min-width: 640px) { .mq-640 .sv.nej { display: block; } }
+@container (min-width: 400px) { .mq-400 .sv.ja { display: block; } }
+@container not (min-width: 400px) { .mq-400 .sv.nej { display: block; } }
+.drag-kolumner { display: grid; gap: .5rem; grid-template-columns: 1fr; }
+@container (min-width: 640px) { .drag-kolumner { grid-template-columns: repeat(3, 1fr); } }
+.drag-kolumner div { padding: .6rem; border-radius: 8px; background: var(--bg2); border: 1px solid var(--line); font-family: var(--mono); font-size: .74rem; color: var(--dim); text-align: center; }
+
+/* clamp(): visar golv, flytande värde och tak samtidigt i en dragbar ruta. */
+.clamp-prov { font-family: var(--disp); font-weight: 700; line-height: 1.1; color: var(--acc); }
+.clamp-golv { font-size: 1.1rem; }
+.clamp-flyt { font-size: clamp(1.1rem, 9cqi, 2.6rem); }
+.clamp-tak  { font-size: 2.6rem; }
+.clamp-rad { display: grid; gap: .3rem; margin-bottom: .7rem; }
+.clamp-rad small { font-family: var(--mono); font-size: .64rem; color: var(--dim); letter-spacing: .1em; text-transform: uppercase; }
+
+/* Viewport-enheterna: mät dem mot varandra i realtid. */
+.vh-matare { display: grid; gap: .45rem; font-family: var(--mono); font-size: .72rem; }
+.vh-matare div { display: flex; align-items: center; gap: .6rem; }
+.vh-matare b { flex: none; width: 3.2rem; color: var(--acc); font-weight: 600; }
+.vh-matare i { height: .85rem; border-radius: 99px; background: var(--acc); display: block; }
+.vh-matare .m-dvh i { width: min(100%, 20dvh); }
+.vh-matare .m-svh i { width: min(100%, 20svh); }
+.vh-matare .m-lvh i { width: min(100%, 20lvh); background: color-mix(in srgb, var(--acc) 55%, #6ea8ff); }
+.vh-matare .m-vh  i { width: min(100%, 20vh);  background: var(--dim); }
+.vh-not { margin-top: .6rem; font-family: var(--mono); font-size: .68rem; color: var(--dim); }
+
+/* Levande media-prov: en rad per läge, det aktiva tänds. Så ser man både
+   vilket svar din maskin ger OCH vilka alternativ frågan har. */
+.prov { display: grid; gap: .4rem; font-family: var(--mono); font-size: .76rem; }
+.prov-rad {
+  display: flex; align-items: center; gap: .6rem; padding: .5rem .75rem;
+  border-radius: 8px; border: 1px solid var(--line); background: var(--bg2); color: var(--dim);
+}
+.prov-rad::before { content: "○"; color: var(--line); flex: none; }
+.prov-rad.pa { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
+.prov-rad.pa::before { content: "●"; color: var(--acc); }
+.prov-rad b { margin-left: auto; font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--acc); opacity: 0; }
+.prov-rad.pa b { opacity: 1; }
+
+@media (hover: hover) { .prov-hover .r-ja { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
+  .prov-hover .r-ja::before { content: "●"; color: var(--acc); } .prov-hover .r-ja b { opacity: 1; } }
+@media (hover: none)  { .prov-hover .r-nej { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
+  .prov-hover .r-nej::before { content: "●"; color: var(--acc); } .prov-hover .r-nej b { opacity: 1; } }
+@media (pointer: fine)   { .prov-pekare .r-fin { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
+  .prov-pekare .r-fin::before { content: "●"; color: var(--acc); } .prov-pekare .r-fin b { opacity: 1; } }
+@media (pointer: coarse) { .prov-pekare .r-grov { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
+  .prov-pekare .r-grov::before { content: "●"; color: var(--acc); } .prov-pekare .r-grov b { opacity: 1; } }
+@media (pointer: none)   { .prov-pekare .r-ingen { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
+  .prov-pekare .r-ingen::before { content: "●"; color: var(--acc); } .prov-pekare .r-ingen b { opacity: 1; } }
+@media (scripting: none)    { .prov-script .r-ingen { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
+  .prov-script .r-ingen::before { content: "●"; color: var(--acc); } .prov-script .r-ingen b { opacity: 1; } }
+@media (scripting: enabled) { .prov-script .r-ja { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
+  .prov-script .r-ja::before { content: "●"; color: var(--acc); } .prov-script .r-ja b { opacity: 1; } }
+@media (prefers-reduced-motion: reduce)      { .prov-rm .r-reduce { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
+  .prov-rm .r-reduce::before { content: "●"; color: var(--acc); } .prov-rm .r-reduce b { opacity: 1; } }
+@media (prefers-reduced-motion: no-preference) { .prov-rm .r-full { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
+  .prov-rm .r-full::before { content: "●"; color: var(--acc); } .prov-rm .r-full b { opacity: 1; } }
+@media (color-gamut: p3)   { .prov-gamut .r-p3 { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
+  .prov-gamut .r-p3::before { content: "●"; color: var(--acc); } .prov-gamut .r-p3 b { opacity: 1; } }
+@media not all and (color-gamut: p3) { .prov-gamut .r-srgb { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
+  .prov-gamut .r-srgb::before { content: "●"; color: var(--acc); } .prov-gamut .r-srgb b { opacity: 1; } }
+
+/* Hover-prov: en yta där man faktiskt känner efter om hover finns. */
+.hover-prov {
+  margin-top: .7rem; padding: 1.1rem; border-radius: 10px; text-align: center;
+  border: 1px dashed var(--line); background: var(--bg2);
+  font-family: var(--mono); font-size: .8rem; color: var(--dim);
+  transition: background .25s, color .25s, border-color .25s, scale .25s;
+}
+.hover-prov::after { content: "sväva här"; }
+@media (hover: hover) {
+  .hover-prov:hover { background: var(--acc); color: #0a0a0a; border-color: var(--acc); border-style: solid; scale: 1.02; font-weight: 600; }
+  .hover-prov:hover::after { content: "✓ hover fungerar — :hover matchade"; }
+}
+@media (hover: none) { .hover-prov::after { content: "din enhet rapporterar hover: none — därför inga svävberoende funktioner"; } }
+
+/* Rörelseprov: en snurra som lyder prefers-reduced-motion. */
+.rm-prov { margin-top: .7rem; display: flex; align-items: center; gap: .9rem; font-family: var(--mono); font-size: .76rem; color: var(--dim); }
+.rm-snurra { width: 2.2rem; height: 2.2rem; border-radius: 50%; flex: none;
+  background: conic-gradient(var(--acc), transparent 70%); animation: rm-rot 1.6s linear infinite; }
+@keyframes rm-rot { to { rotate: 1turn; } }
+.rm-prov .txt::after { content: "animationen rullar — no-preference"; }
+@media (prefers-reduced-motion: reduce) {
+  .rm-snurra { animation: none; background: conic-gradient(var(--dim), transparent 70%); }
+  .rm-prov .txt::after { content: "stillastående — du har bett om mindre rörelse"; }
+}
+
+/* round()/mod(): visa hela trappan i stället för två fasta staplar. */
+.mat-trappa { display: grid; gap: .35rem; font-family: var(--mono); font-size: .72rem; color: var(--dim); }
+.mat-trappa .rad { display: flex; align-items: center; gap: .6rem; }
+.mat-trappa .rad > span { flex: none; width: 9.5rem; }
+.mat-trappa .rad { --spar: minmax(0, 1fr); }
+.mat-trappa .stapel { min-width: 2px; transition: width .25s ease; }
+.mat-trappa .stapel { height: 1.1rem; border-radius: 4px; background: var(--acc); }
+/* Staplarna mäts mot ett eget spår så procenten inte kapas av flexboxen. */
+.mat-trappa .spar { flex: 1; min-width: 0; height: 1.1rem; border-radius: 4px; background: var(--bg2); border: 1px solid var(--line); overflow: hidden; }
+.mat-trappa .r1 .stapel { width: round(up, calc(var(--lv) * 11%), 25%); }
+.mat-trappa .r2 .stapel { width: round(down, calc(var(--lv) * 11%), 25%); }
+.mat-trappa .r3 .stapel { width: calc(var(--lv) * 11%); background: color-mix(in srgb, var(--acc) 45%, var(--dim)); }
+.mat-trappa .r4 .stapel { width: calc(mod(var(--lv) * 30px, 90px) + 10px); background: #6ea8ff; }
+.mat-trappa .stapel { height: 100%; display: block; }
+
 /* ---------- Labb-varianter per kapitel (2026-08-30) ----------
    Varje regel kopplar --lv till den parameter som gör tekniken begriplig. */
 
@@ -4702,8 +4829,12 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="media-color-gamut">
       <h3 class="demo-titel">@media (color-gamut) <span class="stod">— fråga skärmen om färgdjup</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Villkorsladda bred färgrymd bara när skärmen klarar den.</p>
-      <div class="demo-yta nd-gamut"><span class="srgb">sRGB-fallback aktivt</span><b class="p3">✓ P3-skärm upptäckt — bred gamut på</b></div>
-    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="15" aria-label="Kod för @media (color-gamut) — fråga skärmen om färgdjup">&lt;!-- HTML --&gt;
+      <div class="demo-yta prov prov-gamut">
+        <span class="prov-rad r-srgb">sRGB — standardomfång<b>ditt läge</b></span>
+        <span class="prov-rad r-p3">display-p3 — bred gamut<b>ditt läge</b></span>
+      </div>
+      <p class="labb-hint">På en P3-skärm blir den nedre raden aktiv och mättade oklch-färger får mer lyskraft än sRGB kan visa.</p>
+<details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="15" aria-label="Kod för @media (color-gamut) — fråga skärmen om färgdjup">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta nd-gamut"&gt;&lt;span class="srgb"&gt;sRGB-fallback aktivt&lt;/span&gt;&lt;b class="p3"&gt;✓ P3-skärm upptäckt — bred gamut på&lt;/b&gt;&lt;/div&gt;
 
 /* CSS */
@@ -5630,10 +5761,37 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .nd-if .kort {padding:1rem; border-radius:12px; border:1px solid var(--line); background: var(--bg2); color: var(--ink); font-size:.86rem; background: if(style(--varning: ja), #5a1d1d, var(--bg2)); color: if(style(--varning: ja), #ffd7d7, var(--ink));}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="round-mod">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar" id="round-mod">
       <h3 class="demo-titel">round() / mod() <span class="stod">— heltals- och restmatematik</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Snap:a värden till ett raster med <code>round()</code> och ta resten med <code>mod()</code> — helt i CSS.</p>
-      <div class="demo-yta nd-math"><div class="bar"><i></i>round(57%, 8px)</div><div class="bar mod"><i></i>mod(140px, 90px)</div></div>
+      <div class="demo-yta mat-trappa">
+        <div class="rad r1"><span>round(up, x, 25%)</span><i class="spar"><i class="stapel"></i></i></div>
+        <div class="rad r2"><span>round(down, x, 25%)</span><i class="spar"><i class="stapel"></i></i></div>
+        <div class="rad r3"><span>x — oavrundat</span><i class="spar"><i class="stapel"></i></i></div>
+        <div class="rad r4"><span>mod(x·30px, 90px)</span><i class="spar"><i class="stapel"></i></i></div>
+      </div>
+      <p class="labb-hint">Dra reglaget: de två översta <b>hoppar</b> i steg om 25 % medan den tredje glider jämnt. Den nedersta viker tillbaka till noll varje gång den passerar 90 px — det är <code>mod()</code>.</p>
+
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">x = --lv · 11 %</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="x = --lv · 11 %">
+          <label><input type="radio" name="lab-rm" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-rm" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-rm" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-rm" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-rm" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-rm" data-v="5" checked><span>5</span></label>
+          <label><input type="radio" name="lab-rm" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-rm" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-rm" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="10" aria-label="Kod för round() / mod() — heltals- och restmatematik">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta nd-math"&gt;&lt;div class="bar"&gt;&lt;i&gt;&lt;/i&gt;round(57%, 8px)&lt;/div&gt;&lt;div class="bar mod"&gt;&lt;i&gt;&lt;/i&gt;mod(140px, 90px)&lt;/div&gt;&lt;/div&gt;
 
@@ -9255,7 +9413,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   </header>
   <div class="inre demo-grid">
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="dvh-svh-lvh">
+    <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="dvh-svh-lvh">
       <h3 class="demo-titel">dvh / svh / lvh <span class="stod">— viewporten är inte ett fast tal</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">På mobil ändras webbläsarens verktygsfält höjd under scroll. <code>dvh</code> följer med i realtid, <code>svh</code>/<code>lvh</code> låser till minsta/största läget.</p>
       <div class="fig"><svg viewBox="0 0 200 50"><title>Verktygsfältet krymper viewporten olika mycket beroende på enhet</title>
@@ -9268,6 +9426,14 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <div class="vh-box vh-b">7svh</div>
         <div class="vh-box vh-c">7lvh</div>
       </div>
+    
+      <div class="demo-yta vh-matare">
+        <div class="m-dvh"><b>20dvh</b><i></i></div>
+        <div class="m-svh"><b>20svh</b><i></i></div>
+        <div class="m-lvh"><b>20lvh</b><i></i></div>
+        <div class="m-vh"><b>20vh</b><i></i></div>
+      </div>
+      <p class="vh-not">Staplarna mäter samma tal i fyra enheter. På desktop sammanfaller de oftast — öppna sidan i en mobil och scrolla, så vandrar <b>dvh</b> medan <b>svh</b> och <b>lvh</b> står stilla.</p>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="18" aria-label="Kod för dvh / svh / lvh — viewporten är inte ett fast tal">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta vh-row"&gt;
         &lt;div class="vh-box vh-a"&gt;7dvh&lt;/div&gt;
@@ -9288,7 +9454,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .vh-c {height: min(5rem, 7lvh);}</textarea></details>
     </article>
 
-    <article class="demo fluid-demo sup-chrome sup-edge sup-safari sup-firefox" id="clamp">
+    <article class="demo stor fluid-demo sup-chrome sup-edge sup-safari sup-firefox" id="clamp">
       <h3 class="demo-titel">clamp() <span class="stod">— flytande skala</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Ändra webbläsarfönstrets bredd — rubriken skalar mjukt mellan ett golv och ett tak, utan brytpunkter.</p>
       <div class="fig"><svg viewBox="0 0 200 34"><title>Ett golv, ett tak och en flytande formel emellan</title>
@@ -9296,6 +9462,13 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <path d="M10,20 C70,20 90,10 190,10" class="acc-strk" fill="none" /><line x1="190" y1="26" x2="190" y2="10" class="strk" stroke-dasharray="2 2" /><text x="190" y="8" text-anchor="middle" font-size="5.5" class="dim">2.6rem</text></svg>
         <p class="fig-cap">clamp(golv, 5vw, tak) — 5vw styr så länge den håller sig innanför.</p></div>
       <h4>Aa 123</h4>
+    
+      <div class="demo-yta drag-ruta">
+        <div class="clamp-rad"><small>golv — 1.1rem</small><span class="clamp-prov clamp-golv">Aa 123</span></div>
+        <div class="clamp-rad"><small>clamp(1.1rem, 9cqi, 2.6rem) — flyter</small><span class="clamp-prov clamp-flyt">Aa 123</span></div>
+        <div class="clamp-rad"><small>tak — 2.6rem</small><span class="clamp-prov clamp-tak">Aa 123</span></div>
+      </div>
+      <p class="labb-hint">Dra i rutan: mittenraden glider mellan golvet och taket och <b>låser sig</b> vid båda ändarna. Här mot behållarbredd (<code>cqi</code>) i stället för <code>vw</code>, så effekten går att se utan att ändra fönstret.</p>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="22" aria-label="Kod för clamp() — flytande skala">&lt;!-- HTML --&gt;
 &lt;div class="fig"&gt;&lt;svg viewBox="0 0 200 34"&gt;&lt;title&gt;Ett golv, ett tak och en flytande formel emellan&lt;/title&gt;
         &lt;line x1="10" y1="26" x2="190" y2="26" class="strk" /&gt;&lt;line x1="10" y1="26" x2="10" y2="6" class="strk" stroke-dasharray="2 2" /&gt;&lt;text x="10" y="4" text-anchor="middle" font-size="5.5" class="dim"&gt;1.1rem&lt;/text&gt;
@@ -9320,17 +9493,20 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .fig.stor-fig {padding: 1.1rem 1.2rem .9rem;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="prefers-reduced-motion">
+    <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="prefers-reduced-motion">
       <h3 class="demo-titel">prefers-reduced-motion <span class="stod">— frågor bortom bredd, kapitel IX</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Stänger av alla animationer och transitions på hela sidan när användaren bett systemet om det.</p>
       <div class="fig"><svg viewBox="0 0 200 30"><title>En systeminställning stänger av rörelse globalt</title>
         <circle cx="20" cy="15" r="8" class="acc" /><line x1="32" y1="15" x2="60" y2="15" class="acc-strk" marker-end="url(#pil)" />
         <text x="100" y="19" text-anchor="middle" font-size="6.5" class="dim">*, *::before, *::after { animation-duration: .001ms !important }</text></svg>
         <p class="fig-cap">Respekteras överallt i det här dokumentet — inte bara på en demo.</p></div>
-      <div class="demo-yta media-list">
-        <div><code>prefers-reduced-motion: reduce</code> — stänger av alla animationer och transitions på hela sidan.</div>
+      <div class="demo-yta prov prov-rm">
+        <span class="prov-rad r-full">no-preference — full rörelse tillåten<b>ditt läge</b></span>
+        <span class="prov-rad r-reduce">reduce — användaren vill ha mindre rörelse<b>ditt läge</b></span>
       </div>
-    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="11" aria-label="Kod för prefers-reduced-motion — frågor bortom bredd, kapitel IX">&lt;!-- HTML --&gt;
+      <div class="rm-prov"><span class="rm-snurra" aria-hidden="true"></span><span class="txt"></span></div>
+      <p class="labb-hint">Slå på "Minska rörelse" i ditt operativsystem så byter både raden och snurran läge — hela sidan lyder samma flagga.</p>
+<details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="11" aria-label="Kod för prefers-reduced-motion — frågor bortom bredd, kapitel IX">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta media-list"&gt;
         &lt;div&gt;&lt;code&gt;prefers-reduced-motion: reduce&lt;/code&gt; — stänger av alla animationer och transitions på hela sidan.&lt;/div&gt;
       &lt;/div&gt;
@@ -9366,17 +9542,20 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .media-list code {color: var(--acc);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="hover-hover">
+    <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="hover-hover">
       <h3 class="demo-titel">hover: hover</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Skiljer på pekare med och utan svävläge — en mus får hover-effekter, ett finger slipper dem hänga kvar.</p>
       <div class="fig"><svg viewBox="0 0 200 30"><title>Pekartyp avgör om hover-effekter alls erbjuds</title>
         <text x="10" y="14" font-size="6.5" class="acc">@media (hover: hover)</text><text x="10" y="26" font-size="6" class="dim">mus — :hover triggar normalt</text>
         <text x="120" y="14" font-size="6.5" class="dim">(hover: none)</text><text x="120" y="26" font-size="6" class="dim">touch — ingen hängande hover</text></svg>
         <p class="fig-cap">Utan frågan riskerar touch-enheter en hover-effekt som aldrig försvinner.</p></div>
-      <div class="demo-yta media-list">
-        <div><code>hover: hover</code> — skiljer på pekare med och utan svävläge.</div>
+      <div class="demo-yta prov prov-hover">
+        <span class="prov-rad r-ja">hover: hover — pekaren kan sväva<b>ditt läge</b></span>
+        <span class="prov-rad r-nej">hover: none — touch, ingen svävning<b>ditt läge</b></span>
       </div>
-    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="11" aria-label="Kod för hover: hover">&lt;!-- HTML --&gt;
+      <div class="hover-prov"></div>
+      <p class="labb-hint">Raden som lyser är den din enhet matchar <b>just nu</b>. Rutan under provar det på riktigt.</p>
+<details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="11" aria-label="Kod för hover: hover">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta media-list"&gt;
         &lt;div&gt;&lt;code&gt;hover: hover&lt;/code&gt; — skiljer på pekare med och utan svävläge.&lt;/div&gt;
       &lt;/div&gt;
@@ -9389,7 +9568,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .media-list code {color: var(--acc);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="min-width-640px">
+    <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="min-width-640px">
       <h3 class="demo-titel">min-width: 640px</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Den enda kvarvarande bredd-brytpunkten i hela dokumentet — bara för innehållsförteckningens spalter.</p>
       <div class="fig"><svg viewBox="0 0 200 30"><title>Endast en brytpunkt i hela dokumentet</title>
@@ -9399,6 +9578,18 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
       <div class="demo-yta media-list">
         <div><code>min-width: 640px</code> — enda kvarvarande bredd-brytpunkten i hela dokumentet, för innehållsförteckningens spalter.</div>
       </div>
+    
+      <div class="demo-yta drag-ruta mq-640">
+        <div class="drag-mat">
+          <span class="labb-etikett">@media (min-width: 640px)</span>
+          <span class="sv ja">✓ sant — bred layout</span>
+          <span class="sv nej">✕ falskt — smal layout</span>
+        </div>
+        <div class="drag-kolumner" style="margin-top:.7rem">
+          <div>01</div><div>02</div><div>03</div>
+        </div>
+      </div>
+      <p class="labb-hint">Frågan ställs här mot <b>behållarens</b> bredd med <code>@container</code> — samma logik som <code>@media</code>, men mätbar utan att du ändrar fönstret.</p>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="11" aria-label="Kod för min-width: 640px">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta media-list"&gt;
         &lt;div&gt;&lt;code&gt;min-width: 640px&lt;/code&gt; — enda kvarvarande bredd-brytpunkten i hela dokumentet, för innehållsförteckningens spalter.&lt;/div&gt;
@@ -9412,11 +9603,15 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .media-list code {color: var(--acc);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="media-scripting">
+    <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="media-scripting">
       <h3 class="demo-titel">@media (scripting) <span class="stod">— känn av om JS finns</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Denna sida har noll JavaScript, så frågan <code>(scripting: none)</code> är sann här — rutan nedan bevisar det.</p>
-      <div class="demo-yta nd-script"><span class="js-nej">scripting: none — korrekt, ingen JS här</span><span class="js-ja">scripting: enabled</span></div>
-    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="12" aria-label="Kod för @media (scripting) — känn av om JS finns">&lt;!-- HTML --&gt;
+      <div class="demo-yta prov prov-script">
+        <span class="prov-rad r-ingen">scripting: none — inga skript körs<b>ditt läge</b></span>
+        <span class="prov-rad r-ja">scripting: enabled — JS är aktivt<b>ditt läge</b></span>
+      </div>
+      <p class="labb-hint">Det här dokumentet innehåller noll script-taggar, men frågan gäller <b>webbläsarens</b> läge, inte sidans — därför lyser normalt "enabled".</p>
+<details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="12" aria-label="Kod för @media (scripting) — känn av om JS finns">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta nd-script"&gt;&lt;span class="js-nej"&gt;scripting: none — korrekt, ingen JS här&lt;/span&gt;&lt;span class="js-ja"&gt;scripting: enabled&lt;/span&gt;&lt;/div&gt;
 
 /* CSS */
@@ -9448,11 +9643,20 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .nd-sb {max-height:7rem; overflow:auto; scrollbar-width:thin; scrollbar-color: var(--acc) var(--bg2); border:1px solid var(--line); border-radius:10px; padding:.6rem; font-size:.84rem; color:var(--dim);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="media-hover-pointer">
+    <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="media-hover-pointer">
       <h3 class="demo-titel">@media (hover) &amp; (pointer) <span class="stod">— input-förmågor, inte bredd</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Fråga efter pekdon istället för skärmbredd.</p>
-      <div class="demo-yta nd-pek"><span class="fin">✓ hover:hover + pointer:fine — mus/pekplatta</span><span class="grov">Touch eller ingen hover upptäckt</span></div>
-    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="12" aria-label="Kod för @media (hover) &amp; (pointer) — input-förmågor, inte bredd">&lt;!-- HTML --&gt;
+      <div class="demo-yta prov prov-pekare">
+        <span class="prov-rad r-fin">pointer: fine — mus eller styrplatta<b>ditt läge</b></span>
+        <span class="prov-rad r-grov">pointer: coarse — finger<b>ditt läge</b></span>
+        <span class="prov-rad r-ingen">pointer: none — tangentbord/fjärr<b>ditt läge</b></span>
+      </div>
+      <div class="prov prov-hover" style="margin-top:.5rem">
+        <span class="prov-rad r-ja">hover: hover<b>ditt läge</b></span>
+        <span class="prov-rad r-nej">hover: none<b>ditt läge</b></span>
+      </div>
+      <p class="labb-hint">Två oberoende frågor: <b>hur exakt</b> pekaren är, och <b>om</b> den kan sväva. En penna är fine utan hover.</p>
+<details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="12" aria-label="Kod för @media (hover) &amp; (pointer) — input-förmågor, inte bredd">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta nd-pek"&gt;&lt;span class="fin"&gt;✓ hover:hover + pointer:fine — mus/pekplatta&lt;/span&gt;&lt;span class="grov"&gt;Touch eller ingen hover upptäckt&lt;/span&gt;&lt;/div&gt;
 
 /* CSS */
