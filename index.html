@@ -586,6 +586,44 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .mat-trappa .r4 .stapel { width: calc(mod(var(--lv) * 30px, 90px) + 10px); background: #6ea8ff; }
 .mat-trappa .stapel { height: 100%; display: block; }
 
+/* Utskriftssimulering: exakt samma deklarationer som @media print, men
+   applicerade på en pappersattrapp på skärmen. Så slipper man tro oss på
+   vårt ord — och behöver inte öppna utskriftsdialogen för att se skillnaden. */
+.papper {
+  background: #f7f5f0; color: #16151a; border-radius: 4px; padding: 1.1rem 1.2rem;
+  border: 1px solid #d8d4cc; box-shadow: 0 10px 24px -14px #000;
+  font-size: .8rem; line-height: 1.55; container-type: inline-size;
+}
+.papper .p-huvud {
+  background: #16151a; color: #f7f5f0; margin: -1.1rem -1.2rem .9rem; padding: .5rem .8rem;
+  border-radius: 4px 4px 0 0; font-family: var(--mono); font-size: .68rem;
+}
+.papper h5 { font-family: var(--disp); font-size: 1.05rem; margin: 0 0 .35rem; font-weight: 700; }
+.papper p { margin: 0 0 .6rem; }
+.papper a { color: #2c50c8; }
+.papper a::after { content: ""; }
+.papper .p-dekor {
+  margin: .7rem 0; padding: .55rem .7rem; border-radius: 6px;
+  background: linear-gradient(90deg, #ffb84d, #ff6b9d); color: #16151a;
+  font-family: var(--mono); font-size: .68rem; font-weight: 600;
+}
+.papper .p-fot { margin-top: .8rem; padding-top: .5rem; border-top: 1px solid #d8d4cc; font-family: var(--mono); font-size: .64rem; color: #6a6660; }
+
+/* PÅSLAGET läge = så här ser det ut i skrivaren. Samma regler som @media print. */
+.jmfbar:has(.jmf-knapp input:checked) .papper .p-huvud,
+.jmfbar:has(.jmf-knapp input:checked) .papper .p-dekor { display: none; }
+.jmfbar:has(.jmf-knapp input:checked) .papper { box-shadow: none; border-color: #16151a; }
+.jmfbar:has(.jmf-knapp input:checked) .papper a { color: #16151a; text-decoration: underline; }
+.jmfbar:has(.jmf-knapp input:checked) .papper a::after { content: " (" attr(href) ")"; font-family: var(--mono); font-size: .66rem; color: #4a4741; }
+.jmfbar:has(.jmf-knapp input:checked) .papper h5 { break-after: avoid; }
+.jmfbar:has(.jmf-knapp input:checked) .papper .p-fot::after { content: "  ·  sida 1 av 1"; }
+/* media-print vänder på jämförarens innebörd: här betyder "på" att
+   utskriftsreglerna är aktiva, inte att tekniken är avstängd. */
+#media-print .jmf-lage::after { content: "skärm"; }
+#media-print.jmfbar:has(.jmf-knapp input:checked) .jmf-lage::after { content: "utskrift"; }
+.p-brytmark { margin-top: .8rem; border-top: 2px dashed #b9b4ab; padding-top: .35rem; font-family: var(--mono); font-size: .62rem; color: #8a857d; display: none; }
+.jmfbar:has(.jmf-knapp input:checked) .p-brytmark { display: block; }
+
 /* ---------- Labb-varianter per kapitel (2026-08-30) ----------
    Varje regel kopplar --lv till den parameter som gör tekniken begriplig. */
 
@@ -908,10 +946,23 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
   background: var(--bg2); border: 1px solid var(--line); display: grid; place-items: center;
   font-family: var(--disp); font-weight: 700; font-size: 1.4rem; color: var(--acc);
 }
-.carousel-nav { display: flex; justify-content: center; gap: .6rem; margin-top: .8rem; font-family: var(--mono); font-size: .74rem; color: var(--dim); }
+/* Reservnavigering: i motorer utan ::scroll-marker är dessa länkar
+   den enda styrningen. :target + scroll-margin gör dem till en äkta
+   pagineringsrad i stället för en ursäktande textrad. */
+.carousel-nav { display: flex; justify-content: center; align-items: center; gap: .5rem; margin-top: .8rem; font-family: var(--mono); font-size: .74rem; color: var(--dim); }
+.carousel-nav a {
+  display: inline-grid; place-items: center; min-width: 2rem; height: 2rem; padding: 0 .5rem;
+  border: 1px solid var(--line); border-radius: 8px; background: var(--bg2);
+  color: var(--dim); text-decoration: none; transition: background .2s, color .2s, border-color .2s;
+}
+.carousel-nav a:hover { border-color: var(--acc); color: var(--acc); }
+.carousel > .slide:target { outline: 2px solid var(--acc); outline-offset: -2px; }
+.carousel-nav .nav-txt { color: var(--dim); margin-right: .3rem; }
 @supports selector(::scroll-marker) {
   .carousel { scroll-marker-group: after; }
-  .carousel-nav { display: none; }
+  /* Reservraden döljs INTE längre. Båda mekanismerna får synas samtidigt:
+     de genererade punkterna ovan, och :target-länkarna under. */
+  .carousel-nav .nav-txt::after { content: " (behövs ej här — ::scroll-marker stöds)"; }
   .carousel > .slide::scroll-marker {
     content: ""; width: .55rem; height: .55rem; border-radius: 999px; background: var(--line);
     margin: 0 .25rem; transition: background .2s, scale .2s;
@@ -5189,11 +5240,11 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <p class="fig-cap">scroll-marker-group: after; .slide::scroll-marker { content: ""; }</p></div>
       <div class="demo-yta">
         <div class="carousel">
-          <div class="slide">01</div>
-          <div class="slide">02</div>
-          <div class="slide">03</div>
+          <div class="slide" id="slide-1">01</div>
+          <div class="slide" id="slide-2">02</div>
+          <div class="slide" id="slide-3">03</div>
         </div>
-        <p class="carousel-nav">(pilar och punkter kräver ::scroll-marker-stöd)</p>
+        <p class="carousel-nav"><span class="nav-txt">reserv:</span><a href="#slide-1">1</a><a href="#slide-2">2</a><a href="#slide-3">3</a></p>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för ::scroll-marker / ::scroll-button() Chrome/Edge">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta"&gt;
@@ -5414,9 +5465,9 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .tree-nav a:hover {background: var(--acc-soft); color: var(--acc);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="media-print">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="media-print">
       <h3 class="demo-titel">@media print <span class="stod">— utskriftsvänlig artikel</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
-      <p class="demo-beskrivning">Döljer sidhuvud och dekor, skriver ut länkar i klartext och hindrar rubriker från att kapas mitt i en sidbrytning. Går inte att visa live i en skärmdemo — det här är sidans enda handritade förhandsvisning, för att <b>allt som går att visa ska kunna visas</b>.</p>
+      <p class="demo-beskrivning">Döljer sidhuvud och dekor, skriver ut länkar i klartext och hindrar rubriker från att kapas mitt i en sidbrytning. Slå på reglaget så appliceras <b>exakt samma deklarationer</b> på pappersattrappen nedan: sidhuvud och dekor försvinner, länkar skriver ut sin adress och rubriker skyddas mot sidbrytning.</p>
       <div class="fig stor-fig"><svg viewBox="0 0 260 100"><title>Skärmversion jämfört med utskriftsversion</title>
         <rect x="10" y="6" width="110" height="88" rx="4" class="strk" fill="none" />
         <rect x="10" y="6" width="110" height="12" fill="var(--line)" /><text x="65" y="15" text-anchor="middle" font-size="6" class="dim">sidhuvud + nav</text>
@@ -5430,6 +5481,22 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <line x1="152" y1="56" x2="220" y2="56" class="strk" stroke-width="1.6" />
         <text x="199" y="99" text-anchor="middle" font-size="6.5" class="acc">utskrift — @media print</text></svg>
         <p class="fig-cap">Sidhuvud och sidfot försvinner, länkar skriver ut sin egen adress, rubriker undviker att kapas av en sidbrytning.</p></div>
+    <div class="demo-yta">
+        <div class="papper">
+          <div class="p-huvud">CSS·REF — navigering · sök · tema</div>
+          <h5>Utskriftsvänlig artikel</h5>
+          <p>Den här texten är själva innehållet. Den ska överleva resan till papper oförändrad, medan allt runtomkring får stryka på foten.</p>
+          <div class="p-dekor">◆ dekorbanner — bara för skärm</div>
+          <p>Läs mer i <a href="https://developer.mozilla.org/docs/Web/CSS/@media">MDN:s dokumentation</a> om du vill fördjupa dig.</p>
+          <div class="p-brytmark">— — sidbrytning: rubriker kapas inte här (break-after: avoid) — —</div>
+          <div class="p-fot">CSS·REF</div>
+        </div>
+      </div>
+      
+      <div class="jmf">
+        <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>Simulera utskrift</label>
+        <span class="jmf-lage" aria-hidden="true"></span>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för @media print — utskriftsvänlig artikel">&lt;!-- HTML --&gt;
 &lt;div class="fig stor-fig"&gt;&lt;svg viewBox="0 0 260 100"&gt;&lt;title&gt;Skärmversion jämfört med utskriftsversion&lt;/title&gt;
         &lt;rect x="10" y="6" width="110" height="88" rx="4" class="strk" fill="none" /&gt;
