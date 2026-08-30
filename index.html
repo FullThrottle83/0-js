@@ -311,10 +311,101 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .fig.stor-fig { padding: 1.1rem 1.2rem .9rem; }
 
 /* ============================================================
+   LABBET — den delade reglagemekaniken (2026-08-30)
+   ------------------------------------------------------------
+   Problemet: 70 av 133 demos var stillbilder. De VISADE en effekt
+   men gick inte att röra, så man såg aldrig vad parametern gör.
+
+   Lösningen: ett återanvändbart reglage byggt av radioknappar.
+   En typad heltalsegenskap --lv (0–8) styrs av :has() och läses av
+   demot självt. Ingen JS: radion är tillståndet, :has() är läsningen.
+
+   Varje labb har tre delar:
+     .labb-steg   — stegen (radio, data-v="0".."8")
+     .labb-auto   — kryssruta som spelar upp hela svepet automatiskt
+     .labb-varde  — avläsningen, skriven med counter() ur --lv
+   ============================================================ */
+@property --lv { syntax: "<integer>"; inherits: true; initial-value: 4; }
+
+.labb { margin-top: 1rem; display: grid; gap: .6rem; }
+.labb-rad { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .8rem; }
+.labb-etikett {
+  font-family: var(--mono); font-size: .64rem; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--dim); flex: none;
+}
+.labb-steg { display: flex; flex-wrap: wrap; gap: .3rem; }
+.labb-steg input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.labb-steg label { display: inline-block; cursor: pointer; }
+.labb-steg span {
+  display: inline-grid; place-items: center; min-width: 1.85rem; padding: .22rem .5rem;
+  border: 1px solid var(--line); border-radius: 6px; background: var(--bg2);
+  font-family: var(--mono); font-size: .72rem; color: var(--dim);
+  transition: background .2s, color .2s, border-color .2s;
+}
+.labb-steg label:hover span { color: var(--ink); border-color: color-mix(in srgb, var(--acc) 45%, var(--line)); }
+.labb-steg label:has(input:checked) span { background: var(--acc); color: #0a0a0a; border-color: var(--acc); font-weight: 600; }
+.labb-steg label:has(input:focus-visible) span { outline: 2px solid var(--acc); outline-offset: 2px; }
+
+.labb-auto { display: inline-flex; align-items: center; gap: .45rem; cursor: pointer; font-family: var(--mono); font-size: .7rem; color: var(--dim); }
+.labb-auto input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.labb-auto .spar { width: 32px; height: 18px; border-radius: 99px; border: 1px solid var(--line); background: var(--bg2); position: relative; flex: none; transition: background .25s, border-color .25s; }
+.labb-auto .spar::after { content: ""; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: var(--dim); transition: translate .25s cubic-bezier(.2,.8,.2,1), background .25s; }
+.labb-auto:has(input:checked) .spar { background: var(--acc-soft); border-color: var(--acc); }
+.labb-auto:has(input:checked) .spar::after { translate: 14px 0; background: var(--acc); }
+.labb-auto:has(input:focus-visible) .spar { outline: 2px solid var(--acc); outline-offset: 2px; }
+
+.labb-varde {
+  font-family: var(--mono); font-size: .72rem; color: var(--acc);
+  background: color-mix(in srgb, var(--acc) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--acc) 26%, transparent);
+  border-radius: 5px; padding: .2rem .55rem; margin-left: auto;
+  white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+
+/* Stegen: en enda tabell som alla labb ärver. */
+.labbar:has(.labb-steg input[data-v="0"]:checked) { --lv: 0; }
+.labbar:has(.labb-steg input[data-v="1"]:checked) { --lv: 1; }
+.labbar:has(.labb-steg input[data-v="2"]:checked) { --lv: 2; }
+.labbar:has(.labb-steg input[data-v="3"]:checked) { --lv: 3; }
+.labbar:has(.labb-steg input[data-v="4"]:checked) { --lv: 4; }
+.labbar:has(.labb-steg input[data-v="5"]:checked) { --lv: 5; }
+.labbar:has(.labb-steg input[data-v="6"]:checked) { --lv: 6; }
+.labbar:has(.labb-steg input[data-v="7"]:checked) { --lv: 7; }
+.labbar:has(.labb-steg input[data-v="8"]:checked) { --lv: 8; }
+
+/* Autospel: sveper --lv fram och tillbaka. Observera att .demo redan bär
+   scroll-reveal-animationen bento-in — därför måste båda listas här, annars
+   skrivs inträdesanimationen över och kortet blir osynligt. */
+.demo.labbar:has(.labb-auto input:checked) {
+  animation: lv-svep 4.5s ease-in-out infinite alternate;
+}
+@supports (animation-timeline: view()) {
+  .demo.labbar:has(.labb-auto input:checked) {
+    animation: bento-in 1ms linear both, lv-svep 4.5s ease-in-out infinite alternate;
+    animation-timeline: view(), auto;
+    animation-range: entry 0% entry 18%, normal;
+  }
+}
+@keyframes lv-svep { from { --lv: 0; } to { --lv: 8; } }
+@media (prefers-reduced-motion: reduce) {
+  .demo.labbar:has(.labb-auto input:checked) { animation-play-state: paused; }
+}
+
+/* Avläsningen. counter() är enda sättet att skriva ut ett tal i CSS. */
+.labbar { counter-reset: lv var(--lv); }
+.labb-varde::after { content: counter(lv); }
+.labb-hint { font-family: var(--mono); font-size: .68rem; color: var(--dim); }
+.labb-hint b { color: var(--acc); font-weight: 600; }
+
+/* ============================================================
    KAPITEL 01 · FÄRG
    ============================================================ */
-.swatch { border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
-.swatch-yta { height: 3.2rem; }
+/* BUGGFIX 2026-08-30: .swatch-yta är ett <span> och alltså inline — height
+   biter inte på inline-element. Bara .swatch-solo satte display:block, så
+   färgraderna i color-mix, rgb(from …) och oklch/display-p3 kollapsade till
+   0 px höjd: fem osynliga rutor med enbart etiketter under. */
+.swatch { display: block; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+.swatch-yta { display: block; height: 3.2rem; }
 .swatch-solo { max-width: 22rem; }
 .swatch-solo > .swatch { display: block; }
 .swatch-solo .swatch-yta { display: block; height: 6rem; }
@@ -326,6 +417,13 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .cm-row span:nth-child(3) .swatch-yta { background: color-mix(in oklch, var(--acc) 50%, var(--bg2)); }
 .cm-row span:nth-child(4) .swatch-yta { background: color-mix(in oklch, var(--acc) 75%, var(--bg2)); }
 .cm-row span:nth-child(5) .swatch-yta { background: color-mix(in oklch, var(--acc) 100%, var(--bg2)); }
+/* Reglerbar blandning: --lv flyttar hela rampens topp, så de fem stegen
+   visar interpolationen mellan 0 % och den valda maxandelen. */
+.labbar .cm-row span:nth-child(1) .swatch-yta { background: color-mix(in oklch, var(--acc) 0%, var(--bg2)); }
+.labbar .cm-row span:nth-child(2) .swatch-yta { background: color-mix(in oklch, var(--acc) calc(var(--lv) * 3.125%), var(--bg2)); }
+.labbar .cm-row span:nth-child(3) .swatch-yta { background: color-mix(in oklch, var(--acc) calc(var(--lv) * 6.25%), var(--bg2)); }
+.labbar .cm-row span:nth-child(4) .swatch-yta { background: color-mix(in oklch, var(--acc) calc(var(--lv) * 9.375%), var(--bg2)); }
+.labbar .cm-row span:nth-child(5) .swatch-yta { background: color-mix(in oklch, var(--acc) calc(var(--lv) * 12.5%), var(--bg2)); }
 
 /* Kontinuerlig scroll-länkad blandare — animation-timeline: scroll(self inline).
    OBS: --mix-r läses av SAMMA element som scrollas. En anpassad egenskap
@@ -354,6 +452,12 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 @keyframes mix-scrub { to { --mix-r: 100; } }
 
 .rel-row { display:grid; grid-template-columns:repeat(5,1fr); gap:.5rem; }
+/* Reglerbar relativ färg: --lv styr hur långt varje kanalräkning går,
+   så man ser tonen växa fram ur basfärgen i stället för ett fast slutläge. */
+.labbar .rel-b .swatch-yta { background: rgb(from var(--acc) r g b / calc(1 - var(--lv) * .11)); }
+.labbar .rel-c .swatch-yta { background: hsl(from var(--acc) h s calc(l - var(--lv) * 5.5)); }
+.labbar .rel-d .swatch-yta { background: hsl(from var(--acc) h calc(s - var(--lv) * 10) calc(l + var(--lv) * 3.5)); }
+.labbar .rel-e .swatch-yta { background: hsl(from var(--acc) calc(h + var(--lv) * 45) s l); }
 .rel-a .swatch-yta { background: var(--acc); }
 .rel-b .swatch-yta { background: rgb(from var(--acc) r g b / .45); }
 .rel-c .swatch-yta { background: hsl(from var(--acc) h s calc(l - 22)); }
@@ -383,8 +487,30 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .grad-4 .swatch-yta { background: repeating-linear-gradient(45deg, var(--acc) 0 6px, transparent 6px 14px); }
 .grad-5 .swatch-yta { background: repeating-radial-gradient(circle at 50% 50%, var(--acc) 0 3px, transparent 3px 9px); }
 
+/* Reglerbara gradienter: --lv styr den parameter som är intressant för
+   just den gradienttypen — vinkel, mittpunkt, startvinkel eller periodlängd. */
+.labbar.grad-1 .swatch-yta { background: linear-gradient(calc(var(--lv) * 45deg), var(--acc), transparent); }
+.labbar.grad-2 .swatch-yta { background: radial-gradient(circle at calc(var(--lv) * 12.5%) 40%, var(--acc), var(--bg2) 75%); }
+.labbar.grad-3 .swatch-yta { background: conic-gradient(from calc(var(--lv) * 45deg), var(--acc), var(--bg2), var(--acc)); }
+.labbar.grad-4 .swatch-yta { background: repeating-linear-gradient(45deg, var(--acc) 0 calc(2px + var(--lv) * 2px), transparent calc(2px + var(--lv) * 2px) calc(6px + var(--lv) * 4px)); }
+.labbar.grad-5 .swatch-yta { background: repeating-radial-gradient(circle at 50% 50%, var(--acc) 0 calc(1px + var(--lv) * 1px), transparent calc(1px + var(--lv) * 1px) calc(4px + var(--lv) * 2px)); }
+.enh-band .labb-varde::after { content: counter(band) "px band"; }
+.enh-mitt .labb-varde::after { content: counter(pct125) "% mittpunkt"; }
+
 .filter-row { display:grid; gap:.6rem; grid-template-columns:repeat(auto-fit,minmax(90px,1fr)); }
-.filter-row .swatch-yta { background: linear-gradient(120deg, var(--acc), #6ea8ff 60%, #ff6ab0); }
+/* BUGGFIX 2026-08-30: motivet låg bara på .filter-row, men varje filter-demo
+   använder .swatch-solo. Ytan var alltså genomskinlig — filtren filtrerade
+   ingenting alls. Motivet hör till svatschen, inte till radlayouten. */
+.filter-row .swatch-yta,
+.f-blur .swatch-yta, .f-contrast .swatch-yta, .f-saturate .swatch-yta,
+.f-hue .swatch-yta, .f-sepia .swatch-yta, .f-gray .swatch-yta,
+.f-invert .swatch-yta, .f-drop .swatch-yta {
+  background:
+    radial-gradient(circle at 22% 28%, #fff 0 7%, transparent 8%),
+    radial-gradient(circle at 74% 68%, rgb(255 255 255 / .55) 0 5%, transparent 6%),
+    repeating-linear-gradient(90deg, rgb(0 0 0 / .22) 0 6px, transparent 6px 18px),
+    linear-gradient(120deg, var(--acc), #6ea8ff 60%, #ff6ab0);
+}
 .f-blur .swatch-yta { filter: blur(3px); }
 .f-contrast .swatch-yta { filter: contrast(2.1); }
 .f-saturate .swatch-yta { filter: saturate(2.6); }
@@ -393,6 +519,31 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .f-gray .swatch-yta { filter: grayscale(1); }
 .f-invert .swatch-yta { filter: invert(1); }
 .f-drop .swatch-yta { filter: drop-shadow(0 0 8px var(--acc)) brightness(.9); }
+
+/* Reglerbara filter: --lv (0–8) räknas om till varje filters egen skala,
+   så samma åtta knappar styr px, procent och grader. */
+.labbar.f-blur     .swatch-yta { filter: blur(calc(var(--lv) * 1px)); }
+.labbar.f-contrast .swatch-yta { filter: contrast(calc(var(--lv) * 50%)); }
+.labbar.f-saturate .swatch-yta { filter: saturate(calc(var(--lv) * 50%)); }
+.labbar.f-hue      .swatch-yta { filter: hue-rotate(calc(var(--lv) * 45deg)); }
+.labbar.f-sepia    .swatch-yta { filter: sepia(calc(var(--lv) * 12.5%)); }
+.labbar.f-gray     .swatch-yta { filter: grayscale(calc(var(--lv) * 12.5%)); }
+.labbar.f-invert   .swatch-yta { filter: invert(calc(var(--lv) * 12.5%)); }
+.labbar.f-drop     .swatch-yta { filter: drop-shadow(0 0 calc(var(--lv) * 2px) var(--acc)) brightness(.9); }
+
+/* Enheten bredvid siffran, per demo. */
+.enh-px .labb-varde::after      { content: counter(lv) "px"; }
+.enh-pct50 .labb-varde::after   { content: counter(pct50) "%"; }
+.enh-pct125 .labb-varde::after  { content: counter(pct125) "%"; }
+.enh-deg45 .labb-varde::after   { content: counter(deg45) "deg"; }
+.enh-px2 .labb-varde::after     { content: counter(px2) "px"; }
+.labbar {
+  counter-reset: lv var(--lv)
+    pct50 calc(var(--lv) * 50) pct125 calc(var(--lv) * 12.5)
+    deg45 calc(var(--lv) * 45) px2 calc(var(--lv) * 2)
+    pct10 calc(var(--lv) * 10) pct12 calc(var(--lv) * 12)
+    band calc(2 + var(--lv) * 2) grader calc(var(--lv) * 45);
+}
 
 .blend-row { display:grid; gap:.6rem; grid-template-columns:repeat(auto-fit,minmax(90px,1fr)); }
 .blend-tile { position:relative; height:3.6rem; border-radius:10px; overflow:hidden; border:1px solid var(--line); background:#1a1a22; }
@@ -409,6 +560,15 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .blend-tile-solo::before, .blend-tile-solo::after { width: 3.8rem; height: 3.8rem; }
 .blend-tile-solo::before { left: .9rem; top: 1.1rem; }
 .blend-tile-solo::after { left: 2.7rem; top: 1.1rem; }
+
+/* Reglerbar överlappning: --lv skjuter den blå skivan i sidled, så man ser
+   blandningen uppstå och försvinna i stället för en fryst mittbild. */
+.labbar .blend-tile-solo::after {
+  left: calc(.9rem + var(--lv) * .475rem);
+  transition: left .25s ease;
+}
+.labbar:has(.labb-auto input:checked) .blend-tile-solo::after { transition: none; }
+.enh-overlapp .labb-varde::after { content: counter(pct12) "% överlapp"; }
 
 .glow-card {
   position: relative; padding: 1.4rem; border-radius: 14px; text-align: center;
@@ -2657,7 +2817,7 @@ body { counter-reset: visade; }
   </header>
   <div class="inre demo-grid">
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="color-mix">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-pct125" id="color-mix">
       <h3 class="demo-titel">color-mix() <span class="stod">— blanda i valfri färgrymd</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Blandar accentfärgen med bakgrunden i steg om 25 % — direkt i CSS, ingen preprocessor.</p>
       <div class="fig">
@@ -2680,6 +2840,27 @@ body { counter-reset: visade; }
         <span class="swatch"><span class="swatch-yta"></span><span class="swatch-lbl">50%</span></span>
         <span class="swatch"><span class="swatch-yta"></span><span class="swatch-lbl">75%</span></span>
         <span class="swatch"><span class="swatch-yta"></span><span class="swatch-lbl">100%</span></span>
+      </div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">maxandel accent</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="maxandel accent">
+          <label><input type="radio" name="lab-cm" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-cm" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-cm" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-cm" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-cm" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-cm" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-cm" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-cm" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-cm" data-v="8" checked><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för color-mix() — blanda i valfri färgrymd">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta cm-row"&gt;
@@ -2775,7 +2956,7 @@ body { counter-reset: visade; }
 @keyframes mix-scrub {--mix-r: 100;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="rgb-from">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-pct125" id="rgb-from">
       <h3 class="demo-titel">rgb(from …) <span class="stod">— relativ färgsyntax</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Läser ut kanalerna ur en befintlig färg och räknar om dem — toner och nyanser utan att skriva nya hex-koder.</p>
       <div class="fig">
@@ -2802,6 +2983,27 @@ body { counter-reset: visade; }
         <span class="swatch rel-c"><span class="swatch-yta"></span><span class="swatch-lbl">mörkare</span></span>
         <span class="swatch rel-d"><span class="swatch-yta"></span><span class="swatch-lbl">avmättad</span></span>
         <span class="swatch rel-e"><span class="swatch-yta"></span><span class="swatch-lbl">+150° nyans</span></span>
+      </div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">omräkningsgrad</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="omräkningsgrad">
+          <label><input type="radio" name="lab-rel" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-rel" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-rel" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-rel" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-rel" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-rel" data-v="5" checked><span>5</span></label>
+          <label><input type="radio" name="lab-rel" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-rel" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-rel" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för rgb(from …) — relativ färgsyntax">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta rel-row"&gt;
@@ -2963,7 +3165,7 @@ body { counter-reset: visade; }
 .ld-dark {color-scheme: dark;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="linear-gradient">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar grad-1 enh-deg45" id="linear-gradient">
       <h3 class="demo-titel">linear-gradient() <span class="stod">— färg längs en riktning</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Färgen glider längs en rak vinkel — ingen bild, bara en riktning och stopp.</p>
       <div class="fig">
@@ -2975,6 +3177,27 @@ body { counter-reset: visade; }
         <p class="fig-cap">linear-gradient(135deg, …)</p>
       </div>
       <div class="demo-yta swatch-solo"><span class="swatch grad-1"><span class="swatch-yta"></span><span class="swatch-lbl">linear</span></span></div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">vinkel</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="vinkel">
+          <label><input type="radio" name="lab-g1" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-g1" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-g1" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-g1" data-v="3" checked><span>3</span></label>
+          <label><input type="radio" name="lab-g1" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-g1" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-g1" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-g1" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-g1" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för linear-gradient() — färg längs en riktning">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta swatch-solo"&gt;&lt;span class="swatch grad-1"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;linear&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
 
@@ -3020,7 +3243,7 @@ body { counter-reset: visade; }
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="radial-gradient">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar grad-2 enh-mitt" id="radial-gradient">
       <h3 class="demo-titel">radial-gradient() <span class="stod">— färg ut från en punkt</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Ringar som växer ut från en vald mittpunkt, inte ett hörn.</p>
       <div class="fig">
@@ -3031,6 +3254,27 @@ body { counter-reset: visade; }
         <p class="fig-cap">radial-gradient(circle at 30% 30%, …)</p>
       </div>
       <div class="demo-yta swatch-solo"><span class="swatch grad-2"><span class="swatch-yta"></span><span class="swatch-lbl">radial</span></span></div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">mittpunkt x</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="mittpunkt x">
+          <label><input type="radio" name="lab-g2" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-g2" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-g2" data-v="2" checked><span>2</span></label>
+          <label><input type="radio" name="lab-g2" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-g2" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-g2" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-g2" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-g2" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-g2" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för radial-gradient() — färg ut från en punkt">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta swatch-solo"&gt;&lt;span class="swatch grad-2"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;radial&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
 
@@ -3076,7 +3320,7 @@ body { counter-reset: visade; }
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="conic-gradient">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar grad-3 enh-deg45" id="conic-gradient">
       <h3 class="demo-titel">conic-gradient() <span class="stod">— färg runt ett varv</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Färgen sveper runt en mittpunkt som visarna på en klocka — grunden för donuts och kalkylerade tårtbitar.</p>
       <div class="fig">
@@ -3088,6 +3332,27 @@ body { counter-reset: visade; }
         <p class="fig-cap">conic-gradient(from 90deg, …)</p>
       </div>
       <div class="demo-yta swatch-solo"><span class="swatch grad-3"><span class="swatch-yta"></span><span class="swatch-lbl">conic</span></span></div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">startvinkel</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="startvinkel">
+          <label><input type="radio" name="lab-g3" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-g3" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-g3" data-v="2" checked><span>2</span></label>
+          <label><input type="radio" name="lab-g3" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-g3" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-g3" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-g3" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-g3" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-g3" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för conic-gradient() — färg runt ett varv">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta swatch-solo"&gt;&lt;span class="swatch grad-3"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;conic&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
 
@@ -3133,7 +3398,7 @@ body { counter-reset: visade; }
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="repeating-linear-gradient">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar grad-4 enh-band" id="repeating-linear-gradient">
       <h3 class="demo-titel">repeating-linear-gradient() <span class="stod">— ett mönster som upprepas</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Samma stopp som linear-gradient, men det sista stoppet loopar tillbaka till det första — ett ändligt mönster, ett oändligt fält.</p>
       <div class="fig">
@@ -3146,6 +3411,27 @@ body { counter-reset: visade; }
         <p class="fig-cap">repeating-linear-gradient(45deg, … 0 6px, transparent 6px 14px)</p>
       </div>
       <div class="demo-yta swatch-solo"><span class="swatch grad-4"><span class="swatch-yta"></span><span class="swatch-lbl">rep-linear</span></span></div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">bandbredd</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="bandbredd">
+          <label><input type="radio" name="lab-g4" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-g4" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-g4" data-v="2" checked><span>2</span></label>
+          <label><input type="radio" name="lab-g4" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-g4" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-g4" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-g4" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-g4" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-g4" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för repeating-linear-gradient() — ett mönster som upprepas">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta swatch-solo"&gt;&lt;span class="swatch grad-4"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;rep-linear&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
 
@@ -3191,7 +3477,7 @@ body { counter-reset: visade; }
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="repeating-radial-gradient">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar grad-5 enh-band" id="repeating-radial-gradient">
       <h3 class="demo-titel">repeating-radial-gradient() <span class="stod">— ringar i oändlighet</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Samma loop-princip som ovan, fast radiellt — ringarna fortsätter tills ytan tar slut.</p>
       <div class="fig">
@@ -3201,6 +3487,27 @@ body { counter-reset: visade; }
         <p class="fig-cap">repeating-radial-gradient(circle at 50% 50%, … 0 3px, transparent 3px 9px)</p>
       </div>
       <div class="demo-yta swatch-solo"><span class="swatch grad-5"><span class="swatch-yta"></span><span class="swatch-lbl">rep-radial</span></span></div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">ringavstånd</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="ringavstånd">
+          <label><input type="radio" name="lab-g5" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-g5" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-g5" data-v="2" checked><span>2</span></label>
+          <label><input type="radio" name="lab-g5" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-g5" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-g5" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-g5" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-g5" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-g5" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för repeating-radial-gradient() — ringar i oändlighet">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta swatch-solo"&gt;&lt;span class="swatch grad-5"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;rep-radial&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
 
@@ -3246,7 +3553,7 @@ body { counter-reset: visade; }
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="filter-blur">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar f-blur enh-px" id="filter-blur">
       <h3 class="demo-titel">filter: blur() <span class="stod">— bildeffekter utan bildredigering</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Suddar pixlarna mot sina grannar — samma gradient som resten av kapitlets filter, realtid, ingen canvas.</p>
       <div class="fig"><svg viewBox="0 0 200 70"><title>Skarp kant blir en gradvis övergång</title>
@@ -3254,6 +3561,27 @@ body { counter-reset: visade; }
         <line x1="84" y1="35" x2="112" y2="35" class="acc-strk" marker-end="url(#pil)" /></svg>
         <p class="fig-cap">filter: blur(3px)</p></div>
       <div class="demo-yta swatch-solo"><span class="swatch f-blur"><span class="swatch-yta"></span><span class="swatch-lbl">blur</span></span></div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">blur()</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="blur()">
+          <label><input type="radio" name="lab-blur" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-blur" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-blur" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-blur" data-v="3" checked><span>3</span></label>
+          <label><input type="radio" name="lab-blur" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-blur" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-blur" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-blur" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-blur" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för filter: blur() — bildeffekter utan bildredigering">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta swatch-solo"&gt;&lt;span class="swatch f-blur"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;blur&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
 
@@ -3299,7 +3627,7 @@ body { counter-reset: visade; }
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="filter-contrast">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar f-contrast enh-pct50" id="filter-contrast">
       <h3 class="demo-titel">filter: contrast()</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Drar mellanton mot svart eller vitt — över 100 % skärper, under 100 % plattar till.</p>
       <div class="fig"><svg viewBox="0 0 200 70"><title>Mellanton pressas mot ytterlägena</title>
@@ -3308,6 +3636,27 @@ body { counter-reset: visade; }
         <text x="20" y="62" font-size="7" class="dim">in</text><text x="170" y="8" font-size="7" class="dim">ut</text></svg>
         <p class="fig-cap">filter: contrast(2.1)</p></div>
       <div class="demo-yta swatch-solo"><span class="swatch f-contrast"><span class="swatch-yta"></span><span class="swatch-lbl">contrast</span></span></div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">contrast()</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="contrast()">
+          <label><input type="radio" name="lab-con" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-con" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-con" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-con" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-con" data-v="4" checked><span>4</span></label>
+          <label><input type="radio" name="lab-con" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-con" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-con" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-con" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för filter: contrast()">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta swatch-solo"&gt;&lt;span class="swatch f-contrast"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;contrast&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
 
@@ -3353,7 +3702,7 @@ body { counter-reset: visade; }
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="filter-saturate">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar f-saturate enh-pct50" id="filter-saturate">
       <h3 class="demo-titel">filter: saturate()</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Skalar färgmättnaden upp eller ner — 0 är gråskala, över 100 % blir färgerna renare än originalet.</p>
       <div class="fig"><svg viewBox="0 0 200 70"><title>Mättnadsskala från grått till rent</title>
@@ -3362,6 +3711,27 @@ body { counter-reset: visade; }
         <circle cx="150" cy="35" r="10" class="acc-strk" fill="none" /></svg>
         <p class="fig-cap">filter: saturate(2.6)</p></div>
       <div class="demo-yta swatch-solo"><span class="swatch f-saturate"><span class="swatch-yta"></span><span class="swatch-lbl">saturate</span></span></div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">saturate()</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="saturate()">
+          <label><input type="radio" name="lab-sat" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-sat" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-sat" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-sat" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-sat" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-sat" data-v="5" checked><span>5</span></label>
+          <label><input type="radio" name="lab-sat" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-sat" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-sat" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för filter: saturate()">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta swatch-solo"&gt;&lt;span class="swatch f-saturate"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;saturate&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
 
@@ -3407,7 +3777,7 @@ body { counter-reset: visade; }
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="filter-hue-rotate">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar f-hue enh-deg45" id="filter-hue-rotate">
       <h3 class="demo-titel">filter: hue-rotate()</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Roterar varje pixels nyansvinkel runt färghjulet — mättnad och ljushet orörda.</p>
       <div class="fig"><svg viewBox="0 0 200 70"><title>Nyansen roterar runt färghjulet</title>
@@ -3422,6 +3792,27 @@ body { counter-reset: visade; }
         <text x="128" y="18" font-size="7" class="acc">120deg</text></svg>
         <p class="fig-cap">filter: hue-rotate(120deg)</p></div>
       <div class="demo-yta swatch-solo"><span class="swatch f-hue"><span class="swatch-yta"></span><span class="swatch-lbl">hue-rotate</span></span></div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">hue-rotate()</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="hue-rotate()">
+          <label><input type="radio" name="lab-hue" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-hue" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-hue" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-hue" data-v="3" checked><span>3</span></label>
+          <label><input type="radio" name="lab-hue" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-hue" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-hue" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-hue" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-hue" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för filter: hue-rotate()">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta swatch-solo"&gt;&lt;span class="swatch f-hue"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;hue-rotate&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
 
@@ -3467,13 +3858,34 @@ body { counter-reset: visade; }
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="filter-sepia">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar f-sepia enh-pct125" id="filter-sepia">
       <h3 class="demo-titel">filter: sepia()</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Drar hela paletten mot ett gammalt fotografis brunton.</p>
       <div class="fig"><svg viewBox="0 0 200 70"><title>Palett dras mot brunt</title>
         <circle cx="50" cy="35" r="18" class="acc" /><line x1="72" y1="35" x2="128" y2="35" class="strk" marker-end="url(#pil)" /><circle cx="150" cy="35" r="18" fill="#9c7a4a" /></svg>
         <p class="fig-cap">filter: sepia(.85)</p></div>
       <div class="demo-yta swatch-solo"><span class="swatch f-sepia"><span class="swatch-yta"></span><span class="swatch-lbl">sepia</span></span></div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">sepia()</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="sepia()">
+          <label><input type="radio" name="lab-sep" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-sep" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-sep" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-sep" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-sep" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-sep" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-sep" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-sep" data-v="7" checked><span>7</span></label>
+          <label><input type="radio" name="lab-sep" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för filter: sepia()">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta swatch-solo"&gt;&lt;span class="swatch f-sepia"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;sepia&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
 
@@ -3519,13 +3931,34 @@ body { counter-reset: visade; }
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="filter-grayscale">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar f-gray enh-pct125" id="filter-grayscale">
       <h3 class="demo-titel">filter: grayscale()</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Tar bort mättnaden helt — samma ljushetsvärden, ingen färg kvar.</p>
       <div class="fig"><svg viewBox="0 0 200 70"><title>Färg reduceras till gråskala</title>
         <circle cx="50" cy="35" r="18" class="acc" /><line x1="72" y1="35" x2="128" y2="35" class="strk" marker-end="url(#pil)" /><circle cx="150" cy="35" r="18" fill="#8a8a8a" /></svg>
         <p class="fig-cap">filter: grayscale(1)</p></div>
       <div class="demo-yta swatch-solo"><span class="swatch f-gray"><span class="swatch-yta"></span><span class="swatch-lbl">grayscale</span></span></div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">grayscale()</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="grayscale()">
+          <label><input type="radio" name="lab-gray" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-gray" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-gray" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-gray" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-gray" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-gray" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-gray" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-gray" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-gray" data-v="8" checked><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för filter: grayscale()">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta swatch-solo"&gt;&lt;span class="swatch f-gray"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;grayscale&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
 
@@ -3571,7 +4004,7 @@ body { counter-reset: visade; }
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="filter-invert">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar f-invert enh-pct125" id="filter-invert">
       <h3 class="demo-titel">filter: invert()</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Byter varje kanal mot sin motsats på hjulet — som ett fotonegativ.</p>
       <div class="fig"><svg viewBox="0 0 200 70"><title>Varje kanal vänds till sin motsats</title>
@@ -3579,6 +4012,27 @@ body { counter-reset: visade; }
         <circle cx="140" cy="35" r="18" fill="hsl(from var(--acc) calc(h + 180) s l)" /></svg>
         <p class="fig-cap">filter: invert(1)</p></div>
       <div class="demo-yta swatch-solo"><span class="swatch f-invert"><span class="swatch-yta"></span><span class="swatch-lbl">invert</span></span></div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">invert()</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="invert()">
+          <label><input type="radio" name="lab-inv" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-inv" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-inv" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-inv" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-inv" data-v="4"><span>4</span></label>
+          <label><input type="radio" name="lab-inv" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-inv" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-inv" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-inv" data-v="8" checked><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för filter: invert()">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta swatch-solo"&gt;&lt;span class="swatch f-invert"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;invert&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
 
@@ -3624,13 +4078,34 @@ body { counter-reset: visade; }
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="filter-drop-shadow">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar f-drop enh-px2" id="filter-drop-shadow">
       <h3 class="demo-titel">filter: drop-shadow()</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Kastar en skugga efter formens egen alfakanal, inte efter dess fyrkantiga box — till skillnad från <code>box-shadow</code>.</p>
       <div class="fig"><svg viewBox="0 0 200 70"><title>Skuggan följer formens kontur</title>
         <circle cx="108" cy="41" r="20" fill="#000" opacity=".55" /><circle cx="100" cy="35" r="20" class="acc" /></svg>
         <p class="fig-cap">filter: drop-shadow(0 0 8px var(--acc)) brightness(.9)</p></div>
       <div class="demo-yta swatch-solo"><span class="swatch f-drop"><span class="swatch-yta"></span><span class="swatch-lbl">drop-shadow</span></span></div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">drop-shadow() radie</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="drop-shadow() radie">
+          <label><input type="radio" name="lab-drop" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-drop" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-drop" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-drop" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-drop" data-v="4" checked><span>4</span></label>
+          <label><input type="radio" name="lab-drop" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-drop" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-drop" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-drop" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för filter: drop-shadow()">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta swatch-solo"&gt;&lt;span class="swatch f-drop"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;drop-shadow&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
 
@@ -3676,11 +4151,32 @@ body { counter-reset: visade; }
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="mix-blend-mode-multiply">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-overlapp" id="mix-blend-mode-multiply">
       <h3 class="demo-titel">mix-blend-mode: multiply <span class="stod">— hur lager möts</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Multiplicerar kanalvärdena — resultatet är alltid lika mörkt eller mörkare än de mörkaste av de två.</p>
       <div class="demo-yta"><span class="blend-tile blend-tile-solo bl-multiply"></span></div>
       <p class="fig-cap">resultat = A × B — vitt lämnar den andra oförändrad</p>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">multiply — överlappning</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="multiply — överlappning">
+          <label><input type="radio" name="lab-mix-blend-mode-multiply" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-multiply" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-multiply" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-multiply" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-multiply" data-v="4" checked><span>4</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-multiply" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-multiply" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-multiply" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-multiply" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="15" aria-label="Kod för mix-blend-mode: multiply — hur lager möts">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta"&gt;&lt;span class="blend-tile blend-tile-solo bl-multiply"&gt;&lt;/span&gt;&lt;/div&gt;
 
@@ -3698,11 +4194,32 @@ body { counter-reset: visade; }
 .blend-tile-solo::after {left: 2.7rem; top: 1.1rem;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="mix-blend-mode-screen">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-overlapp" id="mix-blend-mode-screen">
       <h3 class="demo-titel">mix-blend-mode: screen</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Multiplys motsats — inverterar, multiplicerar, inverterar tillbaka. Resultatet blir alltid ljusare.</p>
       <div class="demo-yta"><span class="blend-tile blend-tile-solo bl-screen"></span></div>
       <p class="fig-cap">resultat = 1 − (1−A) × (1−B) — svart lämnar den andra oförändrad</p>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">screen — överlappning</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="screen — överlappning">
+          <label><input type="radio" name="lab-mix-blend-mode-screen" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-screen" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-screen" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-screen" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-screen" data-v="4" checked><span>4</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-screen" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-screen" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-screen" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-screen" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="15" aria-label="Kod för mix-blend-mode: screen">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta"&gt;&lt;span class="blend-tile blend-tile-solo bl-screen"&gt;&lt;/span&gt;&lt;/div&gt;
 
@@ -3720,11 +4237,32 @@ body { counter-reset: visade; }
 .blend-tile-solo::after {left: 2.7rem; top: 1.1rem;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="mix-blend-mode-overlay">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-overlapp" id="mix-blend-mode-overlay">
       <h3 class="demo-titel">mix-blend-mode: overlay</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Kombinerar de två föregående — multiply på mörka partier, screen på ljusa. Kontrasten skruvas upp.</p>
       <div class="demo-yta"><span class="blend-tile blend-tile-solo bl-overlay"></span></div>
       <p class="fig-cap">mörkt blir mörkare, ljust blir ljusare</p>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">overlay — överlappning</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="overlay — överlappning">
+          <label><input type="radio" name="lab-mix-blend-mode-overlay" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-overlay" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-overlay" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-overlay" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-overlay" data-v="4" checked><span>4</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-overlay" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-overlay" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-overlay" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-overlay" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="15" aria-label="Kod för mix-blend-mode: overlay">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta"&gt;&lt;span class="blend-tile blend-tile-solo bl-overlay"&gt;&lt;/span&gt;&lt;/div&gt;
 
@@ -3742,11 +4280,32 @@ body { counter-reset: visade; }
 .blend-tile-solo::after {left: 2.7rem; top: 1.1rem;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="mix-blend-mode-difference">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-overlapp" id="mix-blend-mode-difference">
       <h3 class="demo-titel">mix-blend-mode: difference</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Drar bort den mörkare kanalen från den ljusare — identiska pixlar blir svarta.</p>
       <div class="demo-yta"><span class="blend-tile blend-tile-solo bl-difference"></span></div>
       <p class="fig-cap">resultat = |A − B|</p>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">difference — överlappning</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="difference — överlappning">
+          <label><input type="radio" name="lab-mix-blend-mode-difference" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-difference" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-difference" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-difference" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-difference" data-v="4" checked><span>4</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-difference" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-difference" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-difference" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-difference" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="15" aria-label="Kod för mix-blend-mode: difference">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta"&gt;&lt;span class="blend-tile blend-tile-solo bl-difference"&gt;&lt;/span&gt;&lt;/div&gt;
 
@@ -3764,11 +4323,32 @@ body { counter-reset: visade; }
 .blend-tile-solo::after {left: 2.7rem; top: 1.1rem;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="mix-blend-mode-color-dodge">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-overlapp" id="mix-blend-mode-color-dodge">
       <h3 class="demo-titel">mix-blend-mode: color-dodge</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Ljusar upp underlaget baserat på hur ljus den övre färgen är — svart gör ingenting, vitt bränner ut till rent vitt.</p>
       <div class="demo-yta"><span class="blend-tile blend-tile-solo bl-colordodge"></span></div>
       <p class="fig-cap">resultat = A ÷ (1 − B)</p>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">color-dodge — överlappning</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="color-dodge — överlappning">
+          <label><input type="radio" name="lab-mix-blend-mode-color-dodge" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-color-dodge" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-color-dodge" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-color-dodge" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-color-dodge" data-v="4" checked><span>4</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-color-dodge" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-color-dodge" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-color-dodge" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-color-dodge" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="15" aria-label="Kod för mix-blend-mode: color-dodge">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta"&gt;&lt;span class="blend-tile blend-tile-solo bl-colordodge"&gt;&lt;/span&gt;&lt;/div&gt;
 
@@ -3786,11 +4366,32 @@ body { counter-reset: visade; }
 .blend-tile-solo::after {left: 2.7rem; top: 1.1rem;}</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="mix-blend-mode-luminosity">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-overlapp" id="mix-blend-mode-luminosity">
       <h3 class="demo-titel">mix-blend-mode: luminosity</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Tar färgtonen från underlaget men ljusheten från lagret ovanpå — omvänt av <code>color</code>-läget.</p>
       <div class="demo-yta"><span class="blend-tile blend-tile-solo bl-luminosity"></span></div>
       <p class="fig-cap">hue + saturation från A, ljushet från B</p>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">luminosity — överlappning</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="luminosity — överlappning">
+          <label><input type="radio" name="lab-mix-blend-mode-luminosity" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-luminosity" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-luminosity" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-luminosity" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-luminosity" data-v="4" checked><span>4</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-luminosity" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-luminosity" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-luminosity" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-luminosity" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="15" aria-label="Kod för mix-blend-mode: luminosity">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta"&gt;&lt;span class="blend-tile blend-tile-solo bl-luminosity"&gt;&lt;/span&gt;&lt;/div&gt;
 
@@ -3906,7 +4507,7 @@ body { counter-reset: visade; }
 }</textarea></details>
     </article>
 
-    <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="mix-blend-mode-difference-27">
+    <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-overlapp" id="mix-blend-mode-difference-27">
       <h3 class="demo-titel">mix-blend-mode: difference <span class="stod">— självinverterande text</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Texten inverterar sig själv mot vad som än ligger bakom — alltid läsbar, oavsett mönster.</p>
       <div class="fig"><svg viewBox="0 0 200 70"><title>Vit text tar |vitt − bakgrund| = alltid synligt</title>
@@ -3916,6 +4517,27 @@ body { counter-reset: visade; }
         <text x="145" y="39" text-anchor="middle" font-size="9" fill="#fff" style="mix-blend-mode:difference">TEXT</text></svg>
         <p class="fig-cap">Samma vita text, två helt olika bakgrunder — färgen räknas om per pixel.</p></div>
       <div class="demo-yta scrim-demo"><span>LÄSBAR</span></div>
+    
+      <div class="labb">
+        <div class="labb-rad">
+          <span class="labb-etikett">difference — överlappning</span>
+          <span class="labb-varde" aria-hidden="true"></span>
+        </div>
+        <div class="labb-rad">
+          <div class="labb-steg" role="radiogroup" aria-label="difference — överlappning">
+          <label><input type="radio" name="lab-mix-blend-mode-difference-27" data-v="0"><span>0</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-difference-27" data-v="1"><span>1</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-difference-27" data-v="2"><span>2</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-difference-27" data-v="3"><span>3</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-difference-27" data-v="4" checked><span>4</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-difference-27" data-v="5"><span>5</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-difference-27" data-v="6"><span>6</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-difference-27" data-v="7"><span>7</span></label>
+          <label><input type="radio" name="lab-mix-blend-mode-difference-27" data-v="8"><span>8</span></label>
+          </div>
+          <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
+        </div>
+      </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="10" aria-label="Kod för mix-blend-mode: difference — självinverterande text">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta scrim-demo"&gt;&lt;span&gt;LÄSBAR&lt;/span&gt;&lt;/div&gt;
 
