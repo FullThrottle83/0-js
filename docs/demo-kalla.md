@@ -443,8 +443,9 @@ horisontell scroll vid 320–1440 px.
 
 Vyn växlas med en radiogrupp (`#vy-kapitel` / `#vy-register`) och `:has()`, som
 stödfiltret och temaväljaren. Bara en vy är renderad åt gången
-(`display:none`) — därför finns ingen dold tab-stopp och ingen teknik två
-gånger i dokumentet. Bokstavsankarna är vanliga länkar till riktiga `id:n`.
+(`display:none`) — därför finns inga dolda tab-stopp i den inaktiva vyn.
+Båda vyernas länkar finns i DOM:en, men den andra listan genereras från
+kapitelindexet och behöver aldrig underhållas separat. Bokstavsankarna är vanliga länkar till riktiga `id:n`.
 Kortens vägvisare till registret pekar på en grupp (`#reg-g`), och panelen
 öppnas då av samma `:target`-modell som mobilmenyn redan använder; en synlig
 rad ("Visa kapitelindexet" → `#sidomeny`) tar tillbaka kapitelvyn när den
