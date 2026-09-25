@@ -12,7 +12,8 @@
     "check:structure": "node scripts/check.mjs",
     "check:snippets": "node scripts/check-snippets.mjs",
     "check:tests": "node scripts/check.test.mjs",
-    "test:browser": "node tests/menu-keyboard.mjs && node tests/demo-source.mjs && node tests/demo-parity.mjs",
+    "test:browser": "node tests/menu-keyboard.mjs && node tests/ux-polish.mjs && node tests/demo-source.mjs && node tests/demo-parity.mjs",
+    "test:ux": "node tests/ux-polish.mjs",
     "test:parity": "node tests/demo-parity.mjs",
     "baseline:capture": "node tests/demo-parity.mjs --capture",
     "screenshot": "node scripts/screenshot.mjs"

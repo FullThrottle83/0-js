@@ -132,7 +132,7 @@ section { scroll-margin-top: calc(var(--hh) + .5rem); }
 }
 .marke em { font-style: normal; color: var(--acc); }
 .site nav {
-  display: flex; gap: 1.3rem; overflow-x: auto; scrollbar-width: none;
+  display: flex; gap: 1.05rem; overflow-x: auto; scrollbar-width: none;
   margin-inline: auto; font-family: var(--mono); font-size: .74rem;
   -webkit-mask-image: linear-gradient(to right, transparent, #000 16px, #000 calc(100% - 16px), transparent);
           mask-image: linear-gradient(to right, transparent, #000 16px, #000 calc(100% - 16px), transparent);
@@ -146,6 +146,16 @@ section { scroll-margin-top: calc(var(--hh) + .5rem); }
 }
 .site nav a:hover, .site nav a:focus-visible { color: var(--ink); border-color: color-mix(in srgb, var(--acc) 50%, transparent); }
 .copyright { font-family: var(--mono); font-size: .72rem; color: var(--dim); white-space: nowrap; }
+
+/* Datumsetiketten står också i hero-kickern ("CSS-REFERENS · SEPTEMBER 2026")
+   och är den del av sidhuvudet som först blir överflödig. Under 1280px tar
+   kapitelnavigeringen dess plats i stället för att hamna utanför kanten. */
+@media (max-width: 1279.98px) { .copyright { display: none; } }
+/* Under 640px får kapitelnavigeringen mindre än en fjärdedel av sin bredd
+   kvar: länkarna staplas osynligt ovanpå varandra (nav blir 0px bred) och
+   tangentbordsfokus hamnar på länkar man inte ser. Panelen (☰ Index) tar
+   över — den har både kapitelgenvägar och hela indexet. */
+@media (max-width: 639.98px) { .site nav { display: none; } }
 
 /* Aktivt kapitel i menyn: :target läser av vilken sektion webbläsarens URL pekar på just nu — ingen JS behövs. */
 body:has(#farg:target)        .site nav a[href="#farg"],
@@ -180,10 +190,9 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 /* ---------- Hero ---------- */
 .hero {
   position: relative; overflow: clip;
-  min-height: calc(100dvh - var(--hh));
   display: grid; align-content: center; justify-items: center;
   text-align: center; gap: 1.7rem;
-  padding: clamp(4rem, 13vh, 8rem) 1.25rem;
+  padding: clamp(2.6rem, 7vh, 5rem) 1.25rem clamp(2.2rem, 6vh, 4rem);
 }
 
 .kicker {
@@ -203,15 +212,6 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 
 .ingress { max-width: 42ch; color: var(--dim); font-size: clamp(1rem, 2.2vw, 1.2rem); text-wrap: pretty; }
 .ingress strong { color: var(--ink); font-weight: 600; }
-
-.hero-meta {
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
-  gap: .6rem 1.2rem; margin-top: .3rem;
-}
-
-.lod { font-family: var(--mono); font-size: .8rem; color: var(--dim); }
-.lod span { display: inline-block; animation: hopp 1.6s ease-in-out infinite; color: var(--acc); }
-@keyframes hopp { 0%,100% { translate: 0 0; } 50% { translate: 0 5px; } }
 
 .noll {
   font-family: var(--mono); font-size: .78rem; letter-spacing: .04em;
@@ -939,11 +939,21 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
   background: var(--bg2);
 }
 
-.subgrid-wrap { display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:auto auto auto; gap:.9rem; }
+.subgrid-wrap { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); grid-template-rows:auto auto auto; gap:.9rem; }
 .subgrid-card { display:grid; grid-row:1/4; grid-template-rows:subgrid; gap:.5rem; padding:.9rem; border:1px solid var(--line); border-radius:12px; background:var(--bg2); }
 .subgrid-card h4 { font-family:var(--disp); font-size:1rem; font-weight:700; }
 .subgrid-card p { font-size:.82rem; color:var(--dim); }
 .subgrid-card .fot { align-self:end; font-family:var(--mono); font-size:.72rem; color:var(--acc); }
+/* Tre kort sida vid sida kräver ~90px var i ett 296px-kort: minska luften
+   i stället för att låta texten rinna ut över kortkanten. Demonstrationen
+   (radspår som delas mellan korten) är oförändrad. */
+@container korten (max-width: 620px) {
+  .subgrid-wrap { gap:.5rem; }
+  .subgrid-card { padding:.55rem; gap:.35rem; border-radius:8px; }
+  .subgrid-card h4 { font-size:.78rem; }
+  .subgrid-card p { font-size:.68rem; }
+  .subgrid-card .fot { font-size:.62rem; }
+}
 
 .rymd {
   position: relative; resize: both; overflow: auto;
@@ -1305,9 +1315,12 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .cd-add     { animation: bump-x 2.2s ease-in-out infinite, bump-y 1.1s ease-in-out infinite; animation-composition: add; }
 .compose-lbl { font-family: var(--mono); font-size: .78rem; color: var(--dim); min-width: 6rem; }
 
-.ease-track { position: relative; height: 2.2rem; border-bottom: 1px dashed var(--line); margin-bottom: .5rem; }
+.ease-track { position: relative; height: 2.2rem; border-bottom: 1px dashed var(--line); margin-bottom: .5rem; width: 90%; }
 .ease-dot { position:absolute; left:0; top:50%; translate:0 -50%; width:13px; height:13px; border-radius:50%; background:var(--acc); box-shadow:0 0 8px var(--acc-soft); animation: race 1.9s ease-in-out infinite alternate; }
 @keyframes race { to { left: calc(100% - 13px); } }
+/* .ease-track är 90 % bred: överslaget i cubic-bezier(.34,1.56,.64,1) går
+   ~10 % förbi spårets slut och behöver den sista tiondelen för att stanna
+   innanför kortet i stället för att flyga ut över kortkanten. */
 .e-linear  { animation-timing-function: linear; }
 .e-easeio  { animation-timing-function: ease-in-out; }
 .e-steps   { animation-timing-function: steps(8, end); }
@@ -2625,7 +2638,7 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .foot b { color: var(--acc); font-weight: 600; }
 
 @media print {
-  .site, .foot, .matare, .lod { display: none; }
+  .site, .foot, .matare { display: none; }
   body { background: #fff; color: #111; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: .8em; }
   h1, h2, h3 { break-after: avoid; }
@@ -2745,7 +2758,7 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
   overflow-y: auto; overscroll-behavior: contain;
   border-right: 1px solid var(--line);
   background: color-mix(in srgb, var(--bg2) 45%, transparent);
-  padding: 1.3rem 1rem 3rem;
+  padding: 0 1rem 3rem;
   scrollbar-width: thin;
 }
 @media (min-width: 1120px) { .sidomeny { display: block; } }
@@ -2779,7 +2792,30 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
     box-shadow: 24px 0 70px rgb(0 0 0 / .55);
   }
 }
-.sidomeny-topp { display:flex; align-items:center; justify-content:space-between; gap:.6rem; margin-bottom: 1rem; }
+/* Panelhuvudet ligger kvar högst upp medan indexet scrollar: stäng-länken
+   ("stäng ✕" / ☰) ska alltid gå att nå, även 40 rader ned i listan. */
+.sidomeny-topp {
+  display:flex; align-items:center; justify-content:space-between; gap:.6rem;
+  position: sticky; top: 0; z-index: 3;
+  margin: 0 -1rem .9rem; padding: 1.15rem 1rem .6rem;
+  background: color-mix(in srgb, var(--bg) 94%, black);
+  border-bottom: 1px solid var(--line);
+}
+/* Kapitelgenvägar: samma tolv mål som i sidhuvudet, men här fungerar de även
+   på mobil där sidhuvudets kapitelnavigering inte får plats. */
+.index-kapitel { display:flex; flex-wrap:wrap; gap:.25rem; list-style:none; margin:0 0 .8rem; padding:0; }
+.index-kapitel a {
+  display:inline-flex; align-items:baseline; gap:.28rem; text-decoration:none;
+  font-family:var(--mono); font-size:.64rem; letter-spacing:.01em; color:var(--dim);
+  border:1px solid var(--line); border-radius:5px; padding:.18rem .4rem;
+  transition: color .2s, border-color .2s;
+}
+.index-kapitel a:hover, .index-kapitel a:focus-visible { color:var(--acc); border-color: color-mix(in srgb, var(--acc) 45%, var(--line)); }
+.index-kapitel .nr { color:var(--acc); }
+.index-grund { font-family:var(--mono); font-size:.68rem; color:var(--dim); margin:0 0 .6rem; }
+.index-grund a { color:var(--acc); }
+.index-tips { font-family:var(--mono); font-size:.66rem; color:var(--dim); margin:0 0 .9rem; }
+.index-tips kbd { font: inherit; border:1px solid var(--line); border-radius:4px; padding:0 .25rem; color:var(--ink); }
 .sidomeny-rubrik { font-family: var(--mono); font-size:.7rem; letter-spacing:.24em; text-transform:uppercase; color:var(--acc); }
 .meny-stang { display:none; text-decoration:none; font-family:var(--mono); font-size:.78rem; color:var(--dim); cursor:pointer; }
 @media (max-width: 1119.98px) {
@@ -2787,7 +2823,7 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
   /* Öppna-knappen markeras som aktiv så länge panelen är :target. */
   body:has(.sidomeny:target) .site .meny-oppna-knapp { color: var(--acc); }
 }
-.meny-oppna-knapp { display:none; cursor:pointer; text-decoration:none; font-family:var(--mono); font-size:.78rem; letter-spacing:.06em; color:var(--dim); border:1px solid var(--line); border-radius:6px; padding:.32rem .6rem; }
+.meny-oppna-knapp { display:none; cursor:pointer; text-decoration:none; font-family:var(--mono); font-size:.78rem; letter-spacing:.06em; color:var(--dim); border:1px solid var(--line); border-radius:6px; padding:.32rem .6rem; white-space: nowrap; }
 @media (max-width: 1119.98px) { .meny-oppna-knapp { display:inline-block; } }
 .meny-oppna-knapp:hover { color: var(--acc); border-color: var(--acc); }
 
@@ -2827,19 +2863,30 @@ body:has(#f-safari:checked) .filter-not, body:has(#f-firefox:checked) .filter-no
 .index-kap summary::before { content:"▸"; transition: rotate .25s; }
 .index-kap[open] summary::before { rotate:90deg; }
 .index-kap summary .antal { margin-left:auto; color:var(--dim); font-size:.66rem; }
-.index-kap ul { list-style:none; margin:.5rem 0 0; padding:0; display:grid; gap:.14rem; }
+.index-kap ul { list-style:none; margin:.5rem 0 0; padding:0; display:grid; gap:.2rem; grid-template-columns: minmax(0, 1fr); }
+.index-rad { min-width: 0; }
 .index-rad a {
-  display:flex; align-items:center; gap:.5rem; padding:.26rem .35rem; border-radius:5px;
+  display:flex; align-items:flex-start; gap:.5rem; padding:.3rem .35rem; border-radius:5px;
+  min-width: 0;
   font-family:var(--mono); font-size:.72rem; color:var(--dim); text-decoration:none;
   transition: background .15s, color .15s;
 }
 .index-rad a:hover { background: var(--acc-soft); color: var(--acc); }
-.index-rad .rad-namn { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.prikkar { display:flex; gap:.26rem; margin-left:auto; flex:none; }
+/* Namnet radbryts i stället för att klippas: indexet är till för att hitta en
+   teknik, och ett avklippt namn är inte sökbart med ögat. Längsta namnet i
+   dokumentet är 85 tecken = tre rader i 19.5rem-panelen. */
+.index-rad .rad-namn { overflow-wrap: break-word; line-height: 1.35; }
+.prikkar { display:flex; gap:.26rem; margin-left:auto; flex:none; margin-top: .36rem; }
+/* Pekdon: indexraderna är panelens navigering på telefon och får
+   större träffyta där (WCAG 2.2 AA kräver 24px; 27px var för tätt). */
 .prikkar b { width:.42rem; height:.42rem; border-radius:50%; background:var(--good); }
 .prikkar b.d { background: var(--acc); }
 .prikkar b.s { background: color-mix(in srgb, var(--dim) 70%, var(--acc)); opacity:.7; }
 .prikkar b.n { background: var(--line); }
+@media (pointer: coarse) {
+  .index-rad a { padding-block: .5rem; font-size: .75rem; }
+  .index-kapitel a { padding: .4rem .55rem; }
+}
 body:has(#kompakt:checked) .index-kap ul { display:none; }
 body:has(#kompakt:checked) .index-kap summary { border-bottom-color: transparent; }
 
@@ -2850,11 +2897,21 @@ body:has(#kompakt:checked) .index-kap summary { border-bottom-color: transparent
   background: color-mix(in srgb, var(--bg) 88%, black);
   border: 1px solid var(--line); border-radius: 99px; padding:.42rem .9rem;
   backdrop-filter: blur(8px);
+  /* Informationen är inte en kontroll — den ska inte fånga klick på det som
+     ligger under den (den ligger fast ovanpå korten på mobil). */
+  pointer-events: none;
 }
-body { counter-reset: visade; }
-.demo { counter-increment: visade; }
 .raknare b { color: var(--acc); }
-.raknare b::after { content: counter(visade); }
+/* Antalet synliga kort per filterläge. CSS-counter räknar inte igenom
+   .inre.demo-grids container-scope (container-type skapar style containment
+   = egen counter-scope), så counter(visade) var alltid 0. Siffrorna nedan är
+   de verkliga antalen i dokumentet; tests/ux-polish.mjs mäter varje läge mot
+   DOM:en så att de inte kan glida. */
+.raknare b::after { content: "133"; }
+body:has(#f-chrome:checked)  .raknare b::after { content: "132"; }
+body:has(#f-edge:checked)    .raknare b::after { content: "132"; }
+body:has(#f-safari:checked)  .raknare b::after { content: "120"; }
+body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 
 /* ---------- Stödrad på korten ---------- */
 .stodrad { display:flex; align-items:center; gap:.55rem; list-style:none; margin:.55rem 0 0; }
@@ -2891,14 +2948,20 @@ body { counter-reset: visade; }
 /* ---------- Kodvalv (klick → markera allt → kopiera) ---------- */
 .kod-valv { margin-top:1.15rem; border:1px solid var(--line); border-radius:6px; overflow:hidden; }
 .kod-valv summary {
-  cursor:pointer; list-style:none; display:flex; align-items:center; gap:.6rem; justify-content:space-between;
+  cursor:pointer; list-style:none; display:flex; flex-wrap:wrap; align-items:center; gap:.2rem .6rem; justify-content:space-between;
   padding:.55rem .8rem; font-family:var(--mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase;
   color:var(--dim); background: color-mix(in srgb, var(--bg2) 70%, transparent); transition: color .2s;
 }
 .kod-valv summary::-webkit-details-marker{display:none}
 .kod-valv summary:hover { color:var(--acc); }
 .kod-valv summary::before { content:"⧉  kod"; }
-.kod-valv .kod-hint { font-size:.62rem; letter-spacing:.02em; text-transform:none; color:var(--dim); }
+/* Hela kopieringsinstruktionen ska synas även när kortet är 296px brett
+   (summary är en flexrad som annars klipper sista ordet). */
+.kod-valv .kod-hint { font-size:.62rem; letter-spacing:.02em; text-transform:none; color:var(--dim); text-align:right; margin-left:auto; }
+/* Tangentbordsvägen visas bara när valvet har tangentbordsfokus — annars
+   vore varje valvrad två rader hög i 133 kort. Texten är sann i det läget:
+   fokus står på summary, nästa Tab går till textarean. */
+.kod-valv summary:focus-visible .kod-hint::after { content: " · tangentbord: ⌘A / Ctrl+A sedan ⌘C"; color: var(--acc); }
 .kod {
   display:block; width:100%; max-height:22rem; overflow:auto; resize:vertical; margin:0;
   padding:.9rem 1rem; background:#0a090d; color:#cfd8c9;
@@ -2908,13 +2971,46 @@ body { counter-reset: visade; }
 }
 .kod:focus { outline:2px solid var(--acc); outline-offset:-2px; }
 
-/* ---------- Hero-omgöring: luftigare + legend ---------- */
-.hero { gap: 2rem; }
+/* ---------- Hero: vägar in i referensen ---------- */
+.hero { gap: 1.5rem; }
 .hero .stat-rad { display:flex; flex-wrap:wrap; gap:.5rem 1.4rem; justify-content:center; font-family:var(--mono); font-size:.78rem; color:var(--dim); }
 .hero .stat-rad b { color:var(--acc); font-weight:600; }
-.hero-kopiera { display:flex; flex-direction:column; gap:.5rem; max-width:46ch; text-align:left; color:var(--dim); font-size:.9rem; }
-.hero-kopiera li { list-style:none; display:flex; gap:.6rem; align-items:baseline; }
-.hero-kopiera li::before { content:"→"; color:var(--acc); }
+
+/* Tre vägar vidare: kapitlen, ett exempel som visar tekniken, och paketet
+   som gör kodexemplen körbara. Alla tre är riktiga länkar — inga knappar
+   som låtsas göra något utan skript. */
+.hero-cta { display:flex; flex-wrap:wrap; gap:.5rem; justify-content:center; list-style:none; margin:0; padding:0; }
+.hero-cta a {
+  display:inline-flex; align-items:center; gap:.45rem; text-decoration:none;
+  font-family:var(--mono); font-size:.76rem; letter-spacing:.02em; color:var(--ink);
+  border:1px solid var(--line); border-radius:99px; padding:.5rem .95rem;
+  background: color-mix(in srgb, var(--panel) 70%, transparent);
+  transition: border-color .2s, color .2s;
+}
+.hero-cta a:hover, .hero-cta a:focus-visible { color:var(--acc); border-color: color-mix(in srgb, var(--acc) 55%, var(--line)); }
+.hero-cta a span { color:var(--acc); }
+
+.hero-anvand { display:grid; gap:.55rem; justify-items:center; max-width:46ch; }
+.hero-rubrik { font-family:var(--mono); font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--acc); }
+.hero-kopiera { display:flex; flex-direction:column; gap:.5rem; max-width:46ch; text-align:left; color:var(--dim); font-size:.9rem; margin:0; padding:0; }
+/* Raden är en textrad, inte en flexrad: annars blir varje <code> ett eget
+   flex-item och meningen spricker upp i kolumner. */
+.hero-kopiera li { list-style:none; position:relative; padding-left:1.35rem; }
+.hero-kopiera li::before { content:"→"; color:var(--acc); position:absolute; left:0; }
+.hero-kopiera code { color: var(--ink); }
+.hero-grund { font-family:var(--mono); font-size:.74rem; color:var(--dim); }
+.hero-grund a { color:var(--acc); }
+
+/* ---------- Webbläsarstöd: filter + markörnyckel som en enhet ----------
+   Blocket låg tidigare inne i hero och sköt den första demon tre skärmhöjder
+   ned. Det hör hemma precis före kapitel 01: där syns filtret samtidigt som
+   dess verkan på korten. Ingen funktion har flyttats — bara placeringen. */
+.stodpanel { border-block: 1px solid var(--line); background: color-mix(in srgb, var(--bg2) 60%, transparent); padding: 1.6rem clamp(1rem, 3vw, 2.2rem); }
+.stodpanel .inre { display:grid; gap:.7rem; justify-items:center; }
+.stodpanel .bxfilter { margin: 0; }
+.stodpanel .filter-not { margin-top: .1rem; max-width: 70ch; text-align: center; }
+.stod-rubrik { font-family:var(--mono); font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--acc); text-align:center; }
+.stod-rubrik span { color:var(--dim); letter-spacing:.04em; text-transform:none; }
 .legend { display:flex; flex-wrap:wrap; gap:.6rem 1.4rem; justify-content:center; font-family:var(--mono); font-size:.72rem; color:var(--dim); }
 .legend span { display:inline-flex; align-items:center; gap:.45rem; }
 .legend svg { width:1.05rem; height:1.05rem; }
@@ -2925,7 +3021,7 @@ body { counter-reset: visade; }
 .legend .mk.nej { background:var(--line); }
 
 /* ---------- Luftigare kort ---------- */
-.kapitel { padding: clamp(5.5rem, 14vh, 10rem) clamp(1rem, 3vw, 2.2rem); }
+.kapitel { padding: clamp(3.4rem, 8vh, 6.5rem) clamp(1rem, 3vw, 2.2rem); }
 .demo-grid { gap: 2rem; }
 .demo { border-radius: 8px; background: color-mix(in srgb, var(--panel) 88%, transparent); border-color: color-mix(in srgb, var(--line) 85%, transparent); transition: border-color .3s, translate .3s; }
 .demo:hover { border-color: color-mix(in srgb, var(--acc) 35%, var(--line)); }
@@ -2938,7 +3034,7 @@ body { counter-reset: visade; }
 .demo:target { border-color: var(--acc); box-shadow: 0 0 0 3px var(--acc-soft); }
 .demo-perma { margin-left:auto; font-family:var(--mono); font-size:.7rem; color:var(--dim); text-decoration:none; opacity:0; transition:opacity .2s; }
 .demo-titel:hover .demo-perma, .demo-titel:focus-within .demo-perma { opacity:1; }
-@media print { .sidomeny, .raknare, .bxfilter { display:none !important; } }
+@media print { .sidomeny, .raknare, .bxfilter, .stodpanel { display:none !important; } }
 
 </style>
 </head>
@@ -3020,7 +3116,28 @@ body { counter-reset: visade; }
 <div class="skal">
 <aside class="sidomeny" id="sidomeny" aria-label="Index och filter">
   <div class="sidomeny-topp"><span class="sidomeny-rubrik">Alla tekniker</span><a class="meny-stang" href="#topp">stäng ✕</a></div>
-  <div class="index-kompakt"><label class="vaxlare" for="kompakt" style="cursor:pointer"><input type="checkbox" id="kompakt"><span class="sparv"></span>Kompakt lista</label><a class="meny-oppna-knapp" href="#topp" aria-label="Stäng indexpanelen">☰</a></div>
+<!-- Kapitelgenvägar: samma tolv mål som i sidhuvudet. På telefon är de den
+     enda kapitelnavigeringen (sidhuvudets rad får inte plats där) och på
+     breda skärmar en genväg förbi listan. Stäng-länken ligger fortfarande
+     först i panelens tab-ordning. -->
+<nav class="index-kapitel-wrap" aria-label="Kapitel">
+<ul class="index-kapitel">
+<li><a href="#farg"><span class="nr">01</span> Färg</a></li>
+<li><a href="#layout"><span class="nr">02</span> Layout</a></li>
+<li><a href="#kaskad"><span class="nr">03</span> Kaskad</a></li>
+<li><a href="#rorelse"><span class="nr">04</span> Rörelse</a></li>
+<li><a href="#interaktion"><span class="nr">05</span> Interaktion</a></li>
+<li><a href="#komponenter"><span class="nr">06</span> Komponenter</a></li>
+<li><a href="#typografi"><span class="nr">07</span> Typografi</a></li>
+<li><a href="#data"><span class="nr">08</span> Data</a></li>
+<li><a href="#responsiv"><span class="nr">09</span> Responsiv</a></li>
+<li><a href="#logik"><span class="nr">10</span> Logik</a></li>
+<li><a href="#referens"><span class="nr">+</span> Ordlista</a></li>
+</ul>
+</nav>
+  <div class="index-kompakt"><label class="vaxlare" for="kompakt" style="cursor:pointer"><input type="checkbox" id="kompakt"><span class="sparv"></span>Visa bara kapitel</label><a class="meny-oppna-knapp" href="#topp" aria-label="Stäng indexpanelen">☰</a></div>
+  <p class="index-grund">Snippetsen bygger på <a href="#grundpaketet">Grundpaketet</a> — kopiera det först.</p>
+  <p class="index-tips">Söker du ett namn? <kbd>Ctrl</kbd>+<kbd>F</kbd> söker i hela listan.</p>
 <nav class="index" aria-label="Alla tekniker">
 <details class="index-kap" open><summary>Färg<span class="antal">31</span></summary><ul>
 <li class="index-rad sup-chrome sup-edge sup-safari sup-firefox"><a href="#color-mix"><span class="rad-namn">color-mix() — blanda i valfri färgrymd</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
@@ -3188,30 +3305,42 @@ body { counter-reset: visade; }
   <p class="kicker">CSS-referens <b>·</b> September 2026</p>
   <h1 class="titel">C<em>SS</em></h1>
   <p class="ingress">En levande referens över vad <strong>ren CSS</strong> klarar på egen hand — inga bibliotek, inga byggsteg, bara webbläsarens motor. Varje demo är körbar kod, och varje kort visar exakt vilka webbläsare som stöder tekniken.</p>
-  <div class="hero-meta">
-    <p class="noll">0 rader javascript</p>
-    <p class="lod">Scrolla för att börja <span>↓</span></p>
+  <ul class="hero-cta">
+    <li><a href="#farg">Utforska kapitlen <span aria-hidden="true">↓</span></a></li>
+    <li><a href="#target">Se ett interaktivt exempel</a></li>
+    <li><a href="#grundpaketet">Grundpaketet</a></li>
+  </ul>
+  <p class="stat-rad"><span class="noll">0 rader javascript</span> <b>133</b> tekniker <span>·</span> <b>10</b> kapitel <span>·</span> <b>1</b> html-fil <span>·</span> stöddata <b>caniuse/MDN 2026-08-30</b></p>
+  <div class="hero-anvand">
+    <p class="hero-rubrik">Så använder du koden</p>
+    <ul class="hero-kopiera">
+      <li>Öppna <code>Kod</code>-valvet under en demo.</li>
+      <li>Klicka i rutan — hela kodstycket markeras. Tryck <code>⌘C</code> / <code>Ctrl+C</code>.</li>
+      <li>Med tangentbord: Tabba till rutan, <code>Ctrl+A</code>, sedan <code>Ctrl+C</code>.</li>
+    </ul>
+    <p class="hero-grund">Alla exempel använder <a href="#grundpaketet">Grundpaketet</a> — kopiera det först, så fungerar resten direkt.</p>
   </div>
-  <p class="stat-rad"><b>133</b> tekniker <span>·</span> <b>10</b> kapitel <span>·</span> <b>1</b> html-fil <span>·</span> stöddata <b>caniuse/MDN 2026-08-30</b></p>
-  <div class="bxfilter" role="radiogroup" aria-label="Filtrera efter webbläsarstöd">
+</section>
+
+<!-- ================= WEBBLÄSARSTÖD (filter + markörnyckel) ================= -->
+<section class="stodpanel" aria-label="Webbläsarstöd">
+  <div class="inre">
+    <p class="stod-rubrik">Webbläsarstöd <span>— filtrera listan och läs markörerna</span></p>
+    <div class="bxfilter" role="radiogroup" aria-label="Filtrera efter webbläsarstöd">
 <label><input type="radio" name="bxfilter" id="f-alla" checked><span>Alla</span></label>
 <label><input type="radio" name="bxfilter" id="f-chrome"><span><svg aria-hidden="true"><use href="#bx-chrome"/></svg>Chrome</span></label>
 <label><input type="radio" name="bxfilter" id="f-edge"><span><svg aria-hidden="true"><use href="#bx-edge"/></svg>Edge</span></label>
 <label><input type="radio" name="bxfilter" id="f-safari"><span><svg aria-hidden="true"><use href="#bx-safari"/></svg>Safari</span></label>
 <label><input type="radio" name="bxfilter" id="f-firefox"><span><svg aria-hidden="true"><use href="#bx-firefox"/></svg>Firefox</span></label>
 </div>
-  <div class="legend" aria-label="Så läser du stödmarkörerna">
-    <span><i class="mk ja"></i> stöds</span>
-    <span><i class="mk del"></i> delvis / prefix</span>
-    <span><i class="mk snart"></i> på väg (TP/nightly)</span>
-    <span><i class="mk nej"></i> stöds ej</span>
+    <div class="legend" aria-label="Så läser du stödmarkörerna">
+      <span><i class="mk ja"></i> stöds</span>
+      <span><i class="mk del"></i> delvis / prefix</span>
+      <span><i class="mk snart"></i> på väg (TP/nightly)</span>
+      <span><i class="mk nej"></i> stöds ej</span>
+    </div>
+    <p class="filter-not" role="status">Filtret döljer demos som saknar fullt stöd i den valda webbläsaren. Det bygger på den daterade stöddatan (caniuse/MDN 2026-08-30), inte på din faktiska webbläsarversion.</p>
   </div>
-  <p class="filter-not" role="status">Filtret döljer demos som saknar fullt stöd i den valda webbläsaren. Det bygger på den daterade stöddatan (caniuse/MDN 2026-08-30), inte på din faktiska webbläsarversion.</p>
-  <ul class="hero-kopiera">
-    <li>Öppna <code>Kod</code>-valvet under en demo.</li>
-    <li>Klicka en gång i rutan — hela kodstycket markeras.</li>
-    <li>Tryck <code>⌘C</code> / <code>Ctrl+C</code>. Klart.</li>
-  </ul>
 </section>
 
 <!-- ================= KAPITEL 01 · FÄRG ================= -->
@@ -4903,7 +5032,7 @@ body { counter-reset: visade; }
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="contrast-color">
       <h3 class="demo-titel">contrast-color()</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome 147 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge 147 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari 26.0 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox 146 · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Webbläsaren väljer svart eller vit text åt dig, baserat på bakgrundens ljushet — ingen manuell kontrastberäkning.</p>
-      <div class="fig"><svg viewBox="0 0 200 70"><title>Ljushet avgör om texten blir svart eller vit</title>
+      <div class="fig"><svg viewBox="0 0 220 70"><title>Ljushet avgör om texten blir svart eller vit</title>
         <rect x="10" y="26" width="80" height="18" rx="9" fill="var(--acc)" />
         <line x1="94" y1="35" x2="130" y2="18" class="strk" marker-end="url(#pil)" /><text x="132" y="16" font-size="7" class="dim">ljus bg → svart text</text>
         <rect x="10" y="50" width="80" height="18" rx="9" fill="#2b2833" />
@@ -6298,7 +6427,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="easingfunktioner">
       <h3 class="demo-titel">Easingfunktioner <span class="stod">— samma resa, olika tempo</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Fem identiska resor med olika <code>animation-timing-function</code>, inklusive den nyare <code>linear()</code>-funktionen för egna kurvor.</p>
-      <div class="fig stor-fig"><svg viewBox="0 0 260 70"><title>Samma resa, fem olika hastighetskurvor över tid</title>
+      <div class="fig stor-fig"><svg viewBox="0 0 300 70"><title>Samma resa, fem olika hastighetskurvor över tid</title>
         <line x1="10" y1="60" x2="250" y2="60" class="strk" /><line x1="10" y1="60" x2="10" y2="8" class="strk" />
         <path d="M10,60 L250,10" class="strk" fill="none" /><text x="255" y="12" font-size="6" class="dim">linear</text>
         <path d="M10,60 C60,60 100,10 250,10" class="acc-strk" fill="none" /><text x="255" y="24" font-size="6" class="acc">ease-in-out</text>
@@ -8917,7 +9046,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="counter-style">
       <h3 class="demo-titel">@counter-style <span class="stod">— egna listmarkörer</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Två egendefinierade räknesystem: ett fast (romerskt) och ett numeriskt (hakparenteser).</p>
-      <div class="fig"><svg viewBox="0 0 200 30"><title>Symbolerna och separatorn är fritt valbara</title>
+      <div class="fig"><svg viewBox="0 0 250 30"><title>Symbolerna och separatorn är fritt valbara</title>
         <text x="10" y="20" font-family="var(--mono)" font-size="9" class="dim">system: fixed; symbols: "I" "II" "III" …</text></svg>
         <p class="fig-cap">@counter-style äger både symbolerna och suffixet — helt frikopplat från list-style-type.</p></div>
       <div class="demo-yta counter-compare">
@@ -9124,7 +9253,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
     <article class="demo sup-chrome sup-edge sup-safari" id="animerad-raknare">
       <h3 class="demo-titel">Animerad räknare <span class="stod">— @property + counter()</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome 115 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge 115 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari 26.0 · stöds</span></li><li class="bx s-nej"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox 157 · stöds ej</span></li><li class="stod-summa"><b>3</b>/4</li></ul><p class="stod-not">Har @supports-fallback</p>
       <p class="demo-beskrivning">Ett heltal räknas upp från 0 när talet rullar in i din synliga yta — samma <code>view()</code>-teknik som scroll-reveal-korten.</p>
-      <div class="fig"><svg viewBox="0 0 200 30"><title>En heltalsräknare interpolerar via en typad integer-variabel</title>
+      <div class="fig"><svg viewBox="0 0 250 30"><title>En heltalsräknare interpolerar via en typad integer-variabel</title>
         <text x="10" y="20" font-size="9" class="dim">counter-reset: numvarde var(--num-count)</text></svg>
         <p class="fig-cap">@property --num-count { syntax: "&lt;integer&gt;" } — heltal, animerbart, läst av content: counter().</p></div>
       <p class="demo-yta num-counter" aria-label="92 procent"></p>
@@ -9376,7 +9505,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="donutdiagram">
       <h3 class="demo-titel">Donutdiagram <span class="stod">— conic-gradient + mask</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">En konisk gradient ritar tårtbitarna, en radiell mask klipper ut mitten.</p>
-      <div class="fig"><svg viewBox="0 0 200 40"><title>Konisk gradient plus mask ger en donut</title>
+      <div class="fig"><svg viewBox="0 0 245 40"><title>Konisk gradient plus mask ger en donut</title>
         <circle cx="30" cy="20" r="16" class="strk" fill="none" /><path d="M30,20 L30,4 A16,16 0 0 1 44,28 Z" class="acc" />
         <line x1="50" y1="20" x2="80" y2="20" class="strk" marker-end="url(#pil)" />
         <circle cx="100" cy="20" r="16" fill="none" /><path d="M100,20 L100,4 A16,16 0 0 1 114,28 Z" class="acc" /><circle cx="100" cy="20" r="8" fill="var(--bg2)" />
@@ -9451,7 +9580,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-cell jmfbar" id="heatmap">
       <h3 class="demo-titel">Heatmap <span class="stod">— color-mix() per cell</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Varje cells färgintensitet räknas proportionellt med <code>color-mix()</code> mot ett numeriskt värde.</p>
-      <div class="fig"><svg viewBox="0 0 200 24"><title>Ju högre värde, desto mer accentfärg blandas in</title>
+      <div class="fig"><svg viewBox="0 0 290 24"><title>Ju högre värde, desto mer accentfärg blandas in</title>
         <rect x="10" y="4" width="16" height="16" fill="color-mix(in oklch, var(--acc) 10%, var(--bg2))" /><rect x="30" y="4" width="16" height="16" fill="color-mix(in oklch, var(--acc) 40%, var(--bg2))" /><rect x="50" y="4" width="16" height="16" fill="color-mix(in oklch, var(--acc) 70%, var(--bg2))" /><rect x="70" y="4" width="16" height="16" fill="color-mix(in oklch, var(--acc) 95%, var(--bg2))" />
         <text x="100" y="16" font-size="6" class="dim">color-mix(in oklch, var(--acc) var(--val)%, var(--bg2))</text></svg>
         <p class="fig-cap">En rad, ett värde, en blandning — samma formel i varje cell.</p></div>
@@ -9735,7 +9864,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="prefers-reduced-motion">
       <h3 class="demo-titel">prefers-reduced-motion <span class="stod">— frågor bortom bredd, kapitel IX</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Stänger av alla animationer och transitions på hela sidan när användaren bett systemet om det.</p>
-      <div class="fig"><svg viewBox="0 0 200 30"><title>En systeminställning stänger av rörelse globalt</title>
+      <div class="fig"><svg viewBox="-32 0 264 30"><title>En systeminställning stänger av rörelse globalt</title>
         <circle cx="20" cy="15" r="8" class="acc" /><line x1="32" y1="15" x2="60" y2="15" class="acc-strk" marker-end="url(#pil)" />
         <text x="100" y="19" text-anchor="middle" font-size="6.5" class="dim">*, *::before, *::after { animation-duration: .001ms !important }</text></svg>
         <p class="fig-cap">Respekteras överallt i det här dokumentet — inte bara på en demo.</p></div>
@@ -9784,7 +9913,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="hover-hover">
       <h3 class="demo-titel">hover: hover</h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Skiljer på pekare med och utan svävläge — en mus får hover-effekter, ett finger slipper dem hänga kvar.</p>
-      <div class="fig"><svg viewBox="0 0 200 30"><title>Pekartyp avgör om hover-effekter alls erbjuds</title>
+      <div class="fig"><svg viewBox="0 0 230 30"><title>Pekartyp avgör om hover-effekter alls erbjuds</title>
         <text x="10" y="14" font-size="6.5" class="acc">@media (hover: hover)</text><text x="10" y="26" font-size="6" class="dim">mus — :hover triggar normalt</text>
         <text x="120" y="14" font-size="6.5" class="dim">(hover: none)</text><text x="120" y="26" font-size="6" class="dim">touch — ingen hängande hover</text></svg>
         <p class="fig-cap">Utan frågan riskerar touch-enheter en hover-effekt som aldrig försvinner.</p></div>
