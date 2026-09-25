@@ -24,8 +24,8 @@
  *   node tests/demo-parity.mjs --capture       skriv baslinjen ur NUVARANDE
  *                                              dokument — körs FÖRE en
  *                                              migrering och committas
- *   node tests/demo-parity.mjs --strict        kräv noll avvikelse även i
- *                                              geometrin (bevis i samma miljö)
+ *   node tests/demo-parity.mjs --strict        kräv samma Chromium-bygge och
+ *                                              noll geometriavvikelse
  *   node tests/demo-parity.mjs --require-same-browser
  *                                              fäll om aktuell webbläsare inte
  *                                              är baslinjens bygge
@@ -457,7 +457,9 @@ async function main() {
     for (const s of softNotes) valuesWithinTolerance.push(s);
     for (const r of reportedNotes) valuesReported.push(r);
     for (const state of Object.keys(measured[id])) {
-      if (!(state in baseline.demos[id])) console.log(`  · ${id}: nytt tillstånd "${state}" (ingår inte i baslinjen än)`);
+      if (!(state in baseline.demos[id])) {
+        problems.push(`nytt tillstånd "${state}" saknas i baslinjen — fånga baslinjen från pre-migrerings-dokumentet`);
+      }
     }
     if (problems.length) {
       failures++;
@@ -486,8 +488,8 @@ async function main() {
     console.warn('  Största avvikelse: ' + maxDeviation(valuesOutsideTolerance));
     console.warn('  Kör om samma webbläsarinstans med --strict (0 px slack) för exakt bevis, eller --verbose för listan.');
   }
-  if (!sameBrowser && requireSameBrowser) {
-    console.error(`✗ Webbläsarbygget skiljer sig från baslinjens (${version} mot ${baseline.chromium}) och --require-same-browser är satt.`);
+  if (!sameBrowser && (requireSameBrowser || strict)) {
+    console.error(`✗ Webbläsarbygget skiljer sig från baslinjens (${version} mot ${baseline.chromium}); --strict/--require-same-browser kräver samma bygge.`);
     process.exit(1);
   }
   if (failures) {
