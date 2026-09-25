@@ -1,0 +1,24 @@
+<!--
+  demo: property-border-angle
+  Kanonisk källa för både live-demot och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+  @property-registreringen ligger här så att den följer med i det kopierbara
+  exemplet — utan den interpoleras inte --border-angle och kanten står stilla.
+-->
+<div class="demo-yta">
+  <div class="glow-card">background-clip: padding-box, border-box</div>
+</div>
+<style>
+@property --border-angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.glow-card {
+  position: relative; padding: 1.4rem; border-radius: 14px; text-align: center;
+  font-family: var(--mono); font-size: .82rem; color: var(--dim);
+  background: var(--bg2); border: 2px solid transparent;
+  background-clip: padding-box, border-box; background-origin: padding-box, border-box;
+  background-image:
+    linear-gradient(var(--bg2), var(--bg2)),
+    conic-gradient(from var(--border-angle), transparent 55%, var(--acc), transparent 100%);
+  animation: rotera-kant 4s linear infinite;
+}
+@keyframes rotera-kant { to { --border-angle: 1turn; } }
+</style>

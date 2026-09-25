@@ -48,7 +48,6 @@
 @property --p  { syntax: "<number>"; inherits: false; initial-value: 0; }
 @property --v  { syntax: "<number>"; inherits: true;  initial-value: 420; }
 @property --w  { syntax: "<number>"; inherits: false; initial-value: 400; }
-@property --border-angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
 @property --num-count    { syntax: "<integer>"; inherits: false; initial-value: 0; }
 @property --shimmer-x    { syntax: "<percentage>"; inherits: false; initial-value: -50%; }
 
@@ -449,7 +448,6 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .jmfbar:has(.jmf-knapp input:checked) .etikett { color: inherit !important; font-weight: 400 !important; }
 .jmfbar:has(.jmf-knapp input:checked) .spec-btn { background: var(--acc-soft); border: 1px solid var(--acc); color: var(--acc); }
 .jmfbar:has(.jmf-knapp input:checked) .nth-row .nth-box:nth-child(even of .mal) { background: var(--bg2); color: var(--dim); font-weight: 400; border-color: var(--line); }
-.jmfbar:has(.jmf-knapp input:checked) .shape-float { shape-outside: none; }
 .jmfbar:has(.jmf-knapp input:checked) .trim-on { text-box: normal; }
 .jmfbar:has(.jmf-knapp input:checked) .hyphen-demo { hyphens: none; }
 .jmfbar:has(.jmf-knapp input:checked) .nd-fvn .tab { font-variant-numeric: normal; }
@@ -879,6 +877,8 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .labbar:has(.labb-auto input:checked) .blend-tile-solo::after { transition: none; }
 .enh-overlapp .labb-varde::after { content: counter(pct12) "% överlapp"; }
 
+/* demo:property-border-angle:css */
+@property --border-angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
 .glow-card {
   position: relative; padding: 1.4rem; border-radius: 14px; text-align: center;
   font-family: var(--mono); font-size: .82rem; color: var(--dim);
@@ -890,6 +890,7 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
   animation: rotera-kant 4s linear infinite;
 }
 @keyframes rotera-kant { to { --border-angle: 1turn; } }
+/* /demo:property-border-angle:css */
 
 .squircle-row { display:flex; flex-wrap:wrap; gap:.6rem; }
 .squircle-row .prov-form {
@@ -982,12 +983,17 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .rtl-scope .rtl-demo { padding-inline: 1.3rem; border-inline-start: 4px solid var(--acc); border-radius: 4px; background: var(--bg2); font-size: .9rem; }
 .rtl-scope:has(#rtl-toggle:checked) .rtl-demo { direction: rtl; }
 
+/* demo:shape-outside:css */
 .shape-demo p { font-size: .88rem; color: var(--dim); text-wrap: pretty; }
 .shape-float {
   float: left; width: 8rem; height: 8rem; margin: 0 1rem .5rem 0;
   shape-outside: circle(50%); clip-path: circle(50%);
   background: radial-gradient(circle at 35% 30%, #fff, var(--acc) 55%, color-mix(in srgb, var(--acc) 30%, transparent));
 }
+
+/* Jämförarens av-läge (.jmfbar) är sidans scenografi och hör inte hemma i det kopierbara exemplet. */
+.jmfbar:has(.jmf-knapp input:checked) .shape-float { shape-outside: none; }
+/* /demo:shape-outside:css */
 
 .carousel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: .8rem; overscroll-behavior-x: contain; scrollbar-width: none; }
 .carousel::-webkit-scrollbar { display: none; }
@@ -1598,6 +1604,7 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .tabs:has(#tab-b:checked) .pb,
 .tabs:has(#tab-c:checked) .pc { display: block; }
 
+/* demo:target:css */
 .target-nav { display:flex; gap:.6rem; margin-bottom: .8rem; flex-wrap: wrap; }
 .target-nav a { font-family: var(--mono); font-size: .8rem; padding: .5rem .9rem; border-radius: 99px; border: 1px solid var(--line); text-decoration: none; color: var(--dim); transition: color .2s, border-color .2s; }
 .target-nav a:hover { color: var(--acc); border-color: var(--acc); }
@@ -1606,6 +1613,7 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .target-panel code { color: var(--ink); }
 .target-panel:target { display:block; }
 .target-stack:not(:has(:target)) .target-panel:first-child { display:block; }
+/* /demo:target:css */
 
 .form-grid { display:grid; gap:1rem; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
 .form-field { display:grid; gap:.4rem; font-size: .85rem; color: var(--dim); }
@@ -4797,27 +4805,31 @@ body { counter-reset: visade; }
         <text x="140" y="31" font-size="7" class="dim">syntax: &lt;angle&gt;</text>
         <text x="140" y="42" font-size="7" class="acc">→ animerbar</text></svg>
         <p class="fig-cap">Utan <b>@property</b> stannar en anpassad egenskap i sitt sluttillstånd — ingen mjuk övergång.</p></div>
+      <!-- demo:property-border-angle:markup -->
       <div class="demo-yta">
         <div class="glow-card">background-clip: padding-box, border-box</div>
       </div>
-    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="18" aria-label="Kod för @property --border-angle — andande kantlinje">&lt;!-- HTML --&gt;
+      <!-- /demo:property-border-angle:markup -->
+    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="20" aria-label="Kod för @property --border-angle — andande kantlinje">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta"&gt;
-        &lt;div class="glow-card"&gt;background-clip: padding-box, border-box&lt;/div&gt;
-      &lt;/div&gt;
+  &lt;div class="glow-card"&gt;background-clip: padding-box, border-box&lt;/div&gt;
+&lt;/div&gt;
 
 /* CSS */
-@property --border-angle { syntax: "&lt;angle&gt;"; inherits: false; initial-value: 0deg; }
+
 .demo-yta {position: relative; border-radius: 4px;}
-.glow-card {position: relative; padding: 1.4rem; border-radius: 14px; text-align: center;
+@property --border-angle { syntax: "&lt;angle&gt;"; inherits: false; initial-value: 0deg; }
+.glow-card {
+  position: relative; padding: 1.4rem; border-radius: 14px; text-align: center;
   font-family: var(--mono); font-size: .82rem; color: var(--dim);
   background: var(--bg2); border: 2px solid transparent;
   background-clip: padding-box, border-box; background-origin: padding-box, border-box;
   background-image:
     linear-gradient(var(--bg2), var(--bg2)),
     conic-gradient(from var(--border-angle), transparent 55%, var(--acc), transparent 100%);
-  animation: rotera-kant 4s linear infinite;}
-
-@keyframes rotera-kant {--border-angle: 1turn;}</textarea></details>
+  animation: rotera-kant 4s linear infinite;
+}
+@keyframes rotera-kant { to { --border-angle: 1turn; } }</textarea></details>
     </article>
 
     <article class="demo sup-chrome sup-edge" id="corner-shape-squircle">
@@ -5295,28 +5307,32 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <circle cx="34" cy="33" r="24" class="acc" opacity=".85" />
         <line x1="70" y1="14" x2="200" y2="14" class="strk" /><line x1="62" y1="24" x2="200" y2="24" class="strk" /><line x1="60" y1="34" x2="200" y2="34" class="strk" /><line x1="62" y1="44" x2="200" y2="44" class="strk" /><line x1="70" y1="54" x2="200" y2="54" class="strk" /></svg>
         <p class="fig-cap">shape-outside ritar kurvan, clip-path beskär elementet till samma form.</p></div>
+      <!-- demo:shape-outside:markup -->
       <div class="demo-yta shape-demo">
         <span class="shape-float" aria-hidden="true"></span>
         <p>Det här stycket böjer sig runt cirkeln till vänster eftersom <code>shape-outside: circle(50%)</code> beskriver formen för radbrytningen, medan <code>clip-path</code> beskär själva elementet till samma form.</p>
       </div>
+      <!-- /demo:shape-outside:markup -->
     
       <div class="jmf">
         <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>shape-outside</label>
         <span class="jmf-lage" aria-hidden="true"></span>
       </div>
-    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="13" aria-label="Kod för shape-outside — text som flyter runt en form">&lt;!-- HTML --&gt;
+    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="15" aria-label="Kod för shape-outside — text som flyter runt en form">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta shape-demo"&gt;
-        &lt;span class="shape-float" aria-hidden="true"&gt;&lt;/span&gt;
-        &lt;p&gt;Det här stycket böjer sig runt cirkeln till vänster eftersom &lt;code&gt;shape-outside: circle(50%)&lt;/code&gt; beskriver formen för radbrytningen, medan &lt;code&gt;clip-path&lt;/code&gt; beskär själva elementet till samma form.&lt;/p&gt;
-      &lt;/div&gt;
+  &lt;span class="shape-float" aria-hidden="true"&gt;&lt;/span&gt;
+  &lt;p&gt;Det här stycket böjer sig runt cirkeln till vänster eftersom &lt;code&gt;shape-outside: circle(50%)&lt;/code&gt; beskriver formen för radbrytningen, medan &lt;code&gt;clip-path&lt;/code&gt; beskär själva elementet till samma form.&lt;/p&gt;
+&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
-.shape-demo p {font-size: .88rem; color: var(--dim); text-wrap: pretty;}
-.shape-float {float: left; width: 8rem; height: 8rem; margin: 0 1rem .5rem 0;
+.shape-demo p { font-size: .88rem; color: var(--dim); text-wrap: pretty; }
+.shape-float {
+  float: left; width: 8rem; height: 8rem; margin: 0 1rem .5rem 0;
   shape-outside: circle(50%); clip-path: circle(50%);
-  background: radial-gradient(circle at 35% 30%, #fff, var(--acc) 55%, color-mix(in srgb, var(--acc) 30%, transparent));}</textarea></details>
+  background: radial-gradient(circle at 35% 30%, #fff, var(--acc) 55%, color-mix(in srgb, var(--acc) 30%, transparent));
+}</textarea></details>
     </article>
 
     <article class="demo stor sup-chrome sup-edge" id="scroll-marker-scroll-button">
@@ -7395,6 +7411,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <rect x="94" y="0" width="100" height="16" rx="4" class="acc-strk" fill="none" /><text x="144" y="11" text-anchor="middle" font-size="6" class="acc">#tp-2:target</text>
         <text x="10" y="32" font-size="6" class="dim">bakåtknapp fungerar — hashen är historik</text></svg>
         <p class="fig-cap">Panelen är statens enda källa: en vanlig URL, inte ett skript.</p></div>
+      <!-- demo:target:markup -->
       <div class="demo-yta">
         <div class="target-nav">
           <a href="#tp-1">Ett</a><a href="#tp-2">Två</a><a href="#tp-3">Tre</a>
@@ -7405,29 +7422,30 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
           <div class="target-panel" id="tp-3">Panel tre — hela tillståndet lever i URL:ens hash.</div>
         </div>
       </div>
+      <!-- /demo:target:markup -->
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="23" aria-label="Kod för :target — navigering som tillstånd">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta"&gt;
-        &lt;div class="target-nav"&gt;
-          &lt;a href="#tp-1"&gt;Ett&lt;/a&gt;&lt;a href="#tp-2"&gt;Två&lt;/a&gt;&lt;a href="#tp-3"&gt;Tre&lt;/a&gt;
-        &lt;/div&gt;
-        &lt;div class="target-stack"&gt;
-          &lt;div class="target-panel" id="tp-1"&gt;Panel ett, standardvald via &lt;code&gt;:not(:has(:target))&lt;/code&gt;.&lt;/div&gt;
-          &lt;div class="target-panel" id="tp-2"&gt;Panel två — synlig för att &lt;code&gt;#tp-2:target&lt;/code&gt; matchar.&lt;/div&gt;
-          &lt;div class="target-panel" id="tp-3"&gt;Panel tre — hela tillståndet lever i URL:ens hash.&lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
+  &lt;div class="target-nav"&gt;
+    &lt;a href="#tp-1"&gt;Ett&lt;/a&gt;&lt;a href="#tp-2"&gt;Två&lt;/a&gt;&lt;a href="#tp-3"&gt;Tre&lt;/a&gt;
+  &lt;/div&gt;
+  &lt;div class="target-stack"&gt;
+    &lt;div class="target-panel" id="tp-1"&gt;Panel ett, standardvald via &lt;code&gt;:not(:has(:target))&lt;/code&gt;.&lt;/div&gt;
+    &lt;div class="target-panel" id="tp-2"&gt;Panel två — synlig för att &lt;code&gt;#tp-2:target&lt;/code&gt; matchar.&lt;/div&gt;
+    &lt;div class="target-panel" id="tp-3"&gt;Panel tre — hela tillståndet lever i URL:ens hash.&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
-.target-nav {display:flex; gap:.6rem; margin-bottom: .8rem; flex-wrap: wrap;}
-.target-nav a {font-family: var(--mono); font-size: .8rem; padding: .5rem .9rem; border-radius: 99px; border: 1px solid var(--line); text-decoration: none; color: var(--dim); transition: color .2s, border-color .2s;}
-.target-nav a:hover {color: var(--acc); border-color: var(--acc);}
-.target-stack {position: relative;}
-.target-panel {display:none; padding: 1rem; border: 1px solid var(--line); border-radius: 12px; font-size: .88rem; color: var(--dim); scroll-margin-top: calc(var(--hh) + 1rem);}
-.target-panel code {color: var(--ink);}
-.target-panel:target {display:block;}
-.target-stack:not(:has(:target)) .target-panel:first-child {display:block;}</textarea></details>
+.target-nav { display:flex; gap:.6rem; margin-bottom: .8rem; flex-wrap: wrap; }
+.target-nav a { font-family: var(--mono); font-size: .8rem; padding: .5rem .9rem; border-radius: 99px; border: 1px solid var(--line); text-decoration: none; color: var(--dim); transition: color .2s, border-color .2s; }
+.target-nav a:hover { color: var(--acc); border-color: var(--acc); }
+.target-stack { position: relative; }
+.target-panel { display:none; padding: 1rem; border: 1px solid var(--line); border-radius: 12px; font-size: .88rem; color: var(--dim); scroll-margin-top: calc(var(--hh) + 1rem); }
+.target-panel code { color: var(--ink); }
+.target-panel:target { display:block; }
+.target-stack:not(:has(:target)) .target-panel:first-child { display:block; }</textarea></details>
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="formulartillstand-field-sizing-content">
