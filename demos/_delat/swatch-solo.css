@@ -1,0 +1,8 @@
+/* DELAT FRAGMENT — den ensamma svatchen (.swatch-solo), kapitel 01 · färg.
+   Ägs av de fem gradient-demona och de åtta filter-demona, dvs. allt som
+   visar EN färgruta med etikett under. Demoerna med en rad av svatchar
+   (color-mix, rgb(from …), oklch/display-p3) behöver den inte och begär den
+   inte — deras kodvalv ska inte bära regler de inte använder. */
+.swatch-solo { max-width: 22rem; }
+.swatch-solo > .swatch { display: block; }
+.swatch-solo .swatch-yta { display: block; height: 6rem; }
