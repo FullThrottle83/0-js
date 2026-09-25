@@ -1,0 +1,38 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index bbe54f7..5700b02 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -25,6 +25,11 @@ jobs:
+         with:
+           node-version: 22
+ 
++      # Källgenerering: index.html måste vara i fas med demos/*.html.
++      # Misslyckas den här är någon demo redigerad utan `npm run build`.
++      - name: Genererade demos är i fas med källorna (stale-kontroll)
++        run: node scripts/build.mjs --check
++
+       - name: Struktur, zero-JS-löfte och ARIA-hygien
+         run: node scripts/check.mjs
+ 
+@@ -34,6 +39,9 @@ jobs:
+       - name: Regressionstest (injicerade defekter ska fångas)
+         run: node scripts/check.test.mjs
+ 
++      - name: Byggtest (determinism, härledning, stale-detektering)
++        run: node scripts/build.test.mjs
++
+   webblasare:
+     name: Webbläsarkontroll (Playwright)
+     runs-on: ubuntu-latest
+@@ -58,6 +66,11 @@ jobs:
+       - name: Nivå 2 — mobilmenyns tangentbordsinteraktion
+         run: node tests/menu-keyboard.mjs
+ 
++      # Obligatoriskt: de källgenererade demona verifieras på sidan och
++      # fristående (Grundpaketet + kodvalv) i en riktig Chromium.
++      - name: Nivå 2/4b — källgenererade demos på sidan och fristående
++        run: node tests/demo-source.mjs
++
+       # Valfritt: skärmbilder är dokumentation, inte en grind.
+       - name: Rendera och ta skärmbilder
+         continue-on-error: true
