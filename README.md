@@ -115,20 +115,19 @@ helt i minnet — ingen webbläsare, inga temporärfiler.
 
 ### CI
 
-En komplett workflow (`ci.yml`, färdig att läggas i `.github/workflows/`)
-finns i projektet men har i skrivande stund inte kunnat committas, eftersom
-token som används saknar `workflows`-behörighet. Innehållet: kontrollerna ovan
-som obligatoriskt jobb utan npm-installation eller webbläsare, plus ett
-valfritt, icke-blockerande Playwright-jobb som tar skärmbilder. **Status just
-nu: ej installerad — CI påstås inte vara aktivt förrän filen är committad och
-en körning verifierats.** Installationsinstruktioner finns i PR-tråden.
+Workflowen [`.github/workflows/ci.yml`](.github/workflows/ci.yml) är committad på
+PR-branchen. Den kör de statiska kontrollerna som ett obligatoriskt jobb utan
+npm-installation eller webbläsare. Därefter kör ett obligatoriskt Playwright-jobb
+mobilmenyns tangentbordstest i Chromium. Endast skärmbildsgenerering och
+artefaktuppladdning är icke-blockerande. **Status: workflow installerad;
+kontrollera den första GitHub Actions-körningen innan ändringarna merge:as.**
 
 ### Vägkarta
 
 - **Nivå 2 — funktionella tester:** `tests/menu-keyboard.mjs` verifierar
-  mobilmenyns tangentbordsflöde i en riktig webbläsare och körs i CI:s valfria
-  webbläsarjobb. Kräver Chromium (`npx playwright install chromium`) och
-  blockerar aldrig de snabba statiska kontrollerna.
+  mobilmenyns tangentbordsflöde i en riktig webbläsare och körs i CI:s
+  obligatoriska webbläsarjobb. Kräver Chromium (`npx playwright install chromium`)
+  och startar efter de snabba statiska kontrollerna.
 - **Nivå 3 — webbläsarmatris:** verifiera utvalda demos i Chromium, Firefox och
   WebKit, med dokumenterad fallback per experimentell funktion.
 - **Nivå 4b — isolerad snippet-rendering:** bygg en testsida av varje exempel
@@ -220,6 +219,8 @@ konkret behov finns. Licenser och upphov: [THIRD-PARTY.md](THIRD-PARTY.md).
 │   └── screenshot.mjs      # valfria skärmbilder (kräver playwright)
 ├── tests/
 │   └── menu-keyboard.mjs   # nivå 2: mobilmenyns tangentbord (kräver webbläsare)
+├── .github/workflows/
+│   └── ci.yml              # statiska kontroller + obligatoriskt browser-test
 ├── THIRD-PARTY.md          # licenser för inbäddade typsnitt
 ├── LICENSE                 # MIT (kod) — OFL 1.1 (typsnitt) gäller separat
 └── README.md
