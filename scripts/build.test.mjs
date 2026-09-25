@@ -4,15 +4,19 @@
  *
  * Kör helt i minnet mot det committade index.html och demos/*.html:
  *   - bygget är deterministiskt och idempotent
- *   - de migrerade demonas id:n och ankare finns kvar
- *   - live-markup och kodvalv härleds bevisligen ur källfilen
+ *   - manifestet (scripts/demo-spec.mjs) och demos/*.html är exakt samma mängd
+ *   - varje migrerad demo: id, ankare, härledning, kodvalv, rows, data-live
+ *   - migrerade källor delar inga CSS-regler med varandra (ingen kapitel-CSS)
  *   - de delade :root-variablerna (Grundpaketet) täcker källornas var()
  *   - de genererade kodvalven klarar check-snippets.mjs
- *   - alla 133 demos finns kvar och check.mjs är grön
+ *   - alla 133 demos finns kvar, de omigrerade är fortfarande omarkerade
  *   - dokumentet innehåller ingen runtime-JavaScript
  *   - en föråldrad (stale) artefakt upptäcks — oavsett om källan eller
  *     index.html ändrats
  *   - felaktiga källor och saknade markörer ger tydliga fel, inte tyst utdata
+ *
+ * Testet är inventariestyrt: lägg till en demo i scripts/demo-spec.mjs och
+ * påståendena nedan gäller den automatiskt. Inga listor med demo-id:n här.
  *
  * Kör: node scripts/build.test.mjs
  */
@@ -23,8 +27,9 @@ import {
   build, loadSources, parseSource, renderLive, renderSnippet, staleDemos,
   applyDemo, BuildError, DEMO_DIR, INDEX, MAX_ROWS,
 } from './build.mjs';
+import { DEMO_SPEC, MIGRATED_IDS } from './demo-spec.mjs';
 import { checkDocument } from './check.mjs';
-import { checkSnippets, extractSnippets, splitParts, declaredVars, usedVars } from './check-snippets.mjs';
+import { checkSnippets, extractSnippets, splitParts, declaredVars, usedVars, stripCssComments } from './check-snippets.mjs';
 
 let failures = 0;
 const ok = (m) => console.log(`✓ ${m}`);
@@ -36,14 +41,53 @@ const throwsBuildError = (fn, m) => {
 
 const html = readFileSync(INDEX, 'utf8');
 const sources = loadSources();
-const MIGRATED = ['property-border-angle', 'shape-outside', 'target'];
 const EXPECTED_DEMOS = 133;
+const N = MIGRATED_IDS.length;
+const canon = (s) => s.replace(/\s+/g, ' ').replace(/\s*:\s*/g, ':').replace(/\s*,\s*/g, ',')
+  .replace(/\s*;\s*/g, ';').replace(/\s*\{\s*/g, '{').replace(/\s*\}\s*/g, '}').replace(/;}/g, '}').trim();
 
-/* Piloten omfattar exakt tre demos ------------------------------------- */
-assert(
-  JSON.stringify([...sources.keys()]) === JSON.stringify(MIGRATED),
-  `piloten omfattar exakt ${MIGRATED.join(', ')}`,
-);
+/**
+ * Dela CSS i toppnivåblock (regler, @media, @supports …) med balanserade
+ * klamrar. Kommentarer räknas inte. Används för att jämföra regeltext mellan
+ * källor; en naiv regex skulle inte klara nästlade block.
+ */
+const topLevelBlocks = (css) => {
+  const out = [];
+  let depth = 0, start = 0;
+  for (let i = 0; i < css.length; i++) {
+    if (css.startsWith('/*', i)) {
+      const end = css.indexOf('*/', i + 2);
+      i = (end === -1 ? css.length : end + 2) - 1;
+      continue;
+    }
+    if (css[i] === '{') depth++;
+    else if (css[i] === '}') {
+      depth--;
+      if (depth === 0) { out.push(canon(css.slice(start, i + 1))); start = i + 1; }
+    }
+  }
+  return out.filter(Boolean);
+};
+
+/** Alla källor som en Map, i manifestets ordning (deterministiskt). */
+const ordered = MIGRATED_IDS.map((id) => [id, sources.get(id)]);
+
+/* 0. Manifestet och källfilerna är samma mängd -------------------------- */
+{
+  const files = [...sources.keys()].sort();
+  assert(files.length === N, `demos/ innehåller ${N} källfiler (manifestet: ${N})`);
+  assert(
+    files.join(',') === [...MIGRATED_IDS].sort().join(','),
+    `manifestet och demos/ är exakt samma mängd${files.join(',') === [...MIGRATED_IDS].sort().join(',') ? '' : ` (demos/: ${files.join(', ')})`}`,
+  );
+  assert(new Set(MIGRATED_IDS).size === N, 'inga dubblerade id:n i manifestet');
+  for (const d of DEMO_SPEC) {
+    assert(typeof d.type === 'string' && typeof d.note === 'string' && Array.isArray(d.anchors),
+      `#${d.id}: manifestposten har typ, anteckning och ankarlista`);
+  }
+  const { errors } = checkSnippets(build(html, sources));
+  assert(errors.length === 0, `check-snippets.mjs är grön på hela bygget${errors.length ? `: ${errors[0]}` : ''}`);
+}
 
 /* 1. Determinism ------------------------------------------------------- */
 {
@@ -51,38 +95,20 @@ assert(
   const b = build(html, sources);
   assert(a === b, 'två byggen ur samma källor ger identisk utdata');
   assert(build(a, sources) === a, 'bygget är idempotent (bygg av byggt = oförändrat)');
-  assert(a === html, 'committat index.html är i fas med demos/ (inte stale)');
-  // Källordningen får inte påverka resultatet.
+  assert(a === html, `committat index.html är i fas med demos/ (${N} migrerade demos, inte stale)`);
   const reversed = new Map([...sources].reverse());
   assert(build(html, reversed) === a, 'källornas ordning påverkar inte utdata');
 }
 
-/* 2. Id:n och ankare ---------------------------------------------------- */
-{
-  const built = build(html, sources);
-  const ids = new Set([...built.matchAll(/\bid="([^"]+)"/g)].map((m) => m[1]));
-  for (const id of MIGRATED) assert(ids.has(id), `kortet #${id} finns kvar`);
-  for (const id of ['tp-1', 'tp-2', 'tp-3']) assert(ids.has(id), `ankarmålet #${id} finns kvar`);
-  for (const id of ['tp-1', 'tp-2', 'tp-3']) {
-    assert(built.includes(`<a href="#${id}">`), `länken till #${id} finns kvar`);
-  }
-  for (const id of MIGRATED) {
-    assert(built.includes(`<a href="#${id}">`), `indexlänken till #${id} finns kvar`);
-    assert(new RegExp(`<article class="demo[^"]*" id="${id}">`).test(built), `#${id} är fortfarande ett demo-kort`);
-  }
-  // Kodvalvens escapade text räknas inte som markup.
-  const dom = built.replace(/<textarea\b[\s\S]*?<\/textarea>/g, '');
-  const count = (s, re) => (s.match(re) || []).length;
-  for (const id of [...MIGRATED, 'tp-1', 'tp-2', 'tp-3']) {
-    assert(count(dom, new RegExp(`\\bid="${id}"`, 'g')) === 1, `id="${id}" förekommer exakt en gång i markupen`);
-  }
-}
-
-/* 3. Härledning ur källan ---------------------------------------------- */
+/* 2. Härledning ur källan, per migrerad demo ---------------------------- */
 {
   const decode = (s) => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-  for (const id of MIGRATED) {
-    const src = sources.get(id);
+  const dom = html.replace(/<textarea\b[\s\S]*?<\/textarea>/g, '');
+  const idsInDom = [...dom.matchAll(/\bid="([^"]+)"/g)].map((m) => m[1]);
+  const linksInDom = [...dom.matchAll(/<a\b[^>]*\bhref="#([^"]+)"/g)].map((m) => m[1]);
+
+  for (const [id, src] of ordered) {
+    const spec = DEMO_SPEC.find((d) => d.id === id);
     const open = `<!-- demo:${id}:markup -->`;
     const a = html.indexOf(open) + open.length;
     const b = html.indexOf(`<!-- /demo:${id}:markup -->`);
@@ -96,10 +122,13 @@ assert(
     assert(decode(ta[2]) === renderSnippet(src), `#${id}: kodvalvet är exakt renderSnippet(källa)`);
     assert(decode(ta[2]).includes(src.markup), `#${id}: kodvalvets HTML-del är källans markup, oindragen`);
     assert(decode(ta[2]).includes(src.css), `#${id}: kodvalvets CSS-del är källans <style>`);
+    assert(!/^\s{6}</m.test(decode(ta[2]).split('/* CSS */')[0].replace(/^<!-- HTML -->\n/, '')),
+      `#${id}: kodvalvets markup har inget kortindrag kvar`);
     if (src.liveCss) {
       assert(!decode(ta[2]).includes(src.liveCss), `#${id}: <style data-live> kopieras INTE till kodvalvet`);
       assert(html.includes(src.liveCss), `#${id}: <style data-live> finns i sidans stilblad`);
     }
+    assert(Boolean(src.liveCss) === spec.liveCss, `#${id}: data-live i källan stämmer med manifestet`);
     const rows = Number(ta[1].match(/rows="(\d+)"/)[1]);
     assert(rows === Math.min(renderSnippet(src).split('\n').length, MAX_ROWS), `#${id}: rows följer radantalet (max ${MAX_ROWS})`);
 
@@ -108,7 +137,40 @@ assert(
     const d = html.indexOf(`/* /demo:${id}:css */`);
     assert(html.slice(c, d).includes(src.css), `#${id}: stilbladet innehåller källans CSS ordagrant`);
     assert(d < html.indexOf('<body'), `#${id}: CSS-markören ligger i <head>-stilbladet, inte i kroppen`);
+    assert(html.slice(c, d).includes(src.liveCss) || !src.liveCss,
+      `#${id}: <style data-live> ligger innanför CSS-markören`);
+
+    /* id:n och ankare i källan: unika i dokumentet och pekade på */
+    const markupIds = [...src.markup.matchAll(/\bid="([^"]+)"/g)].map((m) => m[1]);
+    const markupLinks = [...src.markup.matchAll(/<a\b[^>]*\bhref="#([^"]+)"/g)].map((m) => m[1]);
+    for (const mid of new Set(markupIds)) {
+      assert(idsInDom.filter((x) => x === mid).length === 1, `#${id}: id="${mid}" förekommer exakt en gång i markupen`);
+    }
+    for (const mid of new Set(markupLinks)) {
+      assert(idsInDom.includes(mid), `#${id}: ankarlänken #${mid} har ett mål i dokumentet`);
+      assert(linksInDom.filter((x) => x === mid).length >= 1, `#${id}: länken till #${mid} finns kvar`);
+    }
+    for (const anchor of spec.anchors) {
+      assert(new Set(markupIds).has(anchor), `#${id}: manifestets ankare #${anchor} finns i källans markup`);
+    }
+    assert(idsInDom.filter((x) => x === id).length === 1, `#${id}: kortets eget id finns exakt en gång`);
+    assert(linksInDom.includes(id), `#${id}: indexlänken till #${id} finns kvar`);
+    assert(new RegExp(`<article class="demo[^"]*" id="${id}">`).test(html), `#${id}: är fortfarande ett demo-kort`);
   }
+}
+
+/* 3. Ingen delad CSS mellan migrerade källor ---------------------------- */
+{
+  const owner = new Map();
+  const clashes = [];
+  for (const [id, src] of ordered) {
+    for (const rule of topLevelBlocks(stripCssComments(`${src.css}\n${src.liveCss}`))) {
+      if (owner.has(rule) && owner.get(rule) !== id) clashes.push(`${owner.get(rule)} ↔ ${id}: ${rule.slice(0, 60)}`);
+      owner.set(rule, id);
+    }
+  }
+  assert(clashes.length === 0,
+    `ingen CSS-regel delas mellan migrerade källor (${owner.size} regler kontrollerade)${clashes.length ? `: ${clashes[0]}` : ''}`);
 }
 
 /* 4. Delade variabler --------------------------------------------------- */
@@ -118,52 +180,58 @@ assert(
   for (const v of ['--acc', '--bg2', '--dim', '--line', '--ink', '--mono', '--hh']) {
     assert(baseVars.has(v), `Grundpaketet deklarerar ${v}`);
   }
-  for (const id of MIGRATED) {
-    const src = sources.get(id);
+  for (const [id, src] of ordered) {
     const own = declaredVars(src.css);
-    const missing = usedVars(src.css).filter((u) => !u.hasFallback && !own.has(u.name) && !baseVars.has(u.name));
+    // Anpassade egenskaper som sätts i markupens style-attribut (t.ex.
+    // --p1/--p2 i donutdiagram) är också demots egna deklarationer.
+    for (const m of src.markup.matchAll(/\bstyle="([^"]*)"/g)) for (const v of declaredVars(m[1])) own.add(v);
+    const missing = usedVars(`${src.css}\n${src.liveCss}`)
+      .filter((u) => !u.hasFallback && !own.has(u.name) && !baseVars.has(u.name));
     assert(missing.length === 0, `#${id}: alla var() i källan täcks av källan eller Grundpaketet${missing.length ? ` (saknas: ${missing.map((m) => m.name).join(', ')})` : ''}`);
   }
 }
 
-/* 5. Kodvalven klarar den befintliga statiska kontrollen --------------- */
-{
-  const { errors } = checkSnippets(build(html, sources));
-  const own = errors.filter((e) => MIGRATED.some((id) => e.includes(id)) || /shape-outside|:target|border-angle/.test(e));
-  assert(own.length === 0, `de genererade kodvalven klarar check-snippets.mjs${own.length ? `: ${own[0]}` : ''}`);
-  assert(errors.length === 0, 'inga andra kodvalv påverkas av bygget');
-}
-
-/* 6. 133 demos och strukturkontroll ----------------------------------- */
+/* 5. Alla 133 demos och strukturkontroll ------------------------------- */
 {
   const built = build(html, sources);
   const n = (built.match(/<article class="demo[\s"]/g) || []).length;
   assert(n === EXPECTED_DEMOS, `${n} demos i det genererade dokumentet (förväntat ${EXPECTED_DEMOS})`);
+  const marked = new Set([...built.matchAll(/<!-- demo:([a-z0-9-]+):markup -->/g)].map((m) => m[1]));
+  assert(marked.size === N, `${marked.size} kort är markerade (${N} migrerade)`);
+  assert(EXPECTED_DEMOS - marked.size === EXPECTED_DEMOS - N,
+    `${EXPECTED_DEMOS - N} kort är fortfarande omarkerade (migreras i senare batchar)`);
   const { errors } = checkDocument(built);
   assert(errors.length === 0, `check.mjs är grön på genererat dokument${errors.length ? `: ${errors[0]}` : ''}`);
 }
 
-/* 7. Zero-JS ----------------------------------------------------------- */
+/* 6. Zero-JS ----------------------------------------------------------- */
 {
   const built = build(html, sources);
   assert(!/<script[\s>]/i.test(built), 'inga <script>-element i det genererade dokumentet');
   assert(!/\son[a-z]+\s*=\s*"/i.test(built.replace(/<textarea\b[\s\S]*?<\/textarea>/g, '')), 'inga inline-handlers i det genererade dokumentet');
   assert(!/href\s*=\s*"javascript:/i.test(built), 'inga javascript:-URL:er');
-  assert([...sources.values()].every((s) => !/<script/i.test(s.markup + s.css + s.liveCss)), 'källorna innehåller ingen <script>');
+  assert(ordered.every(([, s]) => !/<script/i.test(s.markup + s.css + s.liveCss)), 'källorna innehåller ingen <script>');
 }
 
-/* 8. Stale-detektering --------------------------------------------------- */
+/* 7. Stale-detektering --------------------------------------------------- */
 {
+  const first = MIGRATED_IDS[0];
+  const target = MIGRATED_IDS.find((id) => id === 'target') ?? first;
+  const t = sources.get(target);
+
   // a) Källan ändras utan ombyggnad.
   const edited = new Map(sources);
-  const t = sources.get('target');
-  edited.set('target', { ...t, css: t.css.replace('gap:.6rem', 'gap:.7rem') });
+  edited.set(target, { ...t, css: t.css.replace('.target-stack', '.target-stack "x"') !== t.css
+    ? t.css.replace('{', '{ /* redigerad */', 1)
+    : t.css });
   const gen = build(html, edited);
   assert(gen !== html, 'ändrad källa ⇒ genererat dokument skiljer sig från committat');
-  assert(JSON.stringify(staleDemos(html, gen, edited)) === '["target"]', 'stale-rapporten pekar ut exakt rätt demo');
+  assert(staleDemos(html, gen, edited).join(',') === target, `stale-rapporten pekar ut exakt rätt demo (${target})`);
 
   // b) Någon redigerar live-markupen direkt i index.html i stället för i källan.
-  const tampered = html.replace('<a href="#tp-1">Ett</a>', '<a href="#tp-1">Etta</a>');
+  const open = `<!-- demo:${target}:markup -->`;
+  const start = html.indexOf(open) + open.length;
+  const tampered = html.slice(0, start) + html.slice(start).replace(/>/, ' data-tamper="1">');
   assert(build(tampered, sources) !== tampered, 'manuell ändring inuti markörerna upptäcks som stale');
   assert(build(tampered, sources) === html, '…och bygget återställer området ur källan');
 
@@ -172,12 +240,17 @@ assert(
   assert(build(outside, sources) === outside, 'ändring utanför markörerna bevaras byte för byte');
 
   // d) Kodvalvet manipuleras direkt.
-  const taStart = html.indexOf('aria-label="Kod för :target');
-  const taTamper = html.slice(0, taStart) + html.slice(taStart).replace('.target-stack { position: relative; }', '.target-stack { position: static; }');
+  const label = new RegExp(`aria-label="[^"]*${target}`);
+  const taStart = html.search(label);
+  const taTamper = html.slice(0, taStart)
+    + html.slice(taStart).replace(/(\.[a-z-]+) \{/i, '$1{');
   assert(taTamper !== html && build(taTamper, sources) === html, 'manuell ändring i ett genererat kodvalv upptäcks och återställs');
+
+  // e) En källa utan manifestpost (föräldralös) ska inte kunna smyga in.
+  assert(DEMO_SPEC.length === sources.size, 'inga källfiler saknar manifestpost');
 }
 
-/* 9. Felhantering: inget tyst ----------------------------------------- */
+/* 8. Felhantering: inget tyst ----------------------------------------- */
 {
   throwsBuildError(() => parseSource('<div></div>'), 'källa utan <style> avvisas');
   throwsBuildError(() => parseSource('<style>a{}</style>'), 'källa utan markup avvisas');
@@ -186,8 +259,10 @@ assert(
   throwsBuildError(() => applyDemo(html, 'finns-inte', sources.get('target')), 'källa utan markörer i index.html ger fel');
   throwsBuildError(() => build(html.replace('/* demo:target:css */', '/* demo:target:css-x */'), sources), 'saknad CSS-markör ger fel');
   throwsBuildError(() => build(html, new Map([...sources].filter(([id]) => id !== 'target'))), 'markör utan källfil (föräldralös) ger fel');
-  const parsed = parseSource(readFileSync(join(DEMO_DIR, 'shape-outside.html'), 'utf8'));
-  assert(parsed.liveCss.includes('.jmfbar') && !parsed.css.includes('.jmfbar'), 'data-live-CSS hålls isär från delad CSS');
+  const withLive = MIGRATED_IDS.find((id) => sources.get(id).liveCss);
+  const parsed = parseSource(readFileSync(join(DEMO_DIR, `${withLive}.html`), 'utf8'));
+  assert(parsed.liveCss.length > 0 && !parsed.css.includes(parsed.liveCss.trim()),
+    `#${withLive}: data-live-CSS hålls isär från delad CSS`);
 }
 
 console.log('');
@@ -195,4 +270,4 @@ if (failures) {
   console.error(`${failures} test misslyckades.`);
   process.exit(1);
 }
-console.log('Alla byggtest gröna.');
+console.log(`Alla byggtest gröna (${N} migrerade demos, inventariestyrda påståenden).`);

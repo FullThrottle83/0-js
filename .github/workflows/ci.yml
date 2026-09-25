@@ -10,7 +10,7 @@ permissions:
 
 # Projektets anda: noll beroenden i runtime. De statiska kontrollerna och
 # regressionstesterna är rena Node-skript utan npm-paket och kräver ingen
-# webbläsare. I webbläsarjobbet är tangentbordstestet ett obligatoriskt steg;
+# webbläsare. I webbläsarjobbet är tangentbords-, demo- och paritetstester obligatoriska;
 # bara skärmbilderna är ett valfritt, icke-blockerande komplement.
 jobs:
   statiska-kontroller:
@@ -70,6 +70,13 @@ jobs:
       # fristående (Grundpaketet + kodvalv) i en riktig Chromium.
       - name: Nivå 2/4b — källgenererade demos på sidan och fristående
         run: node tests/demo-source.mjs
+
+      # Obligatoriskt: mätt ekvivalens mot pre-migrerings-baslinjen.
+      # Struktur, text, attribut och fältvärden jämförs exakt och fäller.
+      # Vid annat Chromium-bygge rapporteras stil-/geometriavvikelser separat;
+      # strikt paritet kräver baslinjens browser-version lokalt.
+      - name: Nivå 4c — mätt ekvivalens mot pre-migrerings-baslinjen
+        run: node tests/demo-parity.mjs
 
       # Valfritt: skärmbilder är dokumentation, inte en grind.
       - name: Rendera och ta skärmbilder

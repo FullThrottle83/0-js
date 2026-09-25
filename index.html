@@ -472,12 +472,10 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .jmfbar:has(.jmf-knapp input:checked) .vertical-heading,
 .jmfbar:has(.jmf-knapp input:checked) .nd-vert { writing-mode: horizontal-tb; height: auto; }
 .jmfbar:has(.jmf-knapp input:checked) .glow-card { animation: none; }
-.jmfbar:has(.jmf-knapp input:checked) .donut { -webkit-mask: none; mask: none; }
 .jmfbar:has(.jmf-knapp input:checked) .gantt-row { grid-column: auto / span 12; }
 .jmfbar:has(.jmf-knapp input:checked) .stack-bar span { flex-basis: auto; flex: 1; }
 .jmfbar:has(.jmf-knapp input:checked) .heatmap span { background: var(--bg2); }
 .jmfbar:has(.jmf-knapp input:checked) .spark span { height: 100%; }
-.jmfbar:has(.jmf-knapp input:checked) .ld-box { background: #17141c; color: #f4efe6; }
 /* BUGGFIX 2026-08-30: off-läget var "display: grid" — men Chrome saknar
    grid-lanes och faller redan tillbaka på grid, så reglaget gjorde inget alls.
    Off-läget visar nu det riktiga alternativet demot jämför sig med:
@@ -773,6 +771,7 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .gamut-c .swatch-yta { background: color(display-p3 1 .55 .1); }
 .gamut-d .swatch-yta { background: oklch(85% .25 145); }
 
+/* demo:light-dark:css */
 .ld-row { display:grid; grid-template-columns:1fr 1fr; gap: .8rem; }
 .ld-box {
   border-radius: 12px; padding: 1.1rem; text-align:center; border: 1px solid var(--line);
@@ -782,6 +781,10 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 }
 .ld-light { color-scheme: light; }
 .ld-dark { color-scheme: dark; }
+
+/* Jämförarens av-läge (.jmfbar) är sidans scenografi och hör inte hemma i det kopierbara exemplet. */
+.jmfbar:has(.jmf-knapp input:checked) .ld-box { background: #17141c; color: #f4efe6; }
+/* /demo:light-dark:css */
 
 .grad-row { display:grid; gap:.6rem; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); }
 .grad-1 .swatch-yta { background: linear-gradient(135deg, var(--acc), transparent); }
@@ -1725,6 +1728,7 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .star-rating label { font-size: 1.6rem; color: var(--line); cursor: pointer; transition: color .15s; line-height: 1; }
 .star-rating label:hover, .star-rating label:hover ~ label, .star-rating input:checked ~ label { color: var(--acc); }
 
+/* demo:losenordsmatare:css */
 /* Lösenordsmätare */
 .pwd-field input {
   width: 100%; padding: .6rem .8rem; border-radius: 8px; border: 1px solid var(--line);
@@ -1734,6 +1738,7 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .pwd-meter span { display: block; height: 100%; width: 0; transition: width .3s ease, background .3s ease; }
 .pwd-field:has(input:not(:placeholder-shown):invalid) .pwd-meter span { width: 40%; background: var(--bad); }
 .pwd-field:has(input:valid) .pwd-meter span { width: 100%; background: var(--good); }
+/* /demo:losenordsmatare:css */
 
 /* Exklusiv accordion-grupp */
 .faq-group { display: grid; gap: .5rem; }
@@ -1744,6 +1749,7 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .faq-group details[open] summary::after { rotate: 45deg; }
 .faq-group .inneh { padding: 0 .9rem .9rem; font-size: .84rem; color: var(--dim); border-top: 1px solid var(--line); padding-top: .6rem; }
 
+/* demo:appearance-base-select:css */
 /* Anpassningsbar <select> */
 .premium-select {
   width: 100%; padding: .6rem .9rem; border-radius: 8px; border: 1px solid var(--line);
@@ -1763,6 +1769,7 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 }
 .select-fallback-note { display: none; font-family: var(--mono); font-size: .72rem; color: var(--dim); margin-top: .5rem; }
 @supports not (appearance: base-select) { .select-fallback-note { display: block; } }
+/* /demo:appearance-base-select:css */
 
 /* Facetterat filter */
 .filter-chips { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: .9rem; }
@@ -1776,12 +1783,14 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .filter-scope:has(#f-design:not(:checked)) .filter-card[data-cat="design"],
 .filter-scope:has(#f-motion:not(:checked)) .filter-card[data-cat="motion"] { display: none; }
 
+/* demo:dubbeltumme-slider:css */
 /* Dubbeltumme-slider */
 .dual-slider { position: relative; height: 2.2rem; display: flex; align-items: center; }
 .dual-slider input[type="range"] { position: absolute; width: 100%; appearance: none; background: transparent; pointer-events: none; margin: 0; }
 .dual-slider input[type="range"]::-webkit-slider-thumb { appearance: none; pointer-events: auto; width: 18px; height: 18px; border-radius: 50%; background: var(--acc); cursor: grab; box-shadow: 0 0 0 3px var(--bg); }
 .dual-slider input[type="range"]::-moz-range-thumb { pointer-events: auto; width: 18px; height: 18px; border: 0; border-radius: 50%; background: var(--acc); cursor: grab; box-shadow: 0 0 0 3px var(--bg); }
 .dual-track { position: absolute; width: 100%; height: 4px; border-radius: 99px; background: var(--line); }
+/* /demo:dubbeltumme-slider:css */
 
 /* Stilad filväljare — välj-knapp + klickbar yta, ingen drag-och-släpp-logik */
 .filval {
@@ -2002,6 +2011,7 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .wizard-wrap:has(#wz-step3:checked) .node-2 { border-color: var(--acc); color: var(--acc); background: var(--panel); }
 .wizard-wrap:has(#wz-step3:checked) .node-3 { border-color: var(--acc); color: #000; background: var(--acc); box-shadow: 0 0 12px var(--acc-soft); }
 
+/* demo:calc-size:css */
 /* calc-size() / interpolate-size demo */
 .calc-size-demo {
   border: 1px solid var(--line);
@@ -2038,6 +2048,7 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
   padding: 1.1rem;
   border-top: 1px solid var(--line);
 }
+/* /demo:calc-size:css */
 
 /* ============================================================
    KAPITEL 07 · TYPOGRAFI
@@ -2147,6 +2158,7 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .spark span { flex: 1; min-height: 2px; border-radius: 3px 3px 0 0; background: color-mix(in oklch, var(--acc), transparent 30%); height: calc(var(--v, 0) * 1%); transition: height .4s cubic-bezier(.2,.8,.2,1); }
 .spark span:last-child { background: var(--acc); }
 
+/* demo:donutdiagram:css */
 .donut {
   width: 8.5rem; height: 8.5rem; border-radius: 50%; margin-inline: auto;
   background: conic-gradient(var(--acc) 0% calc(var(--p1) * 1%), #6ea8ff calc(var(--p1) * 1%) calc((var(--p1) + var(--p2)) * 1%), var(--bg2) calc((var(--p1) + var(--p2)) * 1%) 100%);
@@ -2157,6 +2169,10 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .donut span { font-family: var(--disp); font-weight: 700; -webkit-mask: none; mask: none; color: var(--ink); }
 .donut-legend { display: flex; gap: 1rem; justify-content: center; margin-top: .8rem; font-family: var(--mono); font-size: .74rem; color: var(--dim); }
 .donut-legend b { display: inline-block; width: .6rem; height: .6rem; border-radius: 2px; margin-right: .3rem; }
+
+/* Jämförarens av-läge (.jmfbar) är sidans scenografi och hör inte hemma i det kopierbara exemplet. */
+.jmfbar:has(.jmf-knapp input:checked) .donut { -webkit-mask: none; mask: none; }
+/* /demo:donutdiagram:css */
 
 .gantt { display: grid; grid-template-columns: repeat(12, 1fr); gap: .4rem; }
 .gantt-row { grid-column: var(--start) / span var(--span); background: var(--acc); color: #0a0a0a; border-radius: 6px; padding: .4rem .6rem; font-family: var(--mono); font-size: .74rem; font-weight: 600; }
@@ -2652,31 +2668,41 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .nd-math .bar i { position:absolute; inset:0 auto 0 0; background:var(--acc); width: round(57%, 8px); }
 .nd-math .bar.mod i { width: calc(mod(140px, 90px)); background:#6ea8ff; }
 
+/* demo:if:css */
 .nd-if { display:grid; gap:.6rem; --varning: nej; }
 .nd-if:has(#nd-varna:checked) { --varning: ja; }
 .nd-if label { display:flex; align-items:center; gap:.5rem; font-family:var(--mono); font-size:.8rem; color:var(--dim); cursor:pointer; }
 .nd-if .kort { padding:1rem; border-radius:12px; border:1px solid var(--line); background: var(--bg2); color: var(--ink); font-size:.86rem; background: if(style(--varning: ja), #5a1d1d, var(--bg2)); color: if(style(--varning: ja), #ffd7d7, var(--ink)); }
+/* /demo:if:css */
 
+/* demo:attr:css */
 .nd-attr { counter-reset: n 0; display:grid; gap:.4rem; }
 .nd-attr a { color:var(--dim); text-decoration:none; font-family:var(--mono); font-size:.8rem; }
 .nd-attr a::after { content: " → " attr(data-url); color: var(--acc); }
 .nd-attr a:hover { color: var(--ink); }
+/* /demo:attr:css */
 
 .nd-discrete { border:1px solid var(--line); border-radius:12px; padding:1rem; display:grid; gap:.8rem; background:var(--bg2); }
 .nd-discrete .ruta { padding:.8rem; border-radius:8px; background:var(--acc); color:#0a0a0a; display:none; transition: display .4s allow-discrete, opacity .4s; opacity:0; }
 .nd-discrete:has(#nd-visa:checked) .ruta { display:block; opacity:1; }
 @starting-style { .nd-discrete:has(#nd-visa:checked) .ruta { opacity:0; } }
 
+/* demo:open:css */
 .nd-open details { border:1px solid var(--line); border-radius:10px; padding:.6rem .8rem; background:var(--bg2); }
 .nd-open details:open { border-color:var(--acc); }
 .nd-open details:open summary { color:var(--acc); }
 .nd-open summary { cursor:pointer; font-family:var(--mono); font-size:.8rem; }
+/* /demo:open:css */
 
+/* demo:caret-shape-caret-color:css */
 .nd-caret input { width:100%; padding:.7rem .9rem; border-radius:10px; border:1px solid var(--line); background:var(--bg2); color:var(--ink); font:inherit; caret-color:var(--acc); caret-shape: bar; }
+/* /demo:caret-shape-caret-color:css */
 
+/* demo:accent-color:css */
 .nd-accent { display:grid; gap:.6rem; }
 .nd-accent label { display:flex; gap:.6rem; align-items:center; font-size:.86rem; color:var(--dim); }
 .nd-accent input { accent-color: var(--acc); width:1.1rem; height:1.1rem; }
+/* /demo:accent-color:css */
 
 .nd-clamp { max-width:22rem; font-size:.86rem; color:var(--dim); display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; line-clamp:3; }
 
@@ -3523,31 +3549,35 @@ body { counter-reset: visade; }
         </svg>
         <p class="fig-cap">Webbläsaren väljer gren — du skriver bara ett ställe.</p>
       </div>
+      <!-- demo:light-dark:markup -->
       <div class="demo-yta ld-row">
         <div class="ld-box ld-light">color-scheme: light</div>
         <div class="ld-box ld-dark">color-scheme: dark</div>
       </div>
+      <!-- /demo:light-dark:markup -->
     
       <div class="jmf">
         <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>light-dark()</label>
         <span class="jmf-lage" aria-hidden="true"></span>
       </div>
-    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="16" aria-label="Kod för light-dark() — tvåfärgat i en deklaration">&lt;!-- HTML --&gt;
+    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="18" aria-label="Kod för light-dark() — tvåfärgat i en deklaration">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta ld-row"&gt;
-        &lt;div class="ld-box ld-light"&gt;color-scheme: light&lt;/div&gt;
-        &lt;div class="ld-box ld-dark"&gt;color-scheme: dark&lt;/div&gt;
-      &lt;/div&gt;
+  &lt;div class="ld-box ld-light"&gt;color-scheme: light&lt;/div&gt;
+  &lt;div class="ld-box ld-dark"&gt;color-scheme: dark&lt;/div&gt;
+&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
-.ld-row {display:grid; grid-template-columns:1fr 1fr; gap: .8rem;}
-.ld-box {border-radius: 12px; padding: 1.1rem; text-align:center; border: 1px solid var(--line);
+.ld-row { display:grid; grid-template-columns:1fr 1fr; gap: .8rem; }
+.ld-box {
+  border-radius: 12px; padding: 1.1rem; text-align:center; border: 1px solid var(--line);
   background: light-dark(#efe9dc, #17141c);
   color: light-dark(#171310, #f4efe6);
-  font-family: var(--mono); font-size: .78rem;}
-.ld-light {color-scheme: light;}
-.ld-dark {color-scheme: dark;}</textarea></details>
+  font-family: var(--mono); font-size: .78rem;
+}
+.ld-light { color-scheme: light; }
+.ld-dark { color-scheme: dark; }</textarea></details>
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar grad-1 enh-deg45" id="linear-gradient">
@@ -5914,23 +5944,25 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
     <article class="demo sup-chrome sup-edge" id="if">
       <h3 class="demo-titel">if() <span class="stod">— villkor direkt i egenskapsvärdet</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome 137 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge 137 · stöds</span></li><li class="bx s-nej"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds ej</span></li><li class="bx s-nej"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds ej</span></li><li class="stod-summa"><b>2</b>/4</li></ul>
       <p class="demo-beskrivning">CSS:s eget ternära operator: välj värde efter en style()-fråga, utan @supports-duplicering.</p>
+      <!-- demo:if:markup -->
       <div class="demo-yta nd-if">
         <label><input type="checkbox" id="nd-varna"> Sätt --varning: ja</label>
         <div class="kort">Detta kort byter färg med if(style(--varning: ja), …, …).</div>
       </div>
+      <!-- /demo:if:markup -->
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="13" aria-label="Kod för if() — villkor direkt i egenskapsvärdet">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta nd-if"&gt;
-        &lt;label&gt;&lt;input type="checkbox" id="nd-varna"&gt; Sätt --varning: ja&lt;/label&gt;
-        &lt;div class="kort"&gt;Detta kort byter färg med if(style(--varning: ja), …, …).&lt;/div&gt;
-      &lt;/div&gt;
+  &lt;label&gt;&lt;input type="checkbox" id="nd-varna"&gt; Sätt --varning: ja&lt;/label&gt;
+  &lt;div class="kort"&gt;Detta kort byter färg med if(style(--varning: ja), …, …).&lt;/div&gt;
+&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
-.nd-if {display:grid; gap:.6rem; --varning: nej;}
-.nd-if:has(#nd-varna:checked) {--varning: ja;}
-.nd-if label {display:flex; align-items:center; gap:.5rem; font-family:var(--mono); font-size:.8rem; color:var(--dim); cursor:pointer;}
-.nd-if .kort {padding:1rem; border-radius:12px; border:1px solid var(--line); background: var(--bg2); color: var(--ink); font-size:.86rem; background: if(style(--varning: ja), #5a1d1d, var(--bg2)); color: if(style(--varning: ja), #ffd7d7, var(--ink));}</textarea></details>
+.nd-if { display:grid; gap:.6rem; --varning: nej; }
+.nd-if:has(#nd-varna:checked) { --varning: ja; }
+.nd-if label { display:flex; align-items:center; gap:.5rem; font-family:var(--mono); font-size:.8rem; color:var(--dim); cursor:pointer; }
+.nd-if .kort { padding:1rem; border-radius:12px; border:1px solid var(--line); background: var(--bg2); color: var(--ink); font-size:.86rem; background: if(style(--varning: ja), #5a1d1d, var(--bg2)); color: if(style(--varning: ja), #ffd7d7, var(--ink)); }</textarea></details>
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar" id="round-mod">
@@ -5979,17 +6011,19 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="attr">
       <h3 class="demo-titel">attr() <span class="stod">— data-attribut som innehåll</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Läs <code>data-*</code>-attribut in i <code>content</code> — URL:er och etiketter utan duplication.</p>
+      <!-- demo:attr:markup -->
       <div class="demo-yta nd-attr"><a href="#" data-url="exempel.se/a">Länk A</a><a href="#" data-url="exempel.se/b">Länk B</a></div>
+      <!-- /demo:attr:markup -->
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="10" aria-label="Kod för attr() — data-attribut som innehåll">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta nd-attr"&gt;&lt;a href="#" data-url="exempel.se/a"&gt;Länk A&lt;/a&gt;&lt;a href="#" data-url="exempel.se/b"&gt;Länk B&lt;/a&gt;&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
-.nd-attr {counter-reset: n 0; display:grid; gap:.4rem;}
-.nd-attr a {color:var(--dim); text-decoration:none; font-family:var(--mono); font-size:.8rem;}
-.nd-attr a::after {content: " → " attr(data-url); color: var(--acc);}
-.nd-attr a:hover {color: var(--ink);}</textarea></details>
+.nd-attr { counter-reset: n 0; display:grid; gap:.4rem; }
+.nd-attr a { color:var(--dim); text-decoration:none; font-family:var(--mono); font-size:.8rem; }
+.nd-attr a::after { content: " → " attr(data-url); color: var(--acc); }
+.nd-attr a:hover { color: var(--ink); }</textarea></details>
     </article>
 
   </div>
@@ -7587,45 +7621,51 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="open">
       <h3 class="demo-titel">:open <span class="stod">— matcha öppnade element</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Stil på <code>&lt;details&gt;</code> och <code>&lt;dialog&gt;</code> när de är öppna — utan :has().</p>
+      <!-- demo:open:markup -->
       <div class="demo-yta nd-open"><details><summary>Öppna mig</summary><p style="padding:.6rem .2rem 0;color:var(--dim);font-size:.84rem;">När jag är öppen får summary accentfärg via :open.</p></details></div>
+      <!-- /demo:open:markup -->
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="10" aria-label="Kod för :open — matcha öppnade element">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta nd-open"&gt;&lt;details&gt;&lt;summary&gt;Öppna mig&lt;/summary&gt;&lt;p style="padding:.6rem .2rem 0;color:var(--dim);font-size:.84rem;"&gt;När jag är öppen får summary accentfärg via :open.&lt;/p&gt;&lt;/details&gt;&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
-.nd-open details {border:1px solid var(--line); border-radius:10px; padding:.6rem .8rem; background:var(--bg2);}
-.nd-open details:open {border-color:var(--acc);}
-.nd-open details:open summary {color:var(--acc);}
-.nd-open summary {cursor:pointer; font-family:var(--mono); font-size:.8rem;}</textarea></details>
+.nd-open details { border:1px solid var(--line); border-radius:10px; padding:.6rem .8rem; background:var(--bg2); }
+.nd-open details:open { border-color:var(--acc); }
+.nd-open details:open summary { color:var(--acc); }
+.nd-open summary { cursor:pointer; font-family:var(--mono); font-size:.8rem; }</textarea></details>
     </article>
 
     <article class="demo sup-chrome sup-edge" id="caret-shape-caret-color">
       <h3 class="demo-titel">caret-shape / caret-color <span class="stod">— en markör med personlighet</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome 144 · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge 144 · stöds</span></li><li class="bx s-nej"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds ej</span></li><li class="bx s-nej"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds ej</span></li><li class="stod-summa"><b>2</b>/4</li></ul>
       <p class="demo-beskrivning">Färga och forma textmarkören så att den följer temat.</p>
+      <!-- demo:caret-shape-caret-color:markup -->
       <div class="demo-yta nd-caret"><input type="text" placeholder="Klicka och skriv — markören är accentfärgad"></div>
+      <!-- /demo:caret-shape-caret-color:markup -->
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="7" aria-label="Kod för caret-shape / caret-color — en markör med personlighet">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta nd-caret"&gt;&lt;input type="text" placeholder="Klicka och skriv — markören är accentfärgad"&gt;&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
-.nd-caret input {width:100%; padding:.7rem .9rem; border-radius:10px; border:1px solid var(--line); background:var(--bg2); color:var(--ink); font:inherit; caret-color:var(--acc); caret-shape: bar;}</textarea></details>
+.nd-caret input { width:100%; padding:.7rem .9rem; border-radius:10px; border:1px solid var(--line); background:var(--bg2); color:var(--ink); font:inherit; caret-color:var(--acc); caret-shape: bar; }</textarea></details>
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="accent-color">
       <h3 class="demo-titel">accent-color <span class="stod">— nativa kontroller i tema</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Kryssrutor, radio och range får temat utan att byggas om.</p>
+      <!-- demo:accent-color:markup -->
       <div class="demo-yta nd-accent"><label><input type="checkbox" checked> accent-color: var(--acc)</label><label><input type="checkbox"> omarkerad</label></div>
+      <!-- /demo:accent-color:markup -->
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="9" aria-label="Kod för accent-color — nativa kontroller i tema">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta nd-accent"&gt;&lt;label&gt;&lt;input type="checkbox" checked&gt; accent-color: var(--acc)&lt;/label&gt;&lt;label&gt;&lt;input type="checkbox"&gt; omarkerad&lt;/label&gt;&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
-.nd-accent {display:grid; gap:.6rem;}
-.nd-accent label {display:flex; gap:.6rem; align-items:center; font-size:.86rem; color:var(--dim);}
-.nd-accent input {accent-color: var(--acc); width:1.1rem; height:1.1rem;}</textarea></details>
+.nd-accent { display:grid; gap:.6rem; }
+.nd-accent label { display:flex; gap:.6rem; align-items:center; font-size:.86rem; color:var(--dim); }
+.nd-accent input { accent-color: var(--acc); width:1.1rem; height:1.1rem; }</textarea></details>
     </article>
 
   </div>
@@ -7927,26 +7967,30 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <line x1="90" y1="22" x2="120" y2="22" class="strk" marker-end="url(#pil)" />
         <rect x="124" y="16" width="60" height="6" rx="3" class="acc" /><text x="154" y="34" text-anchor="middle" font-size="5.5" class="acc">100% — :valid</text></svg>
         <p class="fig-cap">.pwd-field:has(input:valid) .pwd-meter span { width: 100% }</p></div>
+      <!-- demo:losenordsmatare:markup -->
       <div class="demo-yta pwd-field">
         <input type="password" placeholder="Minst 8 tecken, en siffra, en versal" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
         <div class="pwd-meter"><span></span></div>
       </div>
-    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="16" aria-label="Kod för Lösenordsmätare — pattern + :valid">&lt;!-- HTML --&gt;
+      <!-- /demo:losenordsmatare:markup -->
+    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="18" aria-label="Kod för Lösenordsmätare — pattern + :valid">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta pwd-field"&gt;
-        &lt;input type="password" placeholder="Minst 8 tecken, en siffra, en versal" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required&gt;
-        &lt;div class="pwd-meter"&gt;&lt;span&gt;&lt;/span&gt;&lt;/div&gt;
-      &lt;/div&gt;
+  &lt;input type="password" placeholder="Minst 8 tecken, en siffra, en versal" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required&gt;
+  &lt;div class="pwd-meter"&gt;&lt;span&gt;&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
 /* Lösenordsmätare */
-.pwd-field input {width: 100%; padding: .6rem .8rem; border-radius: 8px; border: 1px solid var(--line);
-  background: var(--bg2); color: var(--ink); font: inherit; font-size: .88rem;}
-.pwd-meter {height: .4rem; border-radius: 99px; background: var(--bg2); overflow: hidden; margin-top: .5rem;}
-.pwd-meter span {display: block; height: 100%; width: 0; transition: width .3s ease, background .3s ease;}
-.pwd-field:has(input:not(:placeholder-shown):invalid) .pwd-meter span {width: 40%; background: var(--bad);}
-.pwd-field:has(input:valid) .pwd-meter span {width: 100%; background: var(--good);}</textarea></details>
+.pwd-field input {
+  width: 100%; padding: .6rem .8rem; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--bg2); color: var(--ink); font: inherit; font-size: .88rem;
+}
+.pwd-meter { height: .4rem; border-radius: 99px; background: var(--bg2); overflow: hidden; margin-top: .5rem; }
+.pwd-meter span { display: block; height: 100%; width: 0; transition: width .3s ease, background .3s ease; }
+.pwd-field:has(input:not(:placeholder-shown):invalid) .pwd-meter span { width: 40%; background: var(--bad); }
+.pwd-field:has(input:valid) .pwd-meter span { width: 100%; background: var(--good); }</textarea></details>
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="details-name">
@@ -8003,6 +8047,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <text x="164" y="27" text-anchor="middle" font-size="5.5" class="dim">::picker-icon</text>
         <text x="164" y="38" text-anchor="middle" font-size="5.5" class="dim">::checkmark</text></svg>
         <p class="fig-cap">appearance: base-select — menyns delar blir precis lika stilbara som elementet.</p></div>
+      <!-- demo:appearance-base-select:markup -->
       <div class="demo-yta">
         <select class="premium-select">
           <option>Byggnation</option>
@@ -8011,37 +8056,39 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         </select>
         <p class="select-fallback-note">Din webbläsare visar den vanliga inbyggda menyn istället — helt avsiktligt, det är hela poängen med <code>@supports</code>.</p>
       </div>
+      <!-- /demo:appearance-base-select:markup -->
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för appearance: base-select Chrome/Edge">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta"&gt;
-        &lt;select class="premium-select"&gt;
-          &lt;option&gt;Byggnation&lt;/option&gt;
-          &lt;option&gt;VVS&lt;/option&gt;
-          &lt;option&gt;El&lt;/option&gt;
-        &lt;/select&gt;
-        &lt;p class="select-fallback-note"&gt;Din webbläsare visar den vanliga inbyggda menyn istället — helt avsiktligt, det är hela poängen med &lt;code&gt;@supports&lt;/code&gt;.&lt;/p&gt;
-      &lt;/div&gt;
+  &lt;select class="premium-select"&gt;
+    &lt;option&gt;Byggnation&lt;/option&gt;
+    &lt;option&gt;VVS&lt;/option&gt;
+    &lt;option&gt;El&lt;/option&gt;
+  &lt;/select&gt;
+  &lt;p class="select-fallback-note"&gt;Din webbläsare visar den vanliga inbyggda menyn istället — helt avsiktligt, det är hela poängen med &lt;code&gt;@supports&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
 /* Anpassningsbar &lt;select&gt; */
-.premium-select {width: 100%; padding: .6rem .9rem; border-radius: 8px; border: 1px solid var(--line);
-  background: var(--bg2); color: var(--ink); font: inherit; font-size: .88rem;}
-.select-fallback-note {display: none; font-family: var(--mono); font-size: .72rem; color: var(--dim); margin-top: .5rem;}
-@supports (appearance: base-select) {
-  .premium-select {appearance: base-select;}
-  .premium-select::picker(select) {background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: .3rem;
-    box-shadow: 0 16px 40px rgb(0 0 0 / .5);}
-  .premium-select::picker-icon {color: var(--dim); transition: rotate .2s;}
-  .premium-select:open::picker-icon {rotate: 180deg;}
-  .premium-select option {padding: .5rem .6rem; border-radius: 6px; display: flex; align-items: center; gap: .5rem;}
-  .premium-select option:hover {background: var(--acc-soft);}
-  .premium-select option::checkmark {color: var(--acc);}
+.premium-select {
+  width: 100%; padding: .6rem .9rem; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--bg2); color: var(--ink); font: inherit; font-size: .88rem;
 }
-
-@supports not (appearance: base-select) {
-  .select-fallback-note {display: block;}
-}</textarea></details>
+@supports (appearance: base-select) {
+  .premium-select { appearance: base-select; }
+  .premium-select::picker(select) {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: .3rem;
+    box-shadow: 0 16px 40px rgb(0 0 0 / .5);
+  }
+  .premium-select::picker-icon { color: var(--dim); transition: rotate .2s; }
+  .premium-select:open::picker-icon { rotate: 180deg; }
+  .premium-select option { padding: .5rem .6rem; border-radius: 6px; display: flex; align-items: center; gap: .5rem; }
+  .premium-select option:hover { background: var(--acc-soft); }
+  .premium-select option::checkmark { color: var(--acc); }
+}
+.select-fallback-note { display: none; font-family: var(--mono); font-size: .72rem; color: var(--dim); margin-top: .5rem; }
+@supports not (appearance: base-select) { .select-fallback-note { display: block; } }</textarea></details>
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="facetterat-filter">
@@ -8105,27 +8152,29 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <text x="50" y="8" text-anchor="middle" font-size="5.5" class="dim">pointer-events: auto</text><text x="140" y="8" text-anchor="middle" font-size="5.5" class="dim">pointer-events: auto</text>
         <text x="95" y="36" text-anchor="middle" font-size="5.5" class="acc">spåren: pointer-events: none</text></svg>
         <p class="fig-cap">Bara tummarna (::-webkit-slider-thumb) tar emot klick — spåren släpper igenom.</p></div>
+      <!-- demo:dubbeltumme-slider:markup -->
       <div class="demo-yta dual-slider">
         <div class="dual-track"></div>
         <input type="range" min="0" max="100" value="20" aria-label="Lägsta pris">
         <input type="range" min="0" max="100" value="75" aria-label="Högsta pris">
       </div>
+      <!-- /demo:dubbeltumme-slider:markup -->
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="16" aria-label="Kod för Dubbeltumme-slider — två overlappande range">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta dual-slider"&gt;
-        &lt;div class="dual-track"&gt;&lt;/div&gt;
-        &lt;input type="range" min="0" max="100" value="20" aria-label="Lägsta pris"&gt;
-        &lt;input type="range" min="0" max="100" value="75" aria-label="Högsta pris"&gt;
-      &lt;/div&gt;
+  &lt;div class="dual-track"&gt;&lt;/div&gt;
+  &lt;input type="range" min="0" max="100" value="20" aria-label="Lägsta pris"&gt;
+  &lt;input type="range" min="0" max="100" value="75" aria-label="Högsta pris"&gt;
+&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
 /* Dubbeltumme-slider */
-.dual-slider {position: relative; height: 2.2rem; display: flex; align-items: center;}
-.dual-slider input[type="range"] {position: absolute; width: 100%; appearance: none; background: transparent; pointer-events: none; margin: 0;}
-.dual-slider input[type="range"]::-webkit-slider-thumb {appearance: none; pointer-events: auto; width: 18px; height: 18px; border-radius: 50%; background: var(--acc); cursor: grab; box-shadow: 0 0 0 3px var(--bg);}
-.dual-slider input[type="range"]::-moz-range-thumb {pointer-events: auto; width: 18px; height: 18px; border: 0; border-radius: 50%; background: var(--acc); cursor: grab; box-shadow: 0 0 0 3px var(--bg);}
-.dual-track {position: absolute; width: 100%; height: 4px; border-radius: 99px; background: var(--line);}</textarea></details>
+.dual-slider { position: relative; height: 2.2rem; display: flex; align-items: center; }
+.dual-slider input[type="range"] { position: absolute; width: 100%; appearance: none; background: transparent; pointer-events: none; margin: 0; }
+.dual-slider input[type="range"]::-webkit-slider-thumb { appearance: none; pointer-events: auto; width: 18px; height: 18px; border-radius: 50%; background: var(--acc); cursor: grab; box-shadow: 0 0 0 3px var(--bg); }
+.dual-slider input[type="range"]::-moz-range-thumb { pointer-events: auto; width: 18px; height: 18px; border: 0; border-radius: 50%; background: var(--acc); cursor: grab; box-shadow: 0 0 0 3px var(--bg); }
+.dual-track { position: absolute; width: 100%; height: 4px; border-radius: 99px; background: var(--line); }</textarea></details>
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="file-selector-button">
@@ -8557,6 +8606,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <text x="10" y="12" font-size="6" class="dim">height: calc-size(auto, size)</text>
         <path d="M10,34 C60,34 90,10 190,10" class="acc-strk" fill="none" /><text x="190" y="24" text-anchor="end" font-size="5.5" class="acc">natural höjd</text></svg>
         <p class="fig-cap">size är ett nyckelord som pekar på det andra argumentets uträknade värde.</p></div>
+      <!-- demo:calc-size:markup -->
       <div class="demo-yta calc-size-demo">
         <label class="calc-size-trigger">
           <input type="checkbox">
@@ -8567,27 +8617,31 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
           Det här innehållet har okänd, dynamisk höjd. Tidigare krävdes JavaScript för att läsa ut <code>scrollHeight</code>. Nu interpolerar CSS direkt mellan <code>0</code> och <code>calc-size(auto, size)</code>.
         </div>
       </div>
+      <!-- /demo:calc-size:markup -->
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för calc-size() — animera till auto-höjd">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta calc-size-demo"&gt;
-        &lt;label class="calc-size-trigger"&gt;
-          &lt;input type="checkbox"&gt;
-          &lt;span&gt;Klicka för att fälla ut med calc-size()&lt;/span&gt;
-          &lt;span class="calc-size-icon"&gt;▼&lt;/span&gt;
-        &lt;/label&gt;
-        &lt;div class="calc-size-content"&gt;
-          Det här innehållet har okänd, dynamisk höjd. Tidigare krävdes JavaScript för att läsa ut &lt;code&gt;scrollHeight&lt;/code&gt;. Nu interpolerar CSS direkt mellan &lt;code&gt;0&lt;/code&gt; och &lt;code&gt;calc-size(auto, size)&lt;/code&gt;.
-        &lt;/div&gt;
-      &lt;/div&gt;
+  &lt;label class="calc-size-trigger"&gt;
+    &lt;input type="checkbox"&gt;
+    &lt;span&gt;Klicka för att fälla ut med calc-size()&lt;/span&gt;
+    &lt;span class="calc-size-icon"&gt;▼&lt;/span&gt;
+  &lt;/label&gt;
+  &lt;div class="calc-size-content"&gt;
+    Det här innehållet har okänd, dynamisk höjd. Tidigare krävdes JavaScript för att läsa ut &lt;code&gt;scrollHeight&lt;/code&gt;. Nu interpolerar CSS direkt mellan &lt;code&gt;0&lt;/code&gt; och &lt;code&gt;calc-size(auto, size)&lt;/code&gt;.
+  &lt;/div&gt;
+&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
 /* calc-size() / interpolate-size demo */
-.calc-size-demo {border: 1px solid var(--line);
+.calc-size-demo {
+  border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--bg2);
-  overflow: hidden;}
-.calc-size-trigger {padding: .85rem 1.1rem;
+  overflow: hidden;
+}
+.calc-size-trigger {
+  padding: .85rem 1.1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -8596,20 +8650,25 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   font-size: .84rem;
   color: var(--ink);
   background: var(--panel);
-  user-select: none;}
-.calc-size-trigger input {position: absolute; opacity: 0;}
-.calc-size-icon {font-family: var(--mono); color: var(--acc); transition: transform .3s ease;}
-.calc-size-demo:has(.calc-size-trigger input:checked) .calc-size-icon {transform: rotate(180deg);}
-.calc-size-content {height: 0;
+  user-select: none;
+}
+.calc-size-trigger input { position: absolute; opacity: 0; }
+.calc-size-icon { font-family: var(--mono); color: var(--acc); transition: transform .3s ease; }
+.calc-size-demo:has(.calc-size-trigger input:checked) .calc-size-icon { transform: rotate(180deg); }
+.calc-size-content {
+  height: 0;
   overflow: hidden;
   transition: height .4s cubic-bezier(.2,.8,.2,1), padding .4s ease;
   padding: 0 1.1rem;
   color: var(--dim);
   font-size: .86rem;
-  line-height: 1.6;}
-.calc-size-demo:has(.calc-size-trigger input:checked) .calc-size-content {height: calc-size(auto, size);
+  line-height: 1.6;
+}
+.calc-size-demo:has(.calc-size-trigger input:checked) .calc-size-content {
+  height: calc-size(auto, size);
   padding: 1.1rem;
-  border-top: 1px solid var(--line);}</textarea></details>
+  border-top: 1px solid var(--line);
+}</textarea></details>
     </article>
 
   </div>
@@ -9323,32 +9382,36 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <circle cx="100" cy="20" r="16" fill="none" /><path d="M100,20 L100,4 A16,16 0 0 1 114,28 Z" class="acc" /><circle cx="100" cy="20" r="8" fill="var(--bg2)" />
         <text x="150" y="24" font-size="6" class="dim">mask: radial-gradient(…)</text></svg>
         <p class="fig-cap">Gradienten ritar tårtan, masken klipper bort mitten — två lager, ingen SVG.</p></div>
+      <!-- demo:donutdiagram:markup -->
       <div class="demo-yta">
         <div class="donut" role="img" aria-label="Fördelning: 65% kärna, 20% admin, 15% forskning" style="--p1:65; --p2:20;"><span>100%</span></div>
         <p class="donut-legend"><span><b style="background:var(--acc)"></b>Kärna</span><span><b style="background:#6ea8ff"></b>Admin</span><span><b style="background:var(--bg2)"></b>FoU</span></p>
       </div>
+      <!-- /demo:donutdiagram:markup -->
     
       <div class="jmf">
         <label class="jmf-knapp"><input type="checkbox"><span class="spar"></span>mask (hålet)</label>
         <span class="jmf-lage" aria-hidden="true"></span>
       </div>
-    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="17" aria-label="Kod för Donutdiagram — conic-gradient + mask">&lt;!-- HTML --&gt;
+    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="19" aria-label="Kod för Donutdiagram — conic-gradient + mask">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta"&gt;
-        &lt;div class="donut" role="img" aria-label="Fördelning: 65% kärna, 20% admin, 15% forskning" style="--p1:65; --p2:20;"&gt;&lt;span&gt;100%&lt;/span&gt;&lt;/div&gt;
-        &lt;p class="donut-legend"&gt;&lt;span&gt;&lt;b style="background:var(--acc)"&gt;&lt;/b&gt;Kärna&lt;/span&gt;&lt;span&gt;&lt;b style="background:#6ea8ff"&gt;&lt;/b&gt;Admin&lt;/span&gt;&lt;span&gt;&lt;b style="background:var(--bg2)"&gt;&lt;/b&gt;FoU&lt;/span&gt;&lt;/p&gt;
-      &lt;/div&gt;
+  &lt;div class="donut" role="img" aria-label="Fördelning: 65% kärna, 20% admin, 15% forskning" style="--p1:65; --p2:20;"&gt;&lt;span&gt;100%&lt;/span&gt;&lt;/div&gt;
+  &lt;p class="donut-legend"&gt;&lt;span&gt;&lt;b style="background:var(--acc)"&gt;&lt;/b&gt;Kärna&lt;/span&gt;&lt;span&gt;&lt;b style="background:#6ea8ff"&gt;&lt;/b&gt;Admin&lt;/span&gt;&lt;span&gt;&lt;b style="background:var(--bg2)"&gt;&lt;/b&gt;FoU&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
-.donut {width: 8.5rem; height: 8.5rem; border-radius: 50%; margin-inline: auto;
+.donut {
+  width: 8.5rem; height: 8.5rem; border-radius: 50%; margin-inline: auto;
   background: conic-gradient(var(--acc) 0% calc(var(--p1) * 1%), #6ea8ff calc(var(--p1) * 1%) calc((var(--p1) + var(--p2)) * 1%), var(--bg2) calc((var(--p1) + var(--p2)) * 1%) 100%);
   -webkit-mask: radial-gradient(closest-side, transparent 58%, #000 60%);
           mask: radial-gradient(closest-side, transparent 58%, #000 60%);
-  display: grid; place-items: center;}
-.donut span {font-family: var(--disp); font-weight: 700; -webkit-mask: none; mask: none; color: var(--ink);}
-.donut-legend {display: flex; gap: 1rem; justify-content: center; margin-top: .8rem; font-family: var(--mono); font-size: .74rem; color: var(--dim);}
-.donut-legend b {display: inline-block; width: .6rem; height: .6rem; border-radius: 2px; margin-right: .3rem;}</textarea></details>
+  display: grid; place-items: center;
+}
+.donut span { font-family: var(--disp); font-weight: 700; -webkit-mask: none; mask: none; color: var(--ink); }
+.donut-legend { display: flex; gap: 1rem; justify-content: center; margin-top: .8rem; font-family: var(--mono); font-size: .74rem; color: var(--dim); }
+.donut-legend b { display: inline-block; width: .6rem; height: .6rem; border-radius: 2px; margin-right: .3rem; }</textarea></details>
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="gantt-schema">

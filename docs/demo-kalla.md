@@ -1,6 +1,6 @@
 # En källa per demo — beslut, arbetsflöde och migreringsplan
 
-*Status: pilot (3 av 133 demos). Datum: 2026-09-25.*
+*Status: pilot + batch 1 (14 av 133 demos migrerade). Datum: 2026-09-25.*
 
 ## 1. Problemet, mätt i det faktiska dokumentet
 
@@ -134,6 +134,12 @@ byte. CI kör `node scripts/build.mjs --check` som första steg och faller om
 
 ### Migrera ett befintligt kort
 
+0. **Fånga baslinjen först.** `npm run baseline:capture` mäter demot i en riktig
+   webbläsare och skriver `tests/baseline/demos.json` (DOM, text, attribut,
+   geometri, beräknade stilar, pseudoelement) i standardtillståndet och i varje
+   interaktivt tillstånd. Filen committas tillsammans med migreringen; den
+   innehåller sha256 för dokumentet den fångades ur, så ursprunget kan
+   granskas mot git-historiken.
 1. Skapa `demos/<id>.html` med live-markupen (indraget borttaget) och de CSS-
    regler som hör till demot, klippta ur stilbladet. Kontrollera mot kodvalvet
    om det finns regler som driftat — live-versionen är facit.
@@ -141,10 +147,21 @@ byte. CI kör `node scripts/build.mjs --check` som första steg och faller om
 3. Ersätt reglerna i stilbladet med markörparet `/* demo:<id>:css */`.
    Regler som bara sidan behöver (jmfbar/labbar-överstyrningar) → `<style data-live>`.
 4. `npm run build` → granska `git diff index.html`: live-markupen ska vara
-   oförändrad; bara kodvalvet får ändras (och då till det bättre).
-5. Lägg till id:t i `MIGRATED` i `scripts/build.test.mjs` och, om demot är
-   interaktivt, ett scenario i `tests/demo-source.mjs`.
-6. `npm run check` och en riktig webbläsarjämförelse före/efter.
+   **byte-identisk** utanför markörerna; bara kodvalvet får ändras (och då till
+   det bättre).
+5. Registrera demot i `scripts/demo-spec.mjs` (id, typ, ankare, liveCss). Det är
+   manifestet som gör att byggtestet, `tests/demo-source.mjs` och
+   `tests/demo-parity.mjs` ställer sina frågor om demot — glömmer du posten
+   faller testerna, den finns inte som tyst lucka. Interaktiva demos får sina
+   tillstånd i `tests/demo-scenarios.mjs` och sina påståenden i `CHECKS` i
+   `tests/demo-source.mjs`.
+6. `npm run check` (stale + struktur + snippets + regression + byggtest) och
+   `node tests/demo-source.mjs && node tests/demo-parity.mjs --strict`. I samma
+   webbläsarinstans ska pariteten vara 0 px; i CI körs standardläget, där
+   struktur och stilar är exakta och geometrin rapporteras.
+
+`demos/_delat/` (delade fragment för labb-demos, Grupp B) är **inte** byggt —
+det läggs till när första labb-demot migreras, se §7.
 
 ## 6. Piloten — tre demos och vad de bevisar
 
@@ -169,17 +186,147 @@ Statiska kontroller är statiska: `build.test.mjs` bevisar härledning,
 determinism och stale-detektering, inte utseende. Utseende och beteende är
 bevisade enbart genom webbläsarkörningen ovan.
 
-## 7. Migreringsplan för återstående 130 demos
+## 6b. Batch 1 — elva demos ur Grupp A
+
+Migrerade i denna PR (utöver pilotens tre): elva kort som klarade alla fyra
+urvalskraven — snippet-HTML = live-markup, alla CSS-regler ordagrant i
+stilbladet, inga regler delade med andra kort, och ett sammanhängande CSS-block
+utan främmande regler emellan. Urvalet gjordes maskinellt över alla 133 kort;
+kandidaterna granskades sedan ett och ett innan de flyttades.
+
+| Demo | Regler | Varför just den | Vad den prövar i sviten |
+| ---- | -----: | --------------- | ----------------------- |
+| `accent-color` | 3 | rena regler, inga sidreferenser | native kryssrutor, `accent-color` ur Grundpaketet |
+| `caret-shape-caret-color` | 1 | minsta möjliga källa | formulärfält, `caret-shape: bar` |
+| `open` | 4 | interaktivt utan skript | `<details>`/`:open`, kant- och textfärg |
+| `appearance-base-select` | 11 (2 `@supports`-block) | kodvalvets regelordning hade driftat | `@supports`-grenar, `::picker-icon` |
+| `losenordsmatare` | 5 | interaktivt via `:valid` | `pattern`, `:invalid`/`:valid`, mätarens färg |
+| `dubbeltumme-slider` | 5 | leverantörs-pseudoelement | två `range`-reglage, `pointer-events` |
+| `calc-size` | 7 | pågående övergång + `:has()` | utfällning till `calc-size(auto, size)` |
+| `attr` | 4 | `attr()` i `::after` | `content: " → " attr(data-url)`, hover |
+| `if` | 4 | ny funktion med fallback | `if(style(…))`, `--varning`, id:t `#nd-varna` |
+| `light-dark` | 4 + live-only | `jmfbar`-regel → `<style data-live>` | `light-dark()`, `color-scheme` per kort |
+| `donutdiagram` | 4 + live-only | `jmfbar`-regel → `<style data-live>` | `conic-gradient` + `mask`, roll/aria-label |
+
+### Vad migreringen ändrade — och vad den bevisligen inte ändrade
+
+Live-markupen är **byte-identisk** för alla elva kort (jämförd mot `44185f0`
+tecken för tecken utanför markörerna, inte med ögonmått). Stilbladet har
+**samma 1183 toppnivåblock efter migreringen, utan att en enda regel lagts
+till, tagits bort eller ändrats** — jämfört som multimängd mot `44185f0`.
+Två regler har flyttat, och bara två:
+
+| Regel | Före | Efter |
+| ----- | ---: | ----: |
+| `.jmfbar:has(.jmf-knapp input:checked) .ld-box` | 191 | 348 |
+| `.jmfbar:has(.jmf-knapp input:checked) .donut` | 186 | 907 |
+
+Båda är `jmfbar`-överstyrningar som flyttat från det delade jmf-blocket in i
+respektive källas `<style data-live>`, intill demots egna regler. Allt annat
+behåller sin inbördes ordning (positionerna förskjuts bara av att två block
+bytt plats). Sidans scenografi är fortfarande sidans — och att flytten inte
+ändrade kaskaden är mätt, inte antaget: paritetstestet kör varje demos
+`jmf-av`-tillstånd och får 0 avvikelser.
+
+Kodvalven ändras däremot — avsiktligt:
+
+| Ändring | Exempel | Varför |
+| ------- | ------- | ------ |
+| kortets indrag bort | `        <select …>` → `  <select …>` | kodvalvet ska vara kopierbart, inte ett utdrag ur `index.html` |
+| CSS i stilbladets formatering | `.nd-accent {display:grid; …}` → `.nd-accent { display:grid; … }` | live-versionen är facit; en enda kopia kan inte drifta |
+| regelordning som stilbladet | `appearance-base-select`: `.select-fallback-note` låg före `@supports` i valvet | valvet var en handskriven kopia; nu gäller dokumentets ordning |
+| `rows` räknas om | `donutdiagram` 17 → 19 rader | bygget sätter radantalet ur källan |
+
+### Bevis: statiskt kontra mätt
+
+De statiska testerna bevisar **härledning**: `scripts/build.test.mjs` (282
+påståenden, inventariestyrda ur `scripts/demo-spec.mjs`) visar att live-markup,
+stilregler och kodvalv kommer ur källfilen, att bygget är deterministiskt och
+idempotent, att stale upptäcks, att inga regler delas mellan migrerade källor
+och att de 119 omigrerade korten ligger kvar orörda. De säger **ingenting** om
+hur något ser ut.
+
+Utseende och beteende är mätta i Chromium 153.0.8010.0:
+
+- `tests/demo-parity.mjs --strict` mot baslinjen i
+  `tests/baseline/demos.json` (fångad ur `44185f0`, sha256 `6be18e6c…`):
+  **13 200 värden, 0 avvikelser** — inklusive geometri, pseudoelement och de
+  interaktiva tillstånden.
+- 28 elementskärmbilder (`.demo-yta`, ett per tillstånd) före och efter:
+  **byte-identiska**. Beviskörningen ligger utanför repot (skärmbilder hör
+  inte till källkoden); den reproduceras med
+  `node tests/demo-parity.mjs --shots <katalog>` och `cmp` mellan katalogerna.
+- Helsidesbilder av hela dokumentet vid 1280 px och 480 px: **byte-identiska**.
+- `tests/demo-source.mjs`: 136 påståenden om de 14 migrerade demona, på sidan
+  och fristående (Grundpaketet + kodvalv), inklusive interaktiva tillstånd.
+  Kört mot pre-migrerings-dokumentet faller det på markörinventariet — de elva
+  valvens *beteende* var alltså redan korrekt; det som driftade var formen
+  (indrag, formatering, ordning), inte tekniken.
+
+Körningen ligger utanför repots CI-pipeline: `tests/demo-parity.mjs` är
+förberett som eget steg i webbläsarjobbet, men `.github/workflows/ci.yml` kan
+inte uppdateras från den här grenen (GitHub-appen som driver grenen saknar
+`workflows`-behörighet, och GitHub avvisar både push och API-anrop som rör
+workflowfiler). Den exakta raden ligger i PR-beskrivningen. Fram till dess
+körs pariteten lokalt med `npm run test:browser` eller `npm run test:parity`.
+
+**Miljöreservation.** Ett paritetsbevis är bara så starkt som sin miljö, och
+verktyget säger vilket läge det kör i:
+
+| Läge | Vad som jämförs | När |
+| ---- | --------------- | --- |
+| **samma webbläsarbygge** som baslinjen | struktur, text, attribut, fältvärden och icke-geometriska stilar **exakt** (fäller); geometri med slack max(2 px, 2 %) som varning | beviset ovan: `--strict` ger 0 px |
+| **annat bygge** | struktur, text, attribut och fältvärden exakt (fäller); stilar och geometri rapporteras | CI och andra miljöer där Playwright installerar ett annat Chromium än baslinjens 153.0.8010.0 |
+
+Skälet till uppdelningen är att ett nyare bygge kan stödja fler funktioner
+(`if()`, `calc-size()`, `appearance: base-select`) och därmed rendera annat —
+det är skillnad i webbläsare, inte i migrering. `--require-same-browser` gör
+versionsglappet till ett fel och är flaggan för den fullständiga grinden.
+Geometrin mäts i px och textmetrik skiljer sig dessutom mellan Linux-byggen av
+samma Chromium: samma baslinje mätt med `--font-render-hinting=full
+--disable-font-subpixel-positioning` gav **0 strukturella avvikelser**, 78
+geometrivärden inom toleransen och 12 utanför (störst 24 px, alla
+textbreddsberoende).
+
+### Kandidater som medvetet INTE migrerades i denna batch
+
+| Fall | Varför inte | Vad som krävs |
+| ---- | ----------- | ------------- |
+| `dvh-svh-lvh` | CSS-blocket inleds av kapitelbanderollen `/* KAPITEL 09 · RESPONSIV & ADAPTIV */`. Flyttas den in i källan försvinner banderollen ur stilbladet; lämnas den kvar tappar kodvalvet sin inledning. | Beslut om kapitelbanderoller (stanna i `index.html` utanför markörerna + acceptera att valvet inte bär dem). `dvh-svh-lvh` är första kandidaten när beslutet är taget. |
+| `radioflikar` | Tre live-only-regler (`.prov-rad.pa`, `::before`, `b`) kommer från ett delat labb-block, inte från demot. | Migreras när labb-blocket har en ägare (Grupp B). |
+| `prefers-color-scheme`, `prefers-reduced-motion`, `hover-hover`, `min-width-640px` | Deras valv delar tre identiska regler med varandra; att migrera en skulle duplicera regler i stilbladet. | Migreras som grupp om fyra (samma fyra regler i en källa eller fyra källor med varsin regel). |
+| `media-print`, `clamp` | 11 regler var, delade med fem–sex andra kort. | Grupp, efter samma beslut som ovan. |
+| `facetterat-filter` | Delar åtta regler med `flerstegs-formular-wizard`. | Migreras tillsammans med wizarden (Grupp D). |
+| `container-type-size-behallarenheter-cqi` | Ren kandidat (12 regler, inga beroenden) men större än batchens smala urval. | Nästa batch: enkel att lägga till, men förtjänar egen granskning. |
+| `css-kalkylator` | En live-only-regel (`.index-kap summary .antal`) pekar in i sidomenyns/`<figure>`-scenografi. | Kräver samma klassavgränsning som Grupp E-beslutet nedan. |
+| `3d-card-tilt`, `fore-efter-jamforare`, `4-bitars-binaradderare` | Rena kandidater men sammansatta (16–28 regler, flera tillstånd). | Grupp D: en i taget med webbläsarjämförelse. |
+| `grundpaketet` | Valvet *är* källan för `:root`-variablerna som `check-snippets.mjs` läser; kräver tom markup-del. | Egen liten utbyggnad av källformatet. |
+| Grupp B (16 labb-demos), Grupp C (7 avvikande valv) | Delad kapitel-CSS respektive valv som skiljer sig från live-markupen. | Enligt planen i §7 — beslut först, migrering sedan. |
+
+## 7. Migreringsplan för återstående 119 demos
 
 Grupperat efter vad analysen faktiskt visade, inte efter kapitel.
+Läget efter batch 1: **14 av 133** kort är källgenererade (3 pilot + 11 i §6b),
+**119** återstår. Nästa batch kan börja med `container-type-size-behallarenheter-cqi`
+och de övriga rena kandidaterna i Grupp A; besluten i §6b avgör när
+`dvh-svh-lvh` och de fyra media-demon kan följa.
 
 ### Grupp A — mekanisk (≈84 demos, t.ex. `light-dark`, `radioflikar`, `details`, `dialog`, `popover-*`, `donutdiagram`)
 
 Snippet-HTML = live-markup, all CSS finns ordagrant i stilbladet. Migrering
-är ren klipp-och-klistra enligt §5. Kan göras kapitelvis, gärna med ett
-engångsskript som föreslår källfilen ur befintligt kort (skriptet i
-analysfasen hittade dessa maskinellt). Risk: låg. Varje kort granskas via
+är ren klipp-och-klistra enligt §5, med ett engångsskript som föreslår
+källfilen ur befintligt kort. Risk: låg. Varje kort granskas via
 `git diff index.html` — live-markupen ska vara oförändrad.
+
+Batch 1 visade att urvalet bör snävas in ytterligare: en kandidat är bara
+mekanisk om reglerna dessutom ligger i ett **sammanhängande block utan delade
+regler** och om inga andra kort refererar till dess klasser. Två av villkoren
+prövas nu av maskinen: markörformatet tillåter bara **ett** CSS-block per demo
+(två block ger `markören förekommer flera gånger`), och `scripts/build.test.mjs`
+faller om samma regeltext förekommer i två migrerade källor. Det tredje —
+klassreferenser från andra kort — är fortfarande en granskningsfråga, och
+`analyze`-skriptet i analysfasen hittade dem maskinellt
+(`grep '\.klass'` i resten av stilbladet).
 
 ### Grupp B — labb-demos med delade kapitelregler (16 demos: `color-mix`, `rgb-from`, `oklch-display-p3`, 5 gradienter, 8 filter)
 

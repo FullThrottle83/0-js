@@ -1,0 +1,16 @@
+<!--
+  demo: if
+  Kanonisk källa för både live-demot och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+  fyra regler; --varning och id:t #nd-varna hör till demot
+-->
+<div class="demo-yta nd-if">
+  <label><input type="checkbox" id="nd-varna"> Sätt --varning: ja</label>
+  <div class="kort">Detta kort byter färg med if(style(--varning: ja), …, …).</div>
+</div>
+<style>
+.nd-if { display:grid; gap:.6rem; --varning: nej; }
+.nd-if:has(#nd-varna:checked) { --varning: ja; }
+.nd-if label { display:flex; align-items:center; gap:.5rem; font-family:var(--mono); font-size:.8rem; color:var(--dim); cursor:pointer; }
+.nd-if .kort { padding:1rem; border-radius:12px; border:1px solid var(--line); background: var(--bg2); color: var(--ink); font-size:.86rem; background: if(style(--varning: ja), #5a1d1d, var(--bg2)); color: if(style(--varning: ja), #ffd7d7, var(--ink)); }
+</style>

@@ -1,0 +1,35 @@
+<!--
+  demo: appearance-base-select
+  Kanonisk källa för både live-demot och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+  @supports-blocken hör till demot och kodvalvet blir komplett först nu
+-->
+<div class="demo-yta">
+  <select class="premium-select">
+    <option>Byggnation</option>
+    <option>VVS</option>
+    <option>El</option>
+  </select>
+  <p class="select-fallback-note">Din webbläsare visar den vanliga inbyggda menyn istället — helt avsiktligt, det är hela poängen med <code>@supports</code>.</p>
+</div>
+<style>
+/* Anpassningsbar <select> */
+.premium-select {
+  width: 100%; padding: .6rem .9rem; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--bg2); color: var(--ink); font: inherit; font-size: .88rem;
+}
+@supports (appearance: base-select) {
+  .premium-select { appearance: base-select; }
+  .premium-select::picker(select) {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: .3rem;
+    box-shadow: 0 16px 40px rgb(0 0 0 / .5);
+  }
+  .premium-select::picker-icon { color: var(--dim); transition: rotate .2s; }
+  .premium-select:open::picker-icon { rotate: 180deg; }
+  .premium-select option { padding: .5rem .6rem; border-radius: 6px; display: flex; align-items: center; gap: .5rem; }
+  .premium-select option:hover { background: var(--acc-soft); }
+  .premium-select option::checkmark { color: var(--acc); }
+}
+.select-fallback-note { display: none; font-family: var(--mono); font-size: .72rem; color: var(--dim); margin-top: .5rem; }
+@supports not (appearance: base-select) { .select-fallback-note { display: block; } }
+</style>

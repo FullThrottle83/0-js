@@ -1,0 +1,10 @@
+<!--
+  demo: caret-shape-caret-color
+  Kanonisk källa för både live-demot och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+  en enda regel (.nd-caret input) utan kopplingar till andra kort
+-->
+<div class="demo-yta nd-caret"><input type="text" placeholder="Klicka och skriv — markören är accentfärgad"></div>
+<style>
+.nd-caret input { width:100%; padding:.7rem .9rem; border-radius:10px; border:1px solid var(--line); background:var(--bg2); color:var(--ink); font:inherit; caret-color:var(--acc); caret-shape: bar; }
+</style>

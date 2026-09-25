@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * build.mjs — genererar live-demo, stilregler och kopierbart kodvalv ur EN
- * kanonisk källa per demo (pilot: tre demos, se docs/demo-kalla.md).
+ * kanonisk källa per demo (antalet står i scripts/demo-spec.mjs; se
+ * docs/demo-kalla.md).
  *
  * Källor:      demos/<id>.html   — markup + <style> (+ valfri <style data-live>)
  * Mall/artefakt: index.html      — publicerad enfilsprodukt; bara innehållet

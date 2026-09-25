@@ -1,0 +1,13 @@
+<!--
+  demo: open
+  Kanonisk källa för både live-demot och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+  fyra :open/:summary-regler, interaktivt via details utan skript
+-->
+<div class="demo-yta nd-open"><details><summary>Öppna mig</summary><p style="padding:.6rem .2rem 0;color:var(--dim);font-size:.84rem;">När jag är öppen får summary accentfärg via :open.</p></details></div>
+<style>
+.nd-open details { border:1px solid var(--line); border-radius:10px; padding:.6rem .8rem; background:var(--bg2); }
+.nd-open details:open { border-color:var(--acc); }
+.nd-open details:open summary { color:var(--acc); }
+.nd-open summary { cursor:pointer; font-family:var(--mono); font-size:.8rem; }
+</style>
