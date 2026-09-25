@@ -125,9 +125,10 @@ en körning verifierats.** Installationsinstruktioner finns i PR-tråden.
 
 ### Vägkarta
 
-- **Nivå 2 — funktionella tester:** Playwright mot renderad HTML (meny, filter,
-  dialog, popover, tangentbordsnavigering). Kräver webbläsare och körs i CI,
-  inte i de snabba statiska kontrollerna.
+- **Nivå 2 — funktionella tester:** `tests/menu-keyboard.mjs` verifierar
+  mobilmenyns tangentbordsflöde i en riktig webbläsare och körs i CI:s valfria
+  webbläsarjobb. Kräver Chromium (`npx playwright install chromium`) och
+  blockerar aldrig de snabba statiska kontrollerna.
 - **Nivå 3 — webbläsarmatris:** verifiera utvalda demos i Chromium, Firefox och
   WebKit, med dokumenterad fallback per experimentell funktion.
 - **Nivå 4b — isolerad snippet-rendering:** bygg en testsida av varje exempel
@@ -209,6 +210,8 @@ konkret behov finns. Licenser och upphov: [THIRD-PARTY.md](THIRD-PARTY.md).
 │   ├── check-snippets.mjs  # nivå 4: kopierbara exempel (statiskt)
 │   ├── check.test.mjs      # regressionstest för kontrollerna
 │   └── screenshot.mjs      # valfria skärmbilder (kräver playwright)
+├── tests/
+│   └── menu-keyboard.mjs   # nivå 2: mobilmenyns tangentbord (kräver webbläsare)
 ├── THIRD-PARTY.md          # licenser för inbäddade typsnitt
 ├── LICENSE                 # MIT (kod) — OFL 1.1 (typsnitt) gäller separat
 └── README.md
