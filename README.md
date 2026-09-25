@@ -206,17 +206,14 @@ tangentbordstest och de källgenererade demonas beteendetest
 (`tests/demo-source.mjs`: på sidan och fristående som Grundpaketet + kodvalv,
 inklusive interaktiva tillstånd). Både byggtestet och beteendetestet är
 inventariestyrda ur `scripts/demo-spec.mjs`, så de nya demona omfattas utan
-att workflowen ändras. Endast skärmbildsgenerering och artefaktuppladdning är
-icke-blockerande. **Status: workflow installerad; kontrollera den första
+att workflowen ändras. Paritetssteget (`node tests/demo-parity.mjs`) är
+nu också ett obligatoriskt CI-steg. Det jämför DOM-struktur, text, attribut
+och fältvärden exakt. Beräknade stilar och geometri jämförs strikt när
+Chromium-bygget matchar baslinjens; annars rapporteras de separat och det
+krävs en körning med baslinjens bygge för full visuell paritetsgrind.
+Endast skärmbildsgenerering och artefaktuppladdning är icke-blockerande.
+**Status: workflowen är uppdaterad på PR-branchen; kontrollera den första
 GitHub Actions-körningen innan ändringarna merge:as.**
-
-Paritetssteget (`node tests/demo-parity.mjs`) ingår i `npm run test:browser`
-och är förberett som tredje steg i webbläsarjobbet; den exakta raden ligger i
-PR-beskrivningen. Filen `.github/workflows/ci.yml` kan inte uppdateras från
-den här grenen — den automatiska GitHub-appen saknar `workflows`-behörighet,
-och GitHub avvisar både push och API-anrop som rör workflowfiler. Ändringen
-är därför en ettstegsändring för en människa (eller en app med rätt
-behörighet).
 
 ### Vägkarta
 
