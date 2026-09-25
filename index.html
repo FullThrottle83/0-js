@@ -1751,14 +1751,14 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .dual-slider input[type="range"]::-moz-range-thumb { pointer-events: auto; width: 18px; height: 18px; border: 0; border-radius: 50%; background: var(--acc); cursor: grab; box-shadow: 0 0 0 3px var(--bg); }
 .dual-track { position: absolute; width: 100%; height: 4px; border-radius: 99px; background: var(--line); }
 
-/* Dropzon */
-.dropzone {
+/* Stilad filväljare — välj-knapp + klickbar yta, ingen drag-och-släpp-logik */
+.filval {
   display: grid; place-items: center; gap: .4rem; min-height: 6rem; border: 2px dashed var(--line);
   border-radius: 12px; cursor: pointer; transition: border-color .2s, background .2s; text-align: center;
   font-family: var(--mono); font-size: .82rem; color: var(--dim);
 }
-.dropzone:has(:focus-visible) { border-color: var(--acc); background: var(--acc-soft); }
-.dropzone input[type="file"]::file-selector-button {
+.filval:has(:focus-visible) { border-color: var(--acc); background: var(--acc-soft); }
+.filval input[type="file"]::file-selector-button {
   padding: .5rem 1rem; border-radius: 8px; border: 0; background: var(--acc); color: #0a0a0a;
   font: inherit; font-weight: 600; cursor: pointer; margin-right: .6rem;
 }
@@ -3036,7 +3036,7 @@ body { counter-reset: visade; }
 <li class="index-rad sup-chrome sup-edge"><a href="#appearance-base-select"><span class="rad-namn">appearance: base-select Chrome/Edge</span><i class="prikkar"><b class=""></b><b class=""></b><b class="s"></b><b class="d"></b></i></a></li>
 <li class="index-rad sup-chrome sup-edge sup-safari sup-firefox"><a href="#facetterat-filter"><span class="rad-namn">Facetterat filter — :has() som frågemotor</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
 <li class="index-rad sup-chrome sup-edge sup-safari sup-firefox"><a href="#dubbeltumme-slider"><span class="rad-namn">Dubbeltumme-slider — två overlappande range</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
-<li class="index-rad sup-chrome sup-edge sup-safari sup-firefox"><a href="#file-selector-button"><span class="rad-namn">::file-selector-button — dropzon</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="index-rad sup-chrome sup-edge sup-safari sup-firefox"><a href="#file-selector-button"><span class="rad-namn">::file-selector-button — stilad filväljare</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
 <li class="index-rad sup-chrome sup-edge sup-safari sup-firefox"><a href="#favorit-starburst"><span class="rad-namn">Favorit-starburst — :checked + partikelring</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
 <li class="index-rad sup-chrome sup-edge sup-safari sup-firefox"><a href="#css-kalkylator"><span class="rad-namn">CSS-kalkylator — counter-increment + :checked</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
 <li class="index-rad sup-chrome sup-edge sup-safari sup-firefox"><a href="#fore-efter-jamforare"><span class="rad-namn">Före/Efter-jämförare — :has() + radiosteg</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
@@ -6810,17 +6810,17 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="popover-attributet">
       <h3 class="demo-titel">popover-attributet <span class="stod">— bevis 01</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
-      <p class="demo-beskrivning">Öppning, light-dismiss (klicka utanför, tryck Esc), stängning och fokusfälla — allt i attribut, inget skript.</p>
+      <p class="demo-beskrivning">Öppning, light-dismiss (klicka utanför, tryck Esc) och stängning — allt i attribut, inget skript. Popovern är icke-modal: innehållet bakom förblir interaktivt och ingen fokusfälla skapas. Den modala motsvarigheten — med fokusfälla — finns i <a href="#dialog-commandfor">dialog-demot</a>.</p>
       <div class="fig"><svg viewBox="0 0 200 60"><title>En knapp och en panel, kopplade via attribut</title>
         <rect x="10" y="24" width="60" height="20" rx="10" class="acc-strk" fill="none" /><text x="40" y="37" text-anchor="middle" font-size="6.5">öppna</text>
         <line x1="70" y1="34" x2="106" y2="34" class="acc-strk" marker-end="url(#pil)" />
         <rect x="110" y="8" width="80" height="46" rx="8" class="strk" fill="var(--bg2)" /><text x="150" y="34" text-anchor="middle" font-size="6" class="dim">top layer</text></svg>
         <p class="fig-cap">popovertarget="b1" ↔ popover id="b1" — ingen JS-lyssnare emellan.</p></div>
-      <p class="manus"><button class="ord" popovertarget="b1">popover-attributet</button> sköter öppning, ljus-avfärd och fokusfälla.</p>
+      <p class="manus"><button class="ord" popovertarget="b1">popover-attributet</button> sköter öppning och ljus-avfärd.</p>
       <div class="pop" popover id="b1">
         <p class="etikett2">Bevis 01 · popover-attributet</p>
         <h3>Ett rum, deklarerat</h3>
-        <p>Öppning, light-dismiss (klicka utanför, tryck Esc), stängning och fokusfälla — allt i attribut, inget skript.</p>
+        <p>Öppning, light-dismiss (klicka utanför, tryck Esc) och stängning — allt i attribut, inget skript. Popovern är icke-modal, så sidan bakom är fortfarande interaktiv. För modalitet, se <code>&lt;dialog&gt;</code>-demot.</p>
         <pre><code>&lt;button popovertarget="b1"&gt;öppna&lt;/button&gt;
 &lt;div popover id="b1"&gt; … &lt;/div&gt;</code></pre>
         <button class="stang" popovertarget="b1" popovertargetaction="hide">Stäng</button>
@@ -6831,11 +6831,11 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         &lt;line x1="70" y1="34" x2="106" y2="34" class="acc-strk" marker-end="url(#pil)" /&gt;
         &lt;rect x="110" y="8" width="80" height="46" rx="8" class="strk" fill="var(--bg2)" /&gt;&lt;text x="150" y="34" text-anchor="middle" font-size="6" class="dim"&gt;top layer&lt;/text&gt;&lt;/svg&gt;
         &lt;p class="fig-cap"&gt;popovertarget="b1" ↔ popover id="b1" — ingen JS-lyssnare emellan.&lt;/p&gt;&lt;/div&gt;
-      &lt;p class="manus"&gt;&lt;button class="ord" popovertarget="b1"&gt;popover-attributet&lt;/button&gt; sköter öppning, ljus-avfärd och fokusfälla.&lt;/p&gt;
+      &lt;p class="manus"&gt;&lt;button class="ord" popovertarget="b1"&gt;popover-attributet&lt;/button&gt; sköter öppning och ljus-avfärd.&lt;/p&gt;
       &lt;div class="pop" popover id="b1"&gt;
         &lt;p class="etikett2"&gt;Bevis 01 · popover-attributet&lt;/p&gt;
         &lt;h3&gt;Ett rum, deklarerat&lt;/h3&gt;
-        &lt;p&gt;Öppning, light-dismiss (klicka utanför, tryck Esc), stängning och fokusfälla — allt i attribut, inget skript.&lt;/p&gt;
+        &lt;p&gt;Öppning, light-dismiss (klicka utanför, tryck Esc) och stängning — allt i attribut, inget skript. Popovern är icke-modal, så sidan bakom är fortfarande interaktiv. För modalitet, se &lt;code&gt;&amp;lt;dialog&amp;gt;&lt;/code&gt;-demot.&lt;/p&gt;
         &lt;pre&gt;&lt;code&gt;&amp;lt;button popovertarget="b1"&amp;gt;öppna&amp;lt;/button&amp;gt;
 &amp;lt;div popover id="b1"&amp;gt; … &amp;lt;/div&amp;gt;&lt;/code&gt;&lt;/pre&gt;
         &lt;button class="stang" popovertarget="b1" popovertargetaction="hide"&gt;Stäng&lt;/button&gt;
@@ -8057,32 +8057,32 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="file-selector-button">
-      <h3 class="demo-titel">::file-selector-button <span class="stod">— dropzon</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
-      <p class="demo-beskrivning">Ett stilbart urvalsknapp för filer, i en klickbar zon byggd av en <code>&lt;label&gt;</code> som omsluter input-fältet.</p>
+      <h3 class="demo-titel">::file-selector-button <span class="stod">— stilad filväljare</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
+      <p class="demo-beskrivning">En stilbar välj-knapp för filer, i en klickbar yta byggd av en <code>&lt;label&gt;</code> som omsluter input-fältet. Filvalet är native — någon drag-och-släpp-hantering ingår inte, den kräver skript.</p>
       <div class="fig"><svg viewBox="0 0 200 40"><title>Hela ytan är klickbar, bara en del av den ser ut som en knapp</title>
         <rect x="10" y="6" width="180" height="28" rx="6" class="strk" fill="none" stroke-dasharray="3 3" />
         <rect x="20" y="12" width="50" height="16" rx="4" class="acc" /><text x="45" y="23" text-anchor="middle" font-size="6" fill="#0a0a0a">Välj fil</text>
         <text x="130" y="23" text-anchor="middle" font-size="6" class="dim">::file-selector-button</text></svg>
         <p class="fig-cap">&lt;label&gt; omsluter &lt;input&gt; — hela rutan är klickbar, inte bara knappen.</p></div>
-      <label class="demo-yta dropzone">
+      <label class="demo-yta filval">
         <input type="file" style="max-width:100%;">
-        <span>eller släpp en fil här</span>
+        <span>hela ytan öppnar filväljaren</span>
       </label>
-    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="16" aria-label="Kod för ::file-selector-button — dropzon">&lt;!-- HTML --&gt;
-&lt;label class="demo-yta dropzone"&gt;
+    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="16" aria-label="Kod för ::file-selector-button — stilad filväljare">&lt;!-- HTML --&gt;
+&lt;label class="demo-yta filval"&gt;
         &lt;input type="file" style="max-width:100%;"&gt;
-        &lt;span&gt;eller släpp en fil här&lt;/span&gt;
+        &lt;span&gt;hela ytan öppnar filväljaren&lt;/span&gt;
       &lt;/label&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
-/* Dropzon */
-.dropzone {display: grid; place-items: center; gap: .4rem; min-height: 6rem; border: 2px dashed var(--line);
+/* Stilad filväljare — välj-knapp + klickbar yta, ingen drag-och-släpp-logik */
+.filval {display: grid; place-items: center; gap: .4rem; min-height: 6rem; border: 2px dashed var(--line);
   border-radius: 12px; cursor: pointer; transition: border-color .2s, background .2s; text-align: center;
   font-family: var(--mono); font-size: .82rem; color: var(--dim);}
-.dropzone:has(:focus-visible) {border-color: var(--acc); background: var(--acc-soft);}
-.dropzone input[type="file"]::file-selector-button {padding: .5rem 1rem; border-radius: 8px; border: 0; background: var(--acc); color: #0a0a0a;
+.filval:has(:focus-visible) {border-color: var(--acc); background: var(--acc-soft);}
+.filval input[type="file"]::file-selector-button {padding: .5rem 1rem; border-radius: 8px; border: 0; background: var(--acc); color: #0a0a0a;
   font: inherit; font-weight: 600; cursor: pointer; margin-right: .6rem;}</textarea></details>
     </article>
 
@@ -8887,11 +8887,13 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
       <div class="fig"><svg viewBox="0 0 160 30"><title>Suddigheten är den enda variabeln</title>
         <text x="30" y="20" font-family="var(--mono)" font-size="9" filter="blur(3px)" class="dim">••••••••</text>
         <line x1="60" y1="15" x2="100" y2="15" class="strk" marker-end="url(#pil)" />
-        <text x="130" y="20" text-anchor="middle" font-family="var(--mono)" font-size="9" class="acc">sk_live…</text></svg>
+        <text x="130" y="20" text-anchor="middle" font-family="var(--mono)" font-size="9" class="acc">spoiler!</text></svg>
         <p class="fig-cap">filter: blur(6px) → blur(0) vid :hover/:focus-visible.</p></div>
-      <p class="demo-yta" style="font-size:.94rem; color:var(--dim);">Åtkomsttoken: <span class="spoiler" tabindex="0" role="button" aria-label="Dold text, välj för att visa"><span>sk_live_9942a8bf2c</span></span></p>
+      <p class="demo-yta" style="font-size:.94rem; color:var(--dim);">Filmslutet: <span class="spoiler" tabindex="0" aria-label="Spoiler, fokusera eller hovra för att avslöja"><span>hunden överlever</span></span></p>
+      <p class="labb-hint">Suddigheten är bara presentation — texten finns fortfarande i HTML-källan. CSS är <b>inte</b> åtkomstkontroll, så använd aldrig mönstret för hemligheter.</p>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="11" aria-label="Kod för Textspoiler — filter: blur() + fokus">&lt;!-- HTML --&gt;
-&lt;p class="demo-yta" style="font-size:.94rem; color:var(--dim);"&gt;Åtkomsttoken: &lt;span class="spoiler" tabindex="0" role="button" aria-label="Dold text, välj för att visa"&gt;&lt;span&gt;sk_live_9942a8bf2c&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;!-- Suddigheten är bara presentation, texten finns kvar i HTML-källan. Använd aldrig mönstret för hemligheter. --&gt;
+&lt;p class="demo-yta" style="font-size:.94rem; color:var(--dim);"&gt;Filmslutet: &lt;span class="spoiler" tabindex="0" aria-label="Spoiler, fokusera eller hovra för att avslöja"&gt;&lt;span&gt;hunden överlever&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
 
 /* CSS */
 
@@ -9707,14 +9709,14 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="media-scripting">
       <h3 class="demo-titel">@media (scripting) <span class="stod">— känn av om JS finns</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
-      <p class="demo-beskrivning">Denna sida har noll JavaScript, så frågan <code>(scripting: none)</code> är sann här — rutan nedan bevisar det.</p>
+      <p class="demo-beskrivning">Frågan gäller <b>webbläsarens</b> skriptläge — inte den här sidans innehåll. Därför visas normalt <code>enabled</code> nedan, trots att just detta dokument är helt skriptfritt; <code>none</code> blir sant först när skriptkörning är avstängd i webbläsaren.</p>
       <div class="demo-yta prov prov-script">
         <span class="prov-rad r-ingen">scripting: none — inga skript körs<b>ditt läge</b></span>
         <span class="prov-rad r-ja">scripting: enabled — JS är aktivt<b>ditt läge</b></span>
       </div>
       <p class="labb-hint">Det här dokumentet innehåller noll script-taggar, men frågan gäller <b>webbläsarens</b> läge, inte sidans — därför lyser normalt "enabled".</p>
 <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="12" aria-label="Kod för @media (scripting) — känn av om JS finns">&lt;!-- HTML --&gt;
-&lt;div class="demo-yta nd-script"&gt;&lt;span class="js-nej"&gt;scripting: none — korrekt, ingen JS här&lt;/span&gt;&lt;span class="js-ja"&gt;scripting: enabled&lt;/span&gt;&lt;/div&gt;
+&lt;div class="demo-yta nd-script"&gt;&lt;span class="js-nej"&gt;scripting: none — skriptkörning är avstängd i webbläsaren&lt;/span&gt;&lt;span class="js-ja"&gt;scripting: enabled — webbläsaren kör skript&lt;/span&gt;&lt;/div&gt;
 
 /* CSS */
 
@@ -10589,7 +10591,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
     <div class="gloss-grupp">
       <h3>Interaktion</h3>
       <dl class="gloss-list">
-        <div><dt>popover</dt><dd>Inbyggd top-layer, light-dismiss och fokusfälla för valfritt element.</dd></div>
+        <div><dt>popover</dt><dd>Inbyggd top-layer och light-dismiss för valfritt element — icke-modal, ingen fokusfälla (den ger <code>&lt;dialog&gt;</code> med showModal).</dd></div>
         <div><dt>::backdrop</dt><dd>Stilbar bakgrund bakom ett öppet popover eller en dialog.</dd></div>
         <div><dt>popover="hint"</dt><dd>Ett popover-läge som inte stänger andra öppna popovers.</dd></div>
         <div><dt>anchor-name / position-anchor</dt><dd>Förankrar ett elements position till ett annat, utan JS-mätning.</dd></div>
