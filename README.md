@@ -145,12 +145,18 @@ med skärmläsare, manövrera med tangentbord, följa synliga fokustillstånd oc
 använda utan den senaste experimentella browser-funktionen. Så här är det
 löst idag:
 
-- **Mobilmenyn** styrs av en riktig, fokuserbar checkbox (Tab + Space). Den är
-  visuellt dold men aldrig `hidden`, fokusindikatorn projiceras på den synliga
-  öppna/stäng-knappen via `:has()`, och panelens länkar är nästa Tab-stopp.
-  Mönstret är valt framför `<details>` (kan inte tvingas permanent öppen på
-  breda skärmar) och deklarativ popover (panelen är en statisk sidebar på
-  desktop).
+- **Mobilmenyn** är en ren `:target`-disclosure: öppna-knappen är en länk
+  till `#sidomeny`, och panelen visas bara medan den är dokumentets `:target`.
+  Det gör att panelen stängs automatiskt så fort en kapitel-/indexlänk
+  aktiveras — något en checkbox inte kan utan skript, eftersom dess
+  tillstånd inte påverkas av fragmentnavigering. Öppna- och stäng-länkarna är
+  riktiga, fokuserbara element och får sidans globala `:focus-visible`-outline
+  utan proxy-regler. Tangentbordsflödet specificeras och testas av
+  `tests/menu-keyboard.mjs` (nivå 2), som körs som obligatoriskt steg i CI:s
+  webbläsarjobb. På breda skärmar är panelen en
+  permanent sidebar och växeln är gömd. `<details>` och deklarativ popover
+  valdes bort: panelen måste vara permanent öppen på breda skärmar och ingen
+  av dem kan tvingas dit utan att förlita sig på UA-regler.
 - **Webbläsarstödet** är information, inte kontroller: ikonerna är inga
   tab-stopp. Texten *webbläsare · version · status* ligger alltid i
   tillgänglighetsträdet (skärmläsare når den utan hover) och visas som etikett
@@ -192,8 +198,10 @@ konkret behov finns. Licenser och upphov: [THIRD-PARTY.md](THIRD-PARTY.md).
   analys. Att den är grön är ett nödvändigt, inte tillräckligt, villkor.
 - CSS-genererade värden (räknare, diagram) behöver granskas med riktig
   skärmläsare för annonsering.
-- Mobilmenyns tillstånd ligger inte i URL:en; Back/Forward påverkar panelen
-  som för alla checkbox-baserade mönster.
+- Mobilmenyn är en `:target`-disclosure. Att stänga utan att navigera går via
+  `#topp`, vilket scrollar sidan till toppen — en känd kostnad för att stänga
+  helt deklarativt. Back/Forward följer hash-historiken: bakåt från en sektion
+  återöppnar panelen (`#sidomeny`-läget).
 - Vissa demos har plattformsbegränsningar som är dokumenterade på kortet
   (t.ex. tic-tac-toes turordning bygger på heder — CSS kan inte jämföra
   antal drag).

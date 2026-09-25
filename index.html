@@ -2715,38 +2715,30 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
   scrollbar-width: thin;
 }
 @media (min-width: 1120px) { .sidomeny { display: block; } }
-/* Menyväxeln är en riktig checkbox — visuellt dold men fokuserbar, så att
-   tangentbordsanvändare kan öppna och stänga panelen med Tab + Space.
+/* Mobilmenyn är en ren :target-disclosure: öppna-knappen är en länk till
+   #sidomeny och panelen visas bara så länge den är dokumentets :target.
 
    Interaktionsmodell (helt utan JavaScript):
-   - Öppna: Tab till växeln (den ligger i DOM direkt efter sidhuvudet) och
-     tryck Space. Panelens innehåll är nästa Tab-stopp.
-   - Stänga: Shift+Tab från panelens första kontroll tillbaka till växeln,
-     eller fortsätt Tab:a tills växeln nås igen; Space stänger. Fokus står
-     kvar på växeln efter stängning, så nästa Tab går till huvudinnehållet.
-   - Fokusindikatorn projiceras på den kontextuella knappen (reglerna nedan).
-   - Panelens länkar är vanliga fragmentlänkar; de fungerar med Back/Forward
-     som resten av sidans ankarlänkar.
+   - Öppna: Tab till "☰ Index" i sidhuvudet, Enter. Hashen blir #sidomeny,
+     panelen visas. Fokus står kvar på öppna-länken; nästa Tab-stopp är
+     panelens första kontroll (stäng-länken).
+   - Navigera: aktiveras en indexlänk flyttas :target till sektionen —
+     panelen stängs automatiskt och sidan scrollar till målet. Just detta kan
+     en checkbox inte åstadkomma utan skript (dess tillstånd påverkas inte av
+     fragmentnavigering), och det var skälet till att :target valdes.
+   - Stänga utan att navigera: "stäng ✕" går till #topp. Känd kostnad: sidan
+     scrollar till toppen — priset för en helt deklarativ stängning.
+   - Back/Forward följer hash-historiken: bakåt från en sektion återöppnas
+     panelen (#sidomeny-läget). Det är avsiktligt och förutsägbart.
+   - Fokusindikatorer behöver inga proxy-regler: öppna- och stäng-länkarna är
+     riktiga element och får sidans globala :focus-visible-outline.
+   - På breda skärmar är panelen en permanent sidebar och växeln gömd.
 
-   Checkboxen valdes framför <details>/<summary> (panelen måste vara permanent
-   öppen på breda skärmar, och det går inte att tvinga fram utan att förlita
-   sig på UA-regler för details) och framför deklarativ popover (panelen är en
-   statisk sidebar på desktop, inte en overlay-yta). */
-.meny-vaxel {
-  position: absolute; width: 1px; height: 1px; margin: -1px;
-  overflow: hidden; clip-path: inset(50%); white-space: nowrap; opacity: 0;
-}
-/* På breda skärmar är panelen alltid synlig — då behövs ingen växel. */
-@media (min-width: 1120px) { .meny-vaxel { display: none; } }
-/* Fokus på den dolda checkboxen visas på den växel som passar läget:
-   öppna-knappen i sidhuvudet när panelen är stängd, stäng-etiketten när
-   den är öppen. */
-body:has(#meny-oppna:focus-visible:not(:checked)) .site .meny-oppna-knapp,
-body:has(#meny-oppna:focus-visible:checked) .meny-stang {
-  outline: 2px solid var(--acc); outline-offset: 3px;
-}
+   <details>/<summary> och deklarativ popover dög inte: panelen måste vara
+   permanent öppen på breda skärmar, och ingen av dem kan tvingas dit utan att
+   förlita sig på UA-regler. */
 @media (max-width: 1119.98px) {
-  body:has(#meny-oppna:checked) .sidomeny {
+  .sidomeny:target {
     display: block; position: fixed; left: 0; top: var(--hh); z-index: 75;
     width: min(21rem, 90vw);
     background: color-mix(in srgb, var(--bg) 94%, black);
@@ -2755,12 +2747,13 @@ body:has(#meny-oppna:focus-visible:checked) .meny-stang {
 }
 .sidomeny-topp { display:flex; align-items:center; justify-content:space-between; gap:.6rem; margin-bottom: 1rem; }
 .sidomeny-rubrik { font-family: var(--mono); font-size:.7rem; letter-spacing:.24em; text-transform:uppercase; color:var(--acc); }
-.meny-stang { display:none; font-family:var(--mono); font-size:.78rem; color:var(--dim); cursor:pointer; }
+.meny-stang { display:none; text-decoration:none; font-family:var(--mono); font-size:.78rem; color:var(--dim); cursor:pointer; }
 @media (max-width: 1119.98px) {
   .meny-stang { display:inline-block; }
-  body:has(#meny-oppna:checked) .meny-oppna-knapp { color: var(--acc); }
+  /* Öppna-knappen markeras som aktiv så länge panelen är :target. */
+  body:has(.sidomeny:target) .site .meny-oppna-knapp { color: var(--acc); }
 }
-.meny-oppna-knapp { display:none; cursor:pointer; font-family:var(--mono); font-size:.78rem; letter-spacing:.06em; color:var(--dim); border:1px solid var(--line); border-radius:6px; padding:.32rem .6rem; }
+.meny-oppna-knapp { display:none; cursor:pointer; text-decoration:none; font-family:var(--mono); font-size:.78rem; letter-spacing:.06em; color:var(--dim); border:1px solid var(--line); border-radius:6px; padding:.32rem .6rem; }
 @media (max-width: 1119.98px) { .meny-oppna-knapp { display:inline-block; } }
 .meny-oppna-knapp:hover { color: var(--acc); border-color: var(--acc); }
 
@@ -2967,7 +2960,7 @@ body { counter-reset: visade; }
 
 <header class="site">
   <a class="marke" href="#topp">CSS<em>·REF</em></a>
-  <label class="meny-oppna-knapp" for="meny-oppna">☰ Index</label>
+  <a class="meny-oppna-knapp" href="#sidomeny">☰ Index</a>
   <nav aria-label="Kapitel">
     <a href="#topp">Start</a>
     <a href="#farg">Färg</a>
@@ -2990,11 +2983,10 @@ body { counter-reset: visade; }
   </div>
   <span class="copyright">Sep 2026</span>
 </header>
-<input type="checkbox" id="meny-oppna" class="meny-vaxel" aria-label="Visa eller dölj indexpanelen">
 <div class="skal">
-<aside class="sidomeny" aria-label="Index och filter">
-  <div class="sidomeny-topp"><span class="sidomeny-rubrik">Alla tekniker</span><label class="meny-stang" for="meny-oppna">stäng ✕</label></div>
-  <div class="index-kompakt"><label class="vaxlare" for="kompakt" style="cursor:pointer"><input type="checkbox" id="kompakt"><span class="sparv"></span>Kompakt lista</label><label class="meny-oppna-knapp" for="meny-oppna">☰</label></div>
+<aside class="sidomeny" id="sidomeny" aria-label="Index och filter">
+  <div class="sidomeny-topp"><span class="sidomeny-rubrik">Alla tekniker</span><a class="meny-stang" href="#topp">stäng ✕</a></div>
+  <div class="index-kompakt"><label class="vaxlare" for="kompakt" style="cursor:pointer"><input type="checkbox" id="kompakt"><span class="sparv"></span>Kompakt lista</label><a class="meny-oppna-knapp" href="#topp" aria-label="Stäng indexpanelen">☰</a></div>
 <nav class="index" aria-label="Alla tekniker">
 <details class="index-kap" open><summary>Färg<span class="antal">31</span></summary><ul>
 <li class="index-rad sup-chrome sup-edge sup-safari sup-firefox"><a href="#color-mix"><span class="rad-namn">color-mix() — blanda i valfri färgrymd</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>

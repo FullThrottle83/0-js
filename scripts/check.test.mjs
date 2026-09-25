@@ -66,7 +66,7 @@ expectCaught(
 
 expectCaught(
   'inline event handler upptäcks',
-  (h) => h.replace('<label class="meny-oppna-knapp"', '<label onclick="meny()" class="meny-oppna-knapp"', 1),
+  (h) => h.replace('<a class="meny-oppna-knapp"', '<a onclick="meny()" class="meny-oppna-knapp"', 1),
   checkDocument,
   /inline event handlers/,
 );
@@ -94,7 +94,7 @@ expectCaught(
 
 expectCaught(
   'kontroll gömd med hidden upptäcks',
-  (h) => h.replace('class="meny-vaxel"', 'class="meny-vaxel" hidden', 1),
+  (h) => h.replace('<input type="checkbox" id="kompakt">', '<input type="checkbox" id="kompakt" hidden>', 1),
   checkDocument,
   /hidden-attributet/,
 );
