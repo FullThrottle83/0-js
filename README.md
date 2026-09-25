@@ -162,7 +162,7 @@ inte i stället för det:
   länkar till grupper i svensk ordning (Å, Ä, Ö efter Z). Ett klick ger
   gruppen i första panelvyn; uppmätt fyndväg för de fyra teknikerna ovan blev
   **0 px panelscroll** (mot 1 666–3 385 px i kapitelindexet).
-- **Samma innehåll, en gång:** registret genereras ur kapitelindexet
+- **En källa till innehållet:** registret genereras ur kapitelindexet
   (`scripts/register.mjs`), aldrig för hand. Namn, beskrivning, stödprickar och
   fragmentlänk kopieras ordagrant; grupperna härleds ur namnen. Ändras en rad
   utan att registret byggs om fäller `npm run build:check`.
@@ -174,8 +174,9 @@ inte i stället för det:
   är innehållet (en siffra eller bokstav ensam vore obegriplig i en länklista).
 - **Ingen ny mekanism:** vyn växlas med en radiogrupp och `:has()`, precis som
   stödfiltret och temaväljaren. Bara en vy är renderad åt gången
-  (`display:none`) — inga dolda tab-stopp, ingen teknik två gånger i
-  dokumentet, noll JavaScript.
+  (`display:none`) — inga dolda tab-stopp i den inaktiva vyn och noll
+  JavaScript. Länkarna finns i båda vyerna i DOM:en, men har en enda
+  underhållen innehållskälla och är aldrig samtidigt synliga.
 
 Alternativ som övervägdes och förkastades: ett separat `D`-element med
 hopplänkar *ovanför* panelen (blev en tredje ingång bredvid chipsen och krävde
@@ -317,8 +318,8 @@ och fältvärden exakt. Beräknade stilar och geometri jämförs strikt när
 Chromium-bygget matchar baslinjens; annars rapporteras de separat och det
 krävs en körning med baslinjens bygge för full visuell paritetsgrind.
 Endast skärmbildsgenerering och artefaktuppladdning är icke-blockerande.
-**Status: workflowen är uppdaterad på PR-branchen; kontrollera den första
-GitHub Actions-körningen innan ändringarna merge:as.**
+**Status: workflowen innehåller nu även registerkontrollerna på PR-branchen;
+kontrollera den senaste GitHub Actions-körningen innan merge.**
 
 UX-kontraktet (`node tests/ux-polish.mjs`) körs lokalt via `npm run test:ux`,
 ingår i `npm run test:browser` och är installerat som ett **obligatoriskt steg**
