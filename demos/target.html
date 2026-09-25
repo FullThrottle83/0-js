@@ -1,0 +1,26 @@
+<!--
+  demo: target
+  Kanonisk källa för både live-demot och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+  Obs: id:n tp-1..tp-3 är ankarmål och måste förbli unika i hela dokumentet.
+-->
+<div class="demo-yta">
+  <div class="target-nav">
+    <a href="#tp-1">Ett</a><a href="#tp-2">Två</a><a href="#tp-3">Tre</a>
+  </div>
+  <div class="target-stack">
+    <div class="target-panel" id="tp-1">Panel ett, standardvald via <code>:not(:has(:target))</code>.</div>
+    <div class="target-panel" id="tp-2">Panel två — synlig för att <code>#tp-2:target</code> matchar.</div>
+    <div class="target-panel" id="tp-3">Panel tre — hela tillståndet lever i URL:ens hash.</div>
+  </div>
+</div>
+<style>
+.target-nav { display:flex; gap:.6rem; margin-bottom: .8rem; flex-wrap: wrap; }
+.target-nav a { font-family: var(--mono); font-size: .8rem; padding: .5rem .9rem; border-radius: 99px; border: 1px solid var(--line); text-decoration: none; color: var(--dim); transition: color .2s, border-color .2s; }
+.target-nav a:hover { color: var(--acc); border-color: var(--acc); }
+.target-stack { position: relative; }
+.target-panel { display:none; padding: 1rem; border: 1px solid var(--line); border-radius: 12px; font-size: .88rem; color: var(--dim); scroll-margin-top: calc(var(--hh) + 1rem); }
+.target-panel code { color: var(--ink); }
+.target-panel:target { display:block; }
+.target-stack:not(:has(:target)) .target-panel:first-child { display:block; }
+</style>

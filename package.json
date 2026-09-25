@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "CSS·REF — levande CSS-referens med 133 demos och noll JavaScript. DevDependency-paketet används enbart för valfria skärmbilder; kontrollerna i scripts/check*.mjs kör utan beroenden.",
+  "description": "CSS·REF — levande CSS-referens med 133 demos och noll JavaScript. DevDependency-paketet används enbart för webbläsartester och valfria skärmbilder; kontrollerna i scripts/check*.mjs och bygget i scripts/build.mjs kör utan beroenden.",
   "scripts": {
-    "check": "node scripts/check.mjs && node scripts/check-snippets.mjs && node scripts/check.test.mjs",
+    "build": "node scripts/build.mjs",
+    "build:check": "node scripts/build.mjs --check",
+    "check": "node scripts/build.mjs --check && node scripts/check.mjs && node scripts/check-snippets.mjs && node scripts/check.test.mjs && node scripts/build.test.mjs",
+    "check:build": "node scripts/build.mjs --check && node scripts/build.test.mjs",
     "check:structure": "node scripts/check.mjs",
     "check:snippets": "node scripts/check-snippets.mjs",
     "check:tests": "node scripts/check.test.mjs",
+    "test:browser": "node tests/menu-keyboard.mjs && node tests/demo-source.mjs",
     "screenshot": "node scripts/screenshot.mjs"
   },
   "devDependencies": {

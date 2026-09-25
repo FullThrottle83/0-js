@@ -1,0 +1,21 @@
+<!--
+  demo: shape-outside
+  Kanonisk källa för både live-demot och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+-->
+<div class="demo-yta shape-demo">
+  <span class="shape-float" aria-hidden="true"></span>
+  <p>Det här stycket böjer sig runt cirkeln till vänster eftersom <code>shape-outside: circle(50%)</code> beskriver formen för radbrytningen, medan <code>clip-path</code> beskär själva elementet till samma form.</p>
+</div>
+<style>
+.shape-demo p { font-size: .88rem; color: var(--dim); text-wrap: pretty; }
+.shape-float {
+  float: left; width: 8rem; height: 8rem; margin: 0 1rem .5rem 0;
+  shape-outside: circle(50%); clip-path: circle(50%);
+  background: radial-gradient(circle at 35% 30%, #fff, var(--acc) 55%, color-mix(in srgb, var(--acc) 30%, transparent));
+}
+</style>
+<style data-live>
+/* Jämförarens av-läge (.jmfbar) är sidans scenografi och hör inte hemma i det kopierbara exemplet. */
+.jmfbar:has(.jmf-knapp input:checked) .shape-float { shape-outside: none; }
+</style>

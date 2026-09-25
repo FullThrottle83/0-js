@@ -96,14 +96,39 @@ Kontrollen är medvetet begränsad och ersätter inte ögonen:
 
 ---
 
+## En källa per demo (pilot)
+
+Ett demo-kort bär sin implementation tre gånger: live-markup, CSS i
+stilbladet och det escapade kodvalvet. Det har redan gett drift (kodvalv med
+föråldrad eller trasig CSS). Därför genereras nu tre pilotdemos —
+`shape-outside`, `target` och `property-border-angle` — ur **en** källfil var
+i [`demos/`](demos/):
+
+```sh
+# redigera demos/<id>.html (markup + <style>, valfri <style data-live>)
+npm run build          # skriver om de markerade områdena i index.html
+npm run build:check    # avslutar med 1 om index.html är föråldrad (körs först i CI)
+```
+
+`index.html` är fortfarande den publicerade enfilsartefakten och källa för
+allt utanför markörerna; bygget rör bara innehållet mellan
+`<!-- demo:<id>:markup -->`, `/* demo:<id>:css */` och kortets kodvalv.
+Bygget är deterministiskt, idempotent och beroendefritt. Beslut, källformat,
+verifiering och migreringsplan för de återstående 130 korten:
+[`docs/demo-kalla.md`](docs/demo-kalla.md).
+
+---
+
 ## Testning
 
 Alla kontroller är rena Node-skript **utan npm-beroenden**, i projektets anda:
 
 ```sh
+node scripts/build.mjs --check    # nivå 0: genererade demos i fas med demos/
 node scripts/check.mjs            # nivå 1: struktur, zero-JS, ARIA-hygien
 node scripts/check-snippets.mjs   # nivå 4: kopierbara exempel (statiskt)
 node scripts/check.test.mjs       # regressionstest för kontrollerna själva
+node scripts/build.test.mjs       # byggtest: determinism, härledning, stale
 # eller: npm run check
 ```
 
@@ -111,14 +136,21 @@ node scripts/check.test.mjs       # regressionstest för kontrollerna själva
 handlers, trasiga ankarlänkar, dubblerade id:n, felaktiga demo-antal, saknade
 CSS-variabler, obalanserade klammerblock, felaktig HTML-nästning, vilseledande
 ARIA) och kräver att kontrollerna fångar varje defekt. Regressionstesterna kör
-helt i minnet — ingen webbläsare, inga temporärfiler.
+helt i minnet — ingen webbläsare, inga temporärfiler. `build.test.mjs` gör
+detsamma för källgenereringen: två byggen är byte-identiska, de migrerade
+kortens id:n/ankare finns kvar, live-markup och kodvalv härleds bevisligen ur
+källfilen, ändringar i källa *eller* i ett genererat område upptäcks som
+stale, ändringar utanför markörerna bevaras, och dokumentet är fritt från
+runtime-JavaScript.
 
 ### CI
 
 Workflowen [`.github/workflows/ci.yml`](.github/workflows/ci.yml) är committad på
 PR-branchen. Den kör de statiska kontrollerna som ett obligatoriskt jobb utan
 npm-installation eller webbläsare. Därefter kör ett obligatoriskt Playwright-jobb
-mobilmenyns tangentbordstest i Chromium. Endast skärmbildsgenerering och
+mobilmenyns tangentbordstest och de källgenererade demonas webbläsartest
+(`tests/demo-source.mjs`: på sidan och fristående som Grundpaketet + kodvalv)
+i Chromium. Endast skärmbildsgenerering och
 artefaktuppladdning är icke-blockerande. **Status: workflow installerad;
 kontrollera den första GitHub Actions-körningen innan ändringarna merge:as.**
 
@@ -131,7 +163,8 @@ kontrollera den första GitHub Actions-körningen innan ändringarna merge:as.**
 - **Nivå 3 — webbläsarmatris:** verifiera utvalda demos i Chromium, Firefox och
   WebKit, med dokumenterad fallback per experimentell funktion.
 - **Nivå 4b — isolerad snippet-rendering:** bygg en testsida av varje exempel
-  och verifiera den i en riktig webbläsare.
+  och verifiera den i en riktig webbläsare. Gjort för de tre källgenererade
+  demona i `tests/demo-source.mjs`; återstår för övriga 130.
 - **Prestanda:** mät överförd storlek, DOM-storlek, LCP och scroll-respons på
   mobil innan en eventuell uppdelning i flera sidor övervägs.
 
@@ -211,14 +244,23 @@ konkret behov finns. Licenser och upphov: [THIRD-PARTY.md](THIRD-PARTY.md).
 
 ```
 0-js/
-├── index.html              # hela referensen — produkt och källa i ett
+├── index.html              # hela referensen — publicerad artefakt; källa utom mellan demo-markörerna
+├── demos/                  # KÄLLA: en fil per källgenererad demo (pilot: 3 st)
+│   ├── shape-outside.html
+│   ├── target.html
+│   └── property-border-angle.html
+├── docs/
+│   └── demo-kalla.md       # beslut, källformat, verifiering, migreringsplan
 ├── scripts/
+│   ├── build.mjs           # npm run build / build:check — genererar ur demos/
+│   ├── build.test.mjs      # byggtest: determinism, härledning, stale-detektering
 │   ├── check.mjs           # nivå 1: struktur, zero-JS, ARIA
 │   ├── check-snippets.mjs  # nivå 4: kopierbara exempel (statiskt)
 │   ├── check.test.mjs      # regressionstest för kontrollerna
 │   └── screenshot.mjs      # valfria skärmbilder (kräver playwright)
 ├── tests/
-│   └── menu-keyboard.mjs   # nivå 2: mobilmenyns tangentbord (kräver webbläsare)
+│   ├── menu-keyboard.mjs   # nivå 2: mobilmenyns tangentbord (kräver webbläsare)
+│   └── demo-source.mjs     # nivå 2/4b: källgenererade demos på sidan + fristående (kräver webbläsare)
 ├── .github/workflows/
 │   └── ci.yml              # statiska kontroller + obligatoriskt browser-test
 ├── THIRD-PARTY.md          # licenser för inbäddade typsnitt
@@ -232,8 +274,12 @@ konkret behov finns. Licenser och upphov: [THIRD-PARTY.md](THIRD-PARTY.md).
 
 1. En demo = ett kort med stödrad, fallback och kopierbart kodvalv.
 2. Beskriv vad demot **faktiskt gör**, inte vad komponenten liknar.
-3. Kör `npm run check` innan push (struktur + snippets + regressionstest).
-4. Lägg till stöddata med datum och källa, och skilj på browser-support och
+3. Rör du en källgenererad demo (`demos/<id>.html`): kör `npm run build` och
+   committa `index.html` tillsammans med källan. Redigera aldrig mellan
+   `demo:`-markörerna i `index.html`.
+4. Kör `npm run check` innan push (stale-kontroll + struktur + snippets +
+   regressionstest + byggtest).
+5. Lägg till stöddata med datum och källa, och skilj på browser-support och
    verifierat demo.
 
 ## Licens
