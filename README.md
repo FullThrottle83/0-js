@@ -96,26 +96,50 @@ Kontrollen är medvetet begränsad och ersätter inte ögonen:
 
 ---
 
-## En källa per demo (pilot)
+## En källa per demo (14 av 133 migrerade)
 
 Ett demo-kort bär sin implementation tre gånger: live-markup, CSS i
 stilbladet och det escapade kodvalvet. Det har redan gett drift (kodvalv med
-föråldrad eller trasig CSS). Därför genereras nu tre pilotdemos —
-`shape-outside`, `target` och `property-border-angle` — ur **en** källfil var
-i [`demos/`](demos/):
+föråldrad eller trasig CSS). Därför genereras nu **14 av de 133** demona ur
+**en** källfil var i [`demos/`](demos/) — först pilotens tre
+(`shape-outside`, `target`, `property-border-angle`), därefter elva ur
+Grupp A i migreringsplanen (`accent-color`, `caret-shape-caret-color`, `open`,
+`appearance-base-select`, `losenordsmatare`, `dubbeltumme-slider`, `calc-size`,
+`attr`, `if`, `light-dark`, `donutdiagram`):
 
 ```sh
 # redigera demos/<id>.html (markup + <style>, valfri <style data-live>)
-npm run build          # skriver om de markerade områdena i index.html
-npm run build:check    # avslutar med 1 om index.html är föråldrad (körs först i CI)
+npm run build               # skriver om de markerade områdena i index.html
+npm run build:check         # avslutar med 1 om index.html är föråldrad (körs först i CI)
+npm run baseline:capture    # fångar mätbaslinjen FÖRE en migrering (tests/baseline/)
+npm run test:parity         # mäter aktuell rendering mot baslinjen
 ```
 
 `index.html` är fortfarande den publicerade enfilsartefakten och källa för
 allt utanför markörerna; bygget rör bara innehållet mellan
 `<!-- demo:<id>:markup -->`, `/* demo:<id>:css */` och kortets kodvalv.
-Bygget är deterministiskt, idempotent och beroendefritt. Beslut, källformat,
-verifiering och migreringsplan för de återstående 130 korten:
+Bygget är deterministiskt, idempotent och beroendefritt. Vilka demos som är
+migrerade står på **en** plats: [`scripts/demo-spec.mjs`](scripts/demo-spec.mjs).
+Byggtestet, webbläsartesterna och paritetstestet läser manifestet och ställer
+sina frågor per demo — glömmer du registrera en källa faller testerna.
+Beslut, källformat, mätmetod och migreringsplan för de återstående 119 korten:
 [`docs/demo-kalla.md`](docs/demo-kalla.md).
+
+### Vad som bevisas var — statiskt kontra mätt
+
+| Nivå | Verktyg | Bevisar | Kräver webbläsare |
+| ---- | ------- | ------- | ----------------- |
+| 0 | `npm run build:check` | `index.html` är i fas med `demos/*.html` | nej |
+| 1 | `scripts/check.mjs` | struktur, zero-JS, unika id:n, ARIA | nej |
+| 4 | `scripts/check-snippets.mjs` | kodexemplen är balanserade och täcker sina variabler | nej |
+| 0 | `scripts/build.test.mjs` | determinism, härledning, stale, inventarium, inga delade regler | nej |
+| 2/4b | `tests/demo-source.mjs` | demot **beter sig** rätt på sidan och fristående (inkl. interaktiva tillstånd) | ja |
+| 4c | `tests/demo-parity.mjs` | det som **renderas** är oförändrat mot pre-migrerings-baslinjen i `tests/baseline/` | ja |
+| 4c | `tests/demo-scenarios.mjs` | de interaktiva tillstånd (klick, tangentbord, hover) som nivå 4b/4c mäter | ja |
+
+Ett statiskt test kan inte se att en regel hamnat i fel kaskadordning; en
+mätning kan inte se att källan slutat vara källan. Gränsen är avsiktlig och
+dokumenterad i [`docs/demo-kalla.md` §6b](docs/demo-kalla.md).
 
 ---
 
@@ -128,29 +152,60 @@ node scripts/build.mjs --check    # nivå 0: genererade demos i fas med demos/
 node scripts/check.mjs            # nivå 1: struktur, zero-JS, ARIA-hygien
 node scripts/check-snippets.mjs   # nivå 4: kopierbara exempel (statiskt)
 node scripts/check.test.mjs       # regressionstest för kontrollerna själva
-node scripts/build.test.mjs       # byggtest: determinism, härledning, stale
+node scripts/build.test.mjs       # byggtest: determinism, härledning, stale, inventarium
 # eller: npm run check
 ```
+
+Webbläsartesterna kräver Playwright + Chromium (endast devDependency):
+
+```sh
+npm run test:browser                          # menyn + demo-source + paritet mot baslinjen
+node tests/demo-parity.mjs --strict           # 0 px slack: exakt geometribevis i samma webbläsarinstans
+node tests/demo-parity.mjs --require-same-browser   # fäll även på versionsglapp
+npm run baseline:capture                      # fånga om baslinjen ur ett PRE-migreringsdokument
+```
+
+`tests/baseline/demos.json` är den committade mätbaslinjen för de migrerade
+demona: DOM-ordning, text, attribut, geometri, beräknade stilar och
+pseudoelement i standardtillståndet och i varje interaktivt tillstånd, fångad
+ur dokumentet **före** migreringen (sha256 för dokumentet sparas i filen, så
+att ursprunget kan granskas mot git-historiken).
+
+Vilka lager som är grind beror på om webbläsarbygget är baslinjens:
+
+- **samma bygge** — struktur, text, attribut, fältvärden och
+  icke-geometriska stilar jämförs exakt; `--strict` gör även geometrin exakt.
+- **annat bygge** (t.ex. CI:s Chromium) — strukturen jämförs exakt och fäller;
+  stilar och geometri rapporteras, eftersom ett nyare bygge kan stödja fler
+  funktioner och rendera annat. `--require-same-browser` gör glappet till fel.
+
+Geometrin mäts dessutom med slack `max(2 px, 2 %)`: textmetrik skiljer mellan
+Linux-byggen av samma Chromium. Gränsen och mätmetoden är dokumenterade i
+[`docs/demo-kalla.md` §6b](docs/demo-kalla.md).
 
 `check.test.mjs` injicerar 15 representativa defekter (script-taggar, inline-
 handlers, trasiga ankarlänkar, dubblerade id:n, felaktiga demo-antal, saknade
 CSS-variabler, obalanserade klammerblock, felaktig HTML-nästning, vilseledande
 ARIA) och kräver att kontrollerna fångar varje defekt. Regressionstesterna kör
 helt i minnet — ingen webbläsare, inga temporärfiler. `build.test.mjs` gör
-detsamma för källgenereringen: två byggen är byte-identiska, de migrerade
-kortens id:n/ankare finns kvar, live-markup och kodvalv härleds bevisligen ur
-källfilen, ändringar i källa *eller* i ett genererat område upptäcks som
-stale, ändringar utanför markörerna bevaras, och dokumentet är fritt från
+detsamma för källgenereringen, inventariestyrt: manifestet och `demos/*.html`
+måste vara exakt samma mängd, varje migrerad källa prövas för sig (id:n och
+ankare unika och pekade på, kodvalvet = `renderSnippet(källa)`, `rows`,
+`data-live` utanför valvet, `var()` täckta), inga CSS-regler får delas mellan
+källor, två byggen är byte-identiska, ändringar i källa *eller* i ett genererat
+område upptäcks som stale, ändringar utanför markörerna bevaras, de 119
+omigrerade korten förblir omarkerade och dokumentet är fritt från
 runtime-JavaScript.
 
 ### CI
 
 Workflowen [`.github/workflows/ci.yml`](.github/workflows/ci.yml) är committad på
 PR-branchen. Den kör de statiska kontrollerna som ett obligatoriskt jobb utan
-npm-installation eller webbläsare. Därefter kör ett obligatoriskt Playwright-jobb
-mobilmenyns tangentbordstest och de källgenererade demonas webbläsartest
-(`tests/demo-source.mjs`: på sidan och fristående som Grundpaketet + kodvalv)
-i Chromium. Endast skärmbildsgenerering och
+npm-installation eller webbläsare. Därefter kör ett obligatoriskt Playwright-jobb tre steg i Chromium:
+mobilmenyns tangentbordstest, de källgenererade demonas beteendetest
+(`tests/demo-source.mjs`: på sidan och fristående som Grundpaketet + kodvalv,
+inklusive interaktiva tillstånd) och det mätta paritetstestet mot baslinjen
+(`tests/demo-parity.mjs`). Endast skärmbildsgenerering och
 artefaktuppladdning är icke-blockerande. **Status: workflow installerad;
 kontrollera den första GitHub Actions-körningen innan ändringarna merge:as.**
 
@@ -163,8 +218,11 @@ kontrollera den första GitHub Actions-körningen innan ändringarna merge:as.**
 - **Nivå 3 — webbläsarmatris:** verifiera utvalda demos i Chromium, Firefox och
   WebKit, med dokumenterad fallback per experimentell funktion.
 - **Nivå 4b — isolerad snippet-rendering:** bygg en testsida av varje exempel
-  och verifiera den i en riktig webbläsare. Gjort för de tre källgenererade
-  demona i `tests/demo-source.mjs`; återstår för övriga 130.
+  och verifiera den i en riktig webbläsare. Gjort för de 14 källgenererade
+  demona i `tests/demo-source.mjs`; återstår för övriga 119.
+- **Nivå 4c — mätt ekvivalens mot baslinje:** `tests/demo-parity.mjs` jämför
+  renderingen med `tests/baseline/demos.json` (fångad före migreringen).
+  Gjort för de 14 migrerade demona; växer automatiskt med manifestet.
 - **Prestanda:** mät överförd storlek, DOM-storlek, LCP och scroll-respons på
   mobil innan en eventuell uppdelning i flera sidor övervägs.
 
@@ -245,22 +303,27 @@ konkret behov finns. Licenser och upphov: [THIRD-PARTY.md](THIRD-PARTY.md).
 ```
 0-js/
 ├── index.html              # hela referensen — publicerad artefakt; källa utom mellan demo-markörerna
-├── demos/                  # KÄLLA: en fil per källgenererad demo (pilot: 3 st)
+├── demos/                  # KÄLLA: en fil per källgenererad demo (14 av 133)
 │   ├── shape-outside.html
 │   ├── target.html
-│   └── property-border-angle.html
+│   ├── property-border-angle.html
+│   └── … (elva ur batch 1)
 ├── docs/
 │   └── demo-kalla.md       # beslut, källformat, verifiering, migreringsplan
 ├── scripts/
 │   ├── build.mjs           # npm run build / build:check — genererar ur demos/
-│   ├── build.test.mjs      # byggtest: determinism, härledning, stale-detektering
+│   ├── demo-spec.mjs       # manifest: vilka demos som är migrerade (enda listan)
+│   ├── build.test.mjs      # byggtest: determinism, härledning, stale, inventarium
 │   ├── check.mjs           # nivå 1: struktur, zero-JS, ARIA
 │   ├── check-snippets.mjs  # nivå 4: kopierbara exempel (statiskt)
 │   ├── check.test.mjs      # regressionstest för kontrollerna
 │   └── screenshot.mjs      # valfria skärmbilder (kräver playwright)
 ├── tests/
 │   ├── menu-keyboard.mjs   # nivå 2: mobilmenyns tangentbord (kräver webbläsare)
-│   └── demo-source.mjs     # nivå 2/4b: källgenererade demos på sidan + fristående (kräver webbläsare)
+│   ├── demo-scenarios.mjs  # interaktiva tillstånd per demo (klick, fokus, hover)
+│   ├── demo-source.mjs     # nivå 2/4b: källgenererade demos på sidan + fristående (kräver webbläsare)
+│   ├── demo-parity.mjs     # nivå 4c: mätt ekvivalens mot baslinjen (kräver webbläsare)
+│   └── baseline/demos.json # mätbaslinje fångad FÖRE migreringen (committad)
 ├── .github/workflows/
 │   └── ci.yml              # statiska kontroller + obligatoriskt browser-test
 ├── THIRD-PARTY.md          # licenser för inbäddade typsnitt
@@ -276,7 +339,10 @@ konkret behov finns. Licenser och upphov: [THIRD-PARTY.md](THIRD-PARTY.md).
 2. Beskriv vad demot **faktiskt gör**, inte vad komponenten liknar.
 3. Rör du en källgenererad demo (`demos/<id>.html`): kör `npm run build` och
    committa `index.html` tillsammans med källan. Redigera aldrig mellan
-   `demo:`-markörerna i `index.html`.
+   `demo:`-markörerna i `index.html`. Migrerar du ett nytt kort: registrera det
+   i `scripts/demo-spec.mjs`, fånga baslinjen (`npm run baseline:capture`)
+   *innan* du redigerar, lägg till dess interaktiva tillstånd i
+   `tests/demo-scenarios.mjs` och dess påståenden i `tests/demo-source.mjs`.
 4. Kör `npm run check` innan push (stale-kontroll + struktur + snippets +
    regressionstest + byggtest).
 5. Lägg till stöddata med datum och källa, och skilj på browser-support och

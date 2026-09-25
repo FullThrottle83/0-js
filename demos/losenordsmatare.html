@@ -1,0 +1,21 @@
+<!--
+  demo: losenordsmatare
+  Kanonisk källa för både live-demot och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+  fem regler kring .pwd-field/.pwd-meter, interaktivt via :valid
+-->
+<div class="demo-yta pwd-field">
+  <input type="password" placeholder="Minst 8 tecken, en siffra, en versal" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+  <div class="pwd-meter"><span></span></div>
+</div>
+<style>
+/* Lösenordsmätare */
+.pwd-field input {
+  width: 100%; padding: .6rem .8rem; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--bg2); color: var(--ink); font: inherit; font-size: .88rem;
+}
+.pwd-meter { height: .4rem; border-radius: 99px; background: var(--bg2); overflow: hidden; margin-top: .5rem; }
+.pwd-meter span { display: block; height: 100%; width: 0; transition: width .3s ease, background .3s ease; }
+.pwd-field:has(input:not(:placeholder-shown):invalid) .pwd-meter span { width: 40%; background: var(--bad); }
+.pwd-field:has(input:valid) .pwd-meter span { width: 100%; background: var(--good); }
+</style>

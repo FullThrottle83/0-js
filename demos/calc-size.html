@@ -1,0 +1,54 @@
+<!--
+  demo: calc-size
+  Kanonisk källa för både live-demot och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+  sju regler med :has() och calc-size(auto, size), interaktivt via kryssruta
+-->
+<div class="demo-yta calc-size-demo">
+  <label class="calc-size-trigger">
+    <input type="checkbox">
+    <span>Klicka för att fälla ut med calc-size()</span>
+    <span class="calc-size-icon">▼</span>
+  </label>
+  <div class="calc-size-content">
+    Det här innehållet har okänd, dynamisk höjd. Tidigare krävdes JavaScript för att läsa ut <code>scrollHeight</code>. Nu interpolerar CSS direkt mellan <code>0</code> och <code>calc-size(auto, size)</code>.
+  </div>
+</div>
+<style>
+/* calc-size() / interpolate-size demo */
+.calc-size-demo {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg2);
+  overflow: hidden;
+}
+.calc-size-trigger {
+  padding: .85rem 1.1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: .84rem;
+  color: var(--ink);
+  background: var(--panel);
+  user-select: none;
+}
+.calc-size-trigger input { position: absolute; opacity: 0; }
+.calc-size-icon { font-family: var(--mono); color: var(--acc); transition: transform .3s ease; }
+.calc-size-demo:has(.calc-size-trigger input:checked) .calc-size-icon { transform: rotate(180deg); }
+.calc-size-content {
+  height: 0;
+  overflow: hidden;
+  transition: height .4s cubic-bezier(.2,.8,.2,1), padding .4s ease;
+  padding: 0 1.1rem;
+  color: var(--dim);
+  font-size: .86rem;
+  line-height: 1.6;
+}
+.calc-size-demo:has(.calc-size-trigger input:checked) .calc-size-content {
+  height: calc-size(auto, size);
+  padding: 1.1rem;
+  border-top: 1px solid var(--line);
+}
+</style>

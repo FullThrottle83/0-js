@@ -1,0 +1,26 @@
+<!--
+  demo: donutdiagram
+  Kanonisk källa för både live-demot och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+  jämförarens av-läge (.donut) är live-only och ligger i <style data-live>
+-->
+<div class="demo-yta">
+  <div class="donut" role="img" aria-label="Fördelning: 65% kärna, 20% admin, 15% forskning" style="--p1:65; --p2:20;"><span>100%</span></div>
+  <p class="donut-legend"><span><b style="background:var(--acc)"></b>Kärna</span><span><b style="background:#6ea8ff"></b>Admin</span><span><b style="background:var(--bg2)"></b>FoU</span></p>
+</div>
+<style>
+.donut {
+  width: 8.5rem; height: 8.5rem; border-radius: 50%; margin-inline: auto;
+  background: conic-gradient(var(--acc) 0% calc(var(--p1) * 1%), #6ea8ff calc(var(--p1) * 1%) calc((var(--p1) + var(--p2)) * 1%), var(--bg2) calc((var(--p1) + var(--p2)) * 1%) 100%);
+  -webkit-mask: radial-gradient(closest-side, transparent 58%, #000 60%);
+          mask: radial-gradient(closest-side, transparent 58%, #000 60%);
+  display: grid; place-items: center;
+}
+.donut span { font-family: var(--disp); font-weight: 700; -webkit-mask: none; mask: none; color: var(--ink); }
+.donut-legend { display: flex; gap: 1rem; justify-content: center; margin-top: .8rem; font-family: var(--mono); font-size: .74rem; color: var(--dim); }
+.donut-legend b { display: inline-block; width: .6rem; height: .6rem; border-radius: 2px; margin-right: .3rem; }
+</style>
+<style data-live>
+/* Jämförarens av-läge (.jmfbar) är sidans scenografi och hör inte hemma i det kopierbara exemplet. */
+.jmfbar:has(.jmf-knapp input:checked) .donut { -webkit-mask: none; mask: none; }
+</style>

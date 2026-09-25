@@ -1,0 +1,12 @@
+<!--
+  demo: accent-color
+  Kanonisk källa för både live-demot och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+  tre regler, ingen delad CSS, inga sidreferenser till .nd-accent
+-->
+<div class="demo-yta nd-accent"><label><input type="checkbox" checked> accent-color: var(--acc)</label><label><input type="checkbox"> omarkerad</label></div>
+<style>
+.nd-accent { display:grid; gap:.6rem; }
+.nd-accent label { display:flex; gap:.6rem; align-items:center; font-size:.86rem; color:var(--dim); }
+.nd-accent input { accent-color: var(--acc); width:1.1rem; height:1.1rem; }
+</style>

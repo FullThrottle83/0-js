@@ -12,7 +12,9 @@
     "check:structure": "node scripts/check.mjs",
     "check:snippets": "node scripts/check-snippets.mjs",
     "check:tests": "node scripts/check.test.mjs",
-    "test:browser": "node tests/menu-keyboard.mjs && node tests/demo-source.mjs",
+    "test:browser": "node tests/menu-keyboard.mjs && node tests/demo-source.mjs && node tests/demo-parity.mjs",
+    "test:parity": "node tests/demo-parity.mjs",
+    "baseline:capture": "node tests/demo-parity.mjs --capture",
     "screenshot": "node scripts/screenshot.mjs"
   },
   "devDependencies": {

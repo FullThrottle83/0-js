@@ -1,0 +1,13 @@
+<!--
+  demo: attr
+  Kanonisk källa för både live-demot och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+  fyra regler; ::after-content med attr(data-url) verifieras i webbläsare
+-->
+<div class="demo-yta nd-attr"><a href="#" data-url="exempel.se/a">Länk A</a><a href="#" data-url="exempel.se/b">Länk B</a></div>
+<style>
+.nd-attr { counter-reset: n 0; display:grid; gap:.4rem; }
+.nd-attr a { color:var(--dim); text-decoration:none; font-family:var(--mono); font-size:.8rem; }
+.nd-attr a::after { content: " → " attr(data-url); color: var(--acc); }
+.nd-attr a:hover { color: var(--ink); }
+</style>

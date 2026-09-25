@@ -1,0 +1,25 @@
+<!--
+  demo: light-dark
+  Kanonisk källa för både live-demot och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+  jämförarens av-läge (.ld-box) är live-only och ligger i <style data-live>
+-->
+<div class="demo-yta ld-row">
+  <div class="ld-box ld-light">color-scheme: light</div>
+  <div class="ld-box ld-dark">color-scheme: dark</div>
+</div>
+<style>
+.ld-row { display:grid; grid-template-columns:1fr 1fr; gap: .8rem; }
+.ld-box {
+  border-radius: 12px; padding: 1.1rem; text-align:center; border: 1px solid var(--line);
+  background: light-dark(#efe9dc, #17141c);
+  color: light-dark(#171310, #f4efe6);
+  font-family: var(--mono); font-size: .78rem;
+}
+.ld-light { color-scheme: light; }
+.ld-dark { color-scheme: dark; }
+</style>
+<style data-live>
+/* Jämförarens av-läge (.jmfbar) är sidans scenografi och hör inte hemma i det kopierbara exemplet. */
+.jmfbar:has(.jmf-knapp input:checked) .ld-box { background: #17141c; color: #f4efe6; }
+</style>
