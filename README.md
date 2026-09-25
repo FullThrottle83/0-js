@@ -264,14 +264,11 @@ Endast skärmbildsgenerering och artefaktuppladdning är icke-blockerande.
 **Status: workflowen är uppdaterad på PR-branchen; kontrollera den första
 GitHub Actions-körningen innan ändringarna merge:as.**
 
-UX-kontraktet (`node tests/ux-polish.mjs`) körs lokalt via `npm run test:ux`
-och ingår i `npm run test:browser`, men steget kunde inte läggas in i
-`.github/workflows/ci.yml` från den gren som införde det: GitHub-appen som
-driver grenen saknar `workflows`-behörighet, och GitHub avvisar både push och
-API-anrop som rör workflowfiler. Den exakta diffen ligger i
-[`doc/ux-polish/ci-foreslagen-andring.diff`](doc/ux-polish/ci-foreslagen-andring.diff)
-och i PR-beskrivningen. Tills den är applicerad är UX-kontraktet ett lokalt
-steg, inte en CI-grind.
+UX-kontraktet (`node tests/ux-polish.mjs`) körs lokalt via `npm run test:ux`,
+ingår i `npm run test:browser` och är installerat som ett **obligatoriskt steg**
+i `.github/workflows/ci.yml`. Det verifierar gränssnittet i Chromium vid fem
+bredder och kompletterar de befintliga testerna för demona. Kontrollera den
+senaste GitHub Actions-körningen innan PR:en merge:as.
 
 ### Vägkarta
 
