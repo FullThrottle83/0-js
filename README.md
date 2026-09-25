@@ -84,7 +84,14 @@ aktiv.
 
 Kodexemplen använder sidans designvariabler (`--acc`, `--bg2`, `--line` …).
 Kopiera **Grundpaketet** först (kapitel 03) så fungerar alla andra snippets
-direkt. `scripts/check-snippets.mjs` verifierar **statiskt** att varje exempel
+direkt — hero och indexpanel länkar dit, eftersom det är den enda förkunskapen
+som krävs.
+
+Öppna valvet med **Kod**-raden under ett demo. Med pekdon räcker ett klick i
+rutan (all text är markerad) följt av `⌘C`/`Ctrl+C`; från tangentbordet Tabbar
+du till rutan, markerar med `⌘A`/`Ctrl+A` och kopierar. Valvraden visar
+tangentbordsvägen när den har fokus. Ingen knapp låtsas kopiera — en sådan
+skulle kräva JavaScript. `scripts/check-snippets.mjs` verifierar **statiskt** att varje exempel
 håller måttet: balanserade taggar och klammerblock, samt att varje `var(--x)`
 är deklarerad i exemplet själv eller i Grundpaketet.
 
@@ -93,6 +100,45 @@ Kontrollen är medvetet begränsad och ersätter inte ögonen:
 - den renderar inte exemplen i en webbläsare,
 - den analyserar inte CSS-kaskadens omfattning (scope/specificitet),
 - en `var()` med fallback godkänns utan deklaration.
+
+---
+
+## Gränssnittets uppbyggnad (UX-omgången)
+
+Sidan hade tre konkurrerande ingångar och sköt den första demon långt ned.
+Strukturen är nu: **hero → webbläsarstöd (filter + markörnyckel) → kapitel**.
+Ingen funktion har tagits bort; filterblocket flyttades från hero till den
+plats där dess verkan syns, och hero fick tre vägar vidare (kapitlen, ett
+interaktivt exempel, Grundpaketet).
+
+| Fråga | Svar i gränssnittet |
+| ----- | ------------------- |
+| Vad är det här? | Hero: ingress + `0 rader javascript` + antal tekniker/kapitel/fil |
+| Var börjar jag? | Tre länkar i hero: kapitel 01, `#target` (interaktivt exempel), `#grundpaketet` |
+| Var hittar jag en teknik? | Indexpanelen med kapitelrubriker, `Ctrl`+`F` över hela listan och 133 djuplänkade rader |
+| Vilka kapitel finns? | Sidhuvudet ≥640px (scrollbar remsa 640–1119px, hel rad ≥1120px) och kapitelchips i panelen |
+| Hur kopierar jag koden? | Kodraden i varje kort + hero-instruktionen; tangentbordsvägen visas när raden har fokus |
+| Vad behövs först? | Grundpaketet, länkat från hero, panelen och instruktionen |
+
+Medvetna val värda att känna till:
+
+- **Räknaren är statisk per filterläge.** `counter(visade)` kunde inte användas:
+  `.inre.demo-grid` har `container-type: inline-size`, vilket skapar en egen
+  counter-scope, så räknaren visade alltid 0. Siffrorna (133/132/132/120/109)
+  står därför som `content` per `:has(#f-…)`-läge och `tests/ux-polish.mjs`
+  jämför varje läge med antalet synliga kort i DOM:en.
+- **Sidhuvudets kapitelnavigering är dold under 640px.** Där blev raden 0px
+  bred, staplade länkarna osynligt ovanpå varandra och lade dem i tab-
+  ordningen; panelen (☰ Index) tar över med kapitelchips + hela indexet.
+  Mellan 640 och 1119px är raden en avsiktlig scrollremsa med tonade kanter.
+- **Indexraderna radbryter i stället för att klippas.** Raden var 654px bred
+  inuti en 311px-panel: tekniknamnen klipptes mitt i ordet och stödmarkörerna
+  hamnade utanför kanten. Nu ryms namnet, prickarna och fokusringen i panelen.
+- **Panelhuvudet är sticky**, så "stäng ✕" alltid går att nå även 40 rader ned
+  i indexet.
+- **Inget av detta kräver JavaScript.** Filter, panel, valv, räknare och
+  kapitelchips bygger på `:has()`, `:target`, `<details>`, radio/checkbox och
+  statiska `content`-värden — samma tekniker som referensen beskriver.
 
 ---
 
@@ -133,6 +179,8 @@ Beslut, källformat, mätmetod och migreringsplan för de återstående 119 kort
 | 1 | `scripts/check.mjs` | struktur, zero-JS, unika id:n, ARIA | nej |
 | 4 | `scripts/check-snippets.mjs` | kodexemplen är balanserade och täcker sina variabler | nej |
 | 0 | `scripts/build.test.mjs` | determinism, härledning, stale, inventarium, inga delade regler | nej |
+| 2 | `tests/menu-keyboard.mjs` | mobilmenyns tangentbordsflöde (öppna, navigera, stänga) | ja |
+| 2 | `tests/ux-polish.mjs` | **gränssnittet runt** demona: sidhuvud, hero, indexpanel, filter, räknare och kodvalv | ja |
 | 2/4b | `tests/demo-source.mjs` | demot **beter sig** rätt på sidan och fristående (inkl. interaktiva tillstånd) | ja |
 | 4c | `tests/demo-parity.mjs` | det som **renderas** är oförändrat mot pre-migrerings-baslinjen i `tests/baseline/` | ja |
 | 4c | `tests/demo-scenarios.mjs` | de interaktiva tillstånd (klick, tangentbord, hover) som nivå 4b/4c mäter | ja |
@@ -159,7 +207,8 @@ node scripts/build.test.mjs       # byggtest: determinism, härledning, stale, i
 Webbläsartesterna kräver Playwright + Chromium (endast devDependency):
 
 ```sh
-npm run test:browser                          # menyn + demo-source + paritet mot baslinjen
+npm run test:browser                          # menyn + UX-kontraktet + demo-source + paritet mot baslinjen
+npm run test:ux                               # bara gränssnittets UX-kontrakt (hero, panel, filter, kodvalv)
 node tests/demo-parity.mjs --strict           # 0 px slack: exakt geometribevis i samma webbläsarinstans
 node tests/demo-parity.mjs --require-same-browser   # fäll även på versionsglapp
 npm run baseline:capture                      # fånga om baslinjen ur ett PRE-migreringsdokument
@@ -214,6 +263,12 @@ krävs en körning med baslinjens bygge för full visuell paritetsgrind.
 Endast skärmbildsgenerering och artefaktuppladdning är icke-blockerande.
 **Status: workflowen är uppdaterad på PR-branchen; kontrollera den första
 GitHub Actions-körningen innan ändringarna merge:as.**
+
+UX-kontraktet (`node tests/ux-polish.mjs`) körs lokalt via `npm run test:ux`,
+ingår i `npm run test:browser` och är installerat som ett **obligatoriskt steg**
+i `.github/workflows/ci.yml`. Det verifierar gränssnittet i Chromium vid fem
+bredder och kompletterar de befintliga testerna för demona. Kontrollera den
+senaste GitHub Actions-körningen innan PR:en merge:as.
 
 ### Vägkarta
 
@@ -301,6 +356,23 @@ konkret behov finns. Licenser och upphov: [THIRD-PARTY.md](THIRD-PARTY.md).
 - Vissa demos har plattformsbegränsningar som är dokumenterade på kortet
   (t.ex. tic-tac-toes turordning bygger på heder — CSS kan inte jämföra
   antal drag).
+- **Ingen fritextsökning.** Ett sökfält hade krävt JavaScript, och en
+  CSS-only approximation (t.ex. `:has()` på ett filter) vore en låtsad
+  sökning. Panelen hänvisar i stället till `Ctrl`/`⌘`+`F`, som söker i hela
+  den expanderade listan. Riktig sökning kräver antingen ett byggsteg som
+  skriver ett statiskt sökindex eller en tjänst — utanför den här PR:en.
+- **Indexet visar alla 133 kort i en lista.** Det är 134 rader att scrolla;
+  kapitelchipsen och det kompakta läget ("Visa bara kapitel") är genvägarna.
+- **Nio figurer ritar fortfarande 1–26 enheter utanför sin `viewBox`** (t.ex.
+  `hover-hover`, `writing-mode`, `oklch-display-p3`). Texten hamnar utanför
+  figurens ruta men innanför kortet, så den klipps inte; fyra värre fall
+  (`counter-style`, `animerad-raknare`, `donutdiagram`, `heatmap`) och två
+  som nådde kortkanten (`prefers-reduced-motion`, `hover-hover`) är
+  åtgärdade. `tests/ux-polish.mjs` fäller om något ritar utanför **kortet**
+  utan klipp- eller scrollmekanism.
+- Kapitelnavigeringen i sidhuvudet är en scrollremsa mellan 640 och 1119px.
+  På en muspekare utan sidledsrullning når man "Referens" via panelen i
+  stället; det är dokumenterat och accepterat i den här omgången.
 
 ---
 
@@ -326,6 +398,7 @@ konkret behov finns. Licenser och upphov: [THIRD-PARTY.md](THIRD-PARTY.md).
 │   └── screenshot.mjs      # valfria skärmbilder (kräver playwright)
 ├── tests/
 │   ├── menu-keyboard.mjs   # nivå 2: mobilmenyns tangentbord (kräver webbläsare)
+│   ├── ux-polish.mjs       # nivå 2: gränssnittet runt demona (kräver webbläsare)
 │   ├── demo-scenarios.mjs  # interaktiva tillstånd per demo (klick, fokus, hover)
 │   ├── demo-source.mjs     # nivå 2/4b: källgenererade demos på sidan + fristående (kräver webbläsare)
 │   ├── demo-parity.mjs     # nivå 4c: mätt ekvivalens mot baslinjen (kräver webbläsare)
