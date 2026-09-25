@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+# Minsta nödvändiga behörighet: skriv ingenting.
+permissions:
+  contents: read
+
+# Projektets anda: noll beroenden i runtime. De statiska kontrollerna och
+# regressionstesterna är rena Node-skript utan npm-paket och kräver ingen
+# webbläsare. I webbläsarjobbet är tangentbordstestet ett obligatoriskt steg;
+# bara skärmbilderna är ett valfritt, icke-blockerande komplement.
+jobs:
+  statiska-kontroller:
+    name: Statiska kontroller + regressionstest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checka ut
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+
+      - name: Struktur, zero-JS-löfte och ARIA-hygien
+        run: node scripts/check.mjs
+
+      - name: Kopierbara kodexempel
+        run: node scripts/check-snippets.mjs
+
+      - name: Regressionstest (injicerade defekter ska fångas)
+        run: node scripts/check.test.mjs
+
+  webblasare:
+    name: Webbläsarkontroll (Playwright)
+    runs-on: ubuntu-latest
+    needs: statiska-kontroller
+    steps:
+      - name: Checka ut
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installera beroenden
+        run: npm ci
+
+      - name: Installera Chromium
+        run: npx playwright install --with-deps chromium
+
+      # Obligatoriskt: misslyckas tangentbordstestet faller jobbet.
+      - name: Nivå 2 — mobilmenyns tangentbordsinteraktion
+        run: node tests/menu-keyboard.mjs
+
+      # Valfritt: skärmbilder är dokumentation, inte en grind.
+      - name: Rendera och ta skärmbilder
+        continue-on-error: true
+        run: node scripts/screenshot.mjs
+
+      - name: Ladda upp som artefakt
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: skarmbilder
+          path: doc/*.png
+          retention-days: 14
+          if-no-files-found: ignore

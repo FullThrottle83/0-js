@@ -1,0 +1,12 @@
+# Inga byggprodukter eller beroenden ska in i repot — projektet är en
+# enda fristående HTML-fil. Detta skyddar mot att råka commita verktyg.
+node_modules/
+dist/
+.DS_Store
+*.log
+npm-debug.log*
+
+# Editor/OS
+.vscode/
+.idea/
+Thumbs.db

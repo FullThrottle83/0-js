@@ -1,0 +1,17 @@
+{
+  "name": "0-js",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "CSS·REF — levande CSS-referens med 133 demos och noll JavaScript. DevDependency-paketet används enbart för valfria skärmbilder; kontrollerna i scripts/check*.mjs kör utan beroenden.",
+  "scripts": {
+    "check": "node scripts/check.mjs && node scripts/check-snippets.mjs && node scripts/check.test.mjs",
+    "check:structure": "node scripts/check.mjs",
+    "check:snippets": "node scripts/check-snippets.mjs",
+    "check:tests": "node scripts/check.test.mjs",
+    "screenshot": "node scripts/screenshot.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.55.0"
+  }
+}
