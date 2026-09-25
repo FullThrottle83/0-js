@@ -199,15 +199,24 @@ runtime-JavaScript.
 
 ### CI
 
-Workflowen [`.github/workflows/ci.yml`](.github/workflows/ci.yml) är committad på
-PR-branchen. Den kör de statiska kontrollerna som ett obligatoriskt jobb utan
-npm-installation eller webbläsare. Därefter kör ett obligatoriskt Playwright-jobb tre steg i Chromium:
-mobilmenyns tangentbordstest, de källgenererade demonas beteendetest
+Workflowen [`.github/workflows/ci.yml`](.github/workflows/ci.yml) kör de
+statiska kontrollerna som ett obligatoriskt jobb utan npm-installation eller
+webbläsare. Därefter kör ett obligatoriskt Playwright-jobb mobilmenyns
+tangentbordstest och de källgenererade demonas beteendetest
 (`tests/demo-source.mjs`: på sidan och fristående som Grundpaketet + kodvalv,
-inklusive interaktiva tillstånd) och det mätta paritetstestet mot baslinjen
-(`tests/demo-parity.mjs`). Endast skärmbildsgenerering och
-artefaktuppladdning är icke-blockerande. **Status: workflow installerad;
-kontrollera den första GitHub Actions-körningen innan ändringarna merge:as.**
+inklusive interaktiva tillstånd). Både byggtestet och beteendetestet är
+inventariestyrda ur `scripts/demo-spec.mjs`, så de nya demona omfattas utan
+att workflowen ändras. Endast skärmbildsgenerering och artefaktuppladdning är
+icke-blockerande. **Status: workflow installerad; kontrollera den första
+GitHub Actions-körningen innan ändringarna merge:as.**
+
+Paritetssteget (`node tests/demo-parity.mjs`) ingår i `npm run test:browser`
+och är förberett som tredje steg i webbläsarjobbet; den exakta raden ligger i
+PR-beskrivningen. Filen `.github/workflows/ci.yml` kan inte uppdateras från
+den här grenen — den automatiska GitHub-appen saknar `workflows`-behörighet,
+och GitHub avvisar både push och API-anrop som rör workflowfiler. Ändringen
+är därför en ettstegsändring för en människa (eller en app med rätt
+behörighet).
 
 ### Vägkarta
 

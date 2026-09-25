@@ -263,13 +263,20 @@ Utseende och beteende är mätta i Chromium 153.0.8010.0:
   valvens *beteende* var alltså redan korrekt; det som driftade var formen
   (indrag, formatering, ordning), inte tekniken.
 
+Körningen ligger utanför repots CI-pipeline: `tests/demo-parity.mjs` är
+förberett som eget steg i webbläsarjobbet, men `.github/workflows/ci.yml` kan
+inte uppdateras från den här grenen (GitHub-appen som driver grenen saknar
+`workflows`-behörighet, och GitHub avvisar både push och API-anrop som rör
+workflowfiler). Den exakta raden ligger i PR-beskrivningen. Fram till dess
+körs pariteten lokalt med `npm run test:browser` eller `npm run test:parity`.
+
 **Miljöreservation.** Ett paritetsbevis är bara så starkt som sin miljö, och
 verktyget säger vilket läge det kör i:
 
 | Läge | Vad som jämförs | När |
 | ---- | --------------- | --- |
 | **samma webbläsarbygge** som baslinjen | struktur, text, attribut, fältvärden och icke-geometriska stilar **exakt** (fäller); geometri med slack max(2 px, 2 %) som varning | beviset ovan: `--strict` ger 0 px |
-| **annat bygge** | struktur, text, attribut och fältvärden exakt (fäller); stilar och geometri rapporteras | CI, där Playwright kan installera ett annat Chromium än baslinjens 153.0.8010.0 |
+| **annat bygge** | struktur, text, attribut och fältvärden exakt (fäller); stilar och geometri rapporteras | CI och andra miljöer där Playwright installerar ett annat Chromium än baslinjens 153.0.8010.0 |
 
 Skälet till uppdelningen är att ett nyare bygge kan stödja fler funktioner
 (`if()`, `calc-size()`, `appearance: base-select`) och därmed rendera annat —
