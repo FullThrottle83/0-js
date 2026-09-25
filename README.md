@@ -142,6 +142,56 @@ Medvetna val värda att känna till:
 
 ---
 
+## Att hitta en teknik (discoverability-omgången)
+
+Föregående omgång gjorde gränssnittet runt demona läsbart. Den här omgången
+svarar på nästa fråga: *jag vet vad tekniken heter — var ligger den?*
+Utgångsläget mättes i Chromium 153 innan något ändrades:
+
+| Teknik | Läge i kapitelindexet (1440 px, panel 6 393 px) | Webbläsarens sökning (375 px) |
+| ------ | ---------------------------------------------- | ----------------------------- |
+| `grid-template-rows: subgrid` | rad 33, 1 666 px ned (1,97 panelvyer) | panelen är `display:none` tills `#sidomeny` är `:target`; sökningen hittar inte texten i ett dolt subträd |
+| `@property` | rad 48, 2 343 px | — |
+| `:has()` | rad 69, 3 335 px (3,95 vyer) | — |
+| `popover` | rad 68, 3 307 px | — |
+
+Åtgärden är **ett A–Ö-register i samma panel**, vid sidan av kapitelindexet —
+inte i stället för det:
+
+- **Namnuppslag:** en bokstavsrad (`@`, `:`, `<`, `0–9`, A … W) med vanliga
+  länkar till grupper i svensk ordning (Å, Ä, Ö efter Z). Ett klick ger
+  gruppen i första panelvyn; uppmätt fyndväg för de fyra teknikerna ovan blev
+  **0 px panelscroll** (mot 1 666–3 385 px i kapitelindexet).
+- **Samma innehåll, en gång:** registret genereras ur kapitelindexet
+  (`scripts/register.mjs`), aldrig för hand. Namn, beskrivning, stödprickar och
+  fragmentlänk kopieras ordagrant; grupperna härleds ur namnen. Ändras en rad
+  utan att registret byggs om fäller `npm run build:check`.
+- **Kapitlen finns kvar:** samma indelning, samma chips, samma rader. Registret
+  är en andra *sortering*, inte en andra sanning.
+- **Kortens vägvisare:** varje kort slutar med två länkar — *Kapitel 02 ·
+  Layout & rutnät* och *I registret: G* — så att man kan gå tillbaka till sitt
+  kapitel eller hitta syskon i bokstavsordningen utan att scrolla upp. Texten
+  är innehållet (en siffra eller bokstav ensam vore obegriplig i en länklista).
+- **Ingen ny mekanism:** vyn växlas med en radiogrupp och `:has()`, precis som
+  stödfiltret och temaväljaren. Bara en vy är renderad åt gången
+  (`display:none`) — inga dolda tab-stopp, ingen teknik två gånger i
+  dokumentet, noll JavaScript.
+
+Alternativ som övervägdes och förkastades: ett separat `D`-element med
+hopplänkar *ovanför* panelen (blev en tredje ingång bredvid chipsen och krävde
+att raderna ändå skrevs två gånger), `:has()`-filtrering på en inmatad bokstav
+(en låtsad sökning — rutan hade inte kunnat matcha text), och att göra
+kapitelindexet själv bokstavssorterat (förstör kapitelstrukturen, som är
+navigeringens ryggrad). Beslut, kontroller och begränsningar:
+[`docs/demo-kalla.md` §9](docs/demo-kalla.md).
+
+Återstår medvetet: ingen fritextsökning, ingen automatiskt härledd
+"relaterade demos"-lista (den skulle kräva metadata som inte finns), och
+registret har fortfarande en rad per teknik — men raden ligger nu en
+bokstavsrad bort i stället för 3 000 px ned.
+
+---
+
 ## En källa per demo (14 av 133 migrerade)
 
 Ett demo-kort bär sin implementation tre gånger: live-markup, CSS i
@@ -179,8 +229,11 @@ Beslut, källformat, mätmetod och migreringsplan för de återstående 119 kort
 | 1 | `scripts/check.mjs` | struktur, zero-JS, unika id:n, ARIA | nej |
 | 4 | `scripts/check-snippets.mjs` | kodexemplen är balanserade och täcker sina variabler | nej |
 | 0 | `scripts/build.test.mjs` | determinism, härledning, stale, inventarium, inga delade regler | nej |
+| 0 | `scripts/register.mjs --check` | A–Ö-registret är i fas med kapitelindexet; unika mål; vägvisare per kort | nej |
+| 0 | `scripts/register.test.mjs` | registret: inventarium, ankare, svensk sortering, stale, felhantering | nej |
 | 2 | `tests/menu-keyboard.mjs` | mobilmenyns tangentbordsflöde (öppna, navigera, stänga) | ja |
 | 2 | `tests/ux-polish.mjs` | **gränssnittet runt** demona: sidhuvud, hero, indexpanel, filter, räknare och kodvalv | ja |
+| 2 | `tests/register-nav.mjs` | **fyndvägen**: A–Ö-registret, bokstavsankare, kortens vägvisare, tangentbord, filter, mobil 320–1440 px | ja |
 | 2/4b | `tests/demo-source.mjs` | demot **beter sig** rätt på sidan och fristående (inkl. interaktiva tillstånd) | ja |
 | 4c | `tests/demo-parity.mjs` | det som **renderas** är oförändrat mot pre-migrerings-baslinjen i `tests/baseline/` | ja |
 | 4c | `tests/demo-scenarios.mjs` | de interaktiva tillstånd (klick, tangentbord, hover) som nivå 4b/4c mäter | ja |
@@ -197,17 +250,20 @@ Alla kontroller är rena Node-skript **utan npm-beroenden**, i projektets anda:
 
 ```sh
 node scripts/build.mjs --check    # nivå 0: genererade demos i fas med demos/
+node scripts/register.mjs --check # nivå 0: A–Ö-registret i fas med kapitelindexet
 node scripts/check.mjs            # nivå 1: struktur, zero-JS, ARIA-hygien
 node scripts/check-snippets.mjs   # nivå 4: kopierbara exempel (statiskt)
 node scripts/check.test.mjs       # regressionstest för kontrollerna själva
 node scripts/build.test.mjs       # byggtest: determinism, härledning, stale, inventarium
+node scripts/register.test.mjs    # registertest: inventarium, ankare, vägvisare, stale
 # eller: npm run check
 ```
 
 Webbläsartesterna kräver Playwright + Chromium (endast devDependency):
 
 ```sh
-npm run test:browser                          # menyn + UX-kontraktet + demo-source + paritet mot baslinjen
+npm run test:browser                          # menyn + UX-kontraktet + A–Ö-registret + demo-source + paritet
+npm run test:nav                              # bara registret och kortens vägvisare
 npm run test:ux                               # bara gränssnittets UX-kontrakt (hero, panel, filter, kodvalv)
 node tests/demo-parity.mjs --strict           # 0 px slack: exakt geometribevis i samma webbläsarinstans
 node tests/demo-parity.mjs --require-same-browser   # fäll även på versionsglapp
@@ -266,8 +322,12 @@ GitHub Actions-körningen innan ändringarna merge:as.**
 
 UX-kontraktet (`node tests/ux-polish.mjs`) körs lokalt via `npm run test:ux`,
 ingår i `npm run test:browser` och är installerat som ett **obligatoriskt steg**
-i `.github/workflows/ci.yml`. Det verifierar gränssnittet i Chromium vid fem
-bredder och kompletterar de befintliga testerna för demona. Kontrollera den
+i `.github/workflows/ci.yml`. Samma gäller registersteget
+(`node scripts/register.mjs --check` i de statiska kontrollerna) och
+navigeringstestet (`node tests/register-nav.mjs`, `npm run test:nav`) som
+verifierar A–Ö-registret och kortens vägvisare. Tillsammans täcker de två
+webbläsartesterna gränssnittet i Chromium från 320 px och uppåt, vid fem
+bredder, och kompletterar de befintliga testerna för demona. Kontrollera den
 senaste GitHub Actions-körningen innan PR:en merge:as.
 
 ### Vägkarta
@@ -359,10 +419,19 @@ konkret behov finns. Licenser och upphov: [THIRD-PARTY.md](THIRD-PARTY.md).
 - **Ingen fritextsökning.** Ett sökfält hade krävt JavaScript, och en
   CSS-only approximation (t.ex. `:has()` på ett filter) vore en låtsad
   sökning. Panelen hänvisar i stället till `Ctrl`/`⌘`+`F`, som söker i hela
-  den expanderade listan. Riktig sökning kräver antingen ett byggsteg som
-  skriver ett statiskt sökindex eller en tjänst — utanför den här PR:en.
-- **Indexet visar alla 133 kort i en lista.** Det är 134 rader att scrolla;
-  kapitelchipsen och det kompakta läget ("Visa bara kapitel") är genvägarna.
+  den expanderade listan, och till A–Ö-registret för namnuppslag. Riktig
+  fritextsökning kräver antingen ett byggsteg som skriver ett statiskt
+  sökindex (t.ex. ett prefixregister för flera sökord per teknik) eller en
+  tjänst — utanför den här PR:en.
+- **Kapitelindexet visar alla 133 kort i en lista.** Det är 134 rader att
+  scrolla; kapitelchipsen, det kompakta läget ("Visa bara kapitel") och
+  A–Ö-registret är genvägarna. Registret har samma radantal (det är samma
+  rader) men en bokstavsrad i stället för kapitelrubriker.
+- **Registret är en bokstavssortering, inte en rekommendation.** Det finns
+  ingen lista över "besläktade demos": en sådan kräver metadata (taggning per
+  kort) som inte finns i dokumentet i dag, och en handskriven lista över 133
+  kort skulle glida. Kortens vägvisare ger i stället den relation som redan
+  finns i datan: kapitel + begynnelsebokstav.
 - **Nio figurer ritar fortfarande 1–26 enheter utanför sin `viewBox`** (t.ex.
   `hover-hover`, `writing-mode`, `oklch-display-p3`). Texten hamnar utanför
   figurens ruta men innanför kortet, så den klipps inte; fyra värre fall
@@ -387,11 +456,16 @@ konkret behov finns. Licenser och upphov: [THIRD-PARTY.md](THIRD-PARTY.md).
 │   ├── property-border-angle.html
 │   └── … (elva ur batch 1)
 ├── docs/
-│   └── demo-kalla.md       # beslut, källformat, verifiering, migreringsplan
+│   └── demo-kalla.md       # beslut, källformat, verifiering, migreringsplan (inkl. §9 A–Ö-registret)
+├── doc/                    # före/efter-bilder (dokumentation, inte testgrind)
+│   ├── ux-polish/          # UX-omgången
+│   └── discoverability/    # den här omgången
 ├── scripts/
 │   ├── build.mjs           # npm run build / build:check — genererar ur demos/
 │   ├── demo-spec.mjs       # manifest: vilka demos som är migrerade (enda listan)
 │   ├── build.test.mjs      # byggtest: determinism, härledning, stale, inventarium
+│   ├── register.mjs        # A–Ö-registret + kortens vägvisare ur kapitelindexet
+│   ├── register.test.mjs   # registertest: inventarium, ankare, sortering, stale
 │   ├── check.mjs           # nivå 1: struktur, zero-JS, ARIA
 │   ├── check-snippets.mjs  # nivå 4: kopierbara exempel (statiskt)
 │   ├── check.test.mjs      # regressionstest för kontrollerna
@@ -399,6 +473,7 @@ konkret behov finns. Licenser och upphov: [THIRD-PARTY.md](THIRD-PARTY.md).
 ├── tests/
 │   ├── menu-keyboard.mjs   # nivå 2: mobilmenyns tangentbord (kräver webbläsare)
 │   ├── ux-polish.mjs       # nivå 2: gränssnittet runt demona (kräver webbläsare)
+│   ├── register-nav.mjs    # nivå 2: A–Ö-registret + kortens vägvisare (kräver webbläsare)
 │   ├── demo-scenarios.mjs  # interaktiva tillstånd per demo (klick, fokus, hover)
 │   ├── demo-source.mjs     # nivå 2/4b: källgenererade demos på sidan + fristående (kräver webbläsare)
 │   ├── demo-parity.mjs     # nivå 4c: mätt ekvivalens mot baslinjen (kräver webbläsare)

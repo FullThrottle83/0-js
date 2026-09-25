@@ -3,20 +3,22 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "CSS·REF — levande CSS-referens med 133 demos och noll JavaScript. DevDependency-paketet används enbart för webbläsartester och valfria skärmbilder; kontrollerna i scripts/check*.mjs och bygget i scripts/build.mjs kör utan beroenden.",
+  "description": "CSS·REF — levande CSS-referens med 133 demos och noll JavaScript. DevDependency-paketet används enbart för webbläsartester och valfria skärmbilder; kontrollerna i scripts/check*.mjs, registret i scripts/register.mjs och bygget i scripts/build.mjs kör utan beroenden.",
   "scripts": {
-    "build": "node scripts/build.mjs",
-    "build:check": "node scripts/build.mjs --check",
-    "check": "node scripts/build.mjs --check && node scripts/check.mjs && node scripts/check-snippets.mjs && node scripts/check.test.mjs && node scripts/build.test.mjs",
-    "check:build": "node scripts/build.mjs --check && node scripts/build.test.mjs",
+    "build": "node scripts/build.mjs && node scripts/register.mjs",
+    "build:check": "node scripts/build.mjs --check && node scripts/register.mjs --check",
+    "check": "npm run build:check && node scripts/check.mjs && node scripts/check-snippets.mjs && node scripts/check.test.mjs && node scripts/build.test.mjs && node scripts/register.test.mjs",
+    "check:build": "npm run build:check && node scripts/build.test.mjs",
     "check:structure": "node scripts/check.mjs",
     "check:snippets": "node scripts/check-snippets.mjs",
     "check:tests": "node scripts/check.test.mjs",
-    "test:browser": "node tests/menu-keyboard.mjs && node tests/ux-polish.mjs && node tests/demo-source.mjs && node tests/demo-parity.mjs",
+    "test:browser": "node tests/menu-keyboard.mjs && node tests/ux-polish.mjs && node tests/register-nav.mjs && node tests/demo-source.mjs && node tests/demo-parity.mjs",
     "test:ux": "node tests/ux-polish.mjs",
     "test:parity": "node tests/demo-parity.mjs",
     "baseline:capture": "node tests/demo-parity.mjs --capture",
-    "screenshot": "node scripts/screenshot.mjs"
+    "screenshot": "node scripts/screenshot.mjs",
+    "check:register": "node scripts/register.mjs --check && node scripts/register.test.mjs",
+    "test:nav": "node tests/register-nav.mjs"
   },
   "devDependencies": {
     "playwright": "^1.55.0"
