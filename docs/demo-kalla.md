@@ -382,3 +382,78 @@ tjänar mest på en enda källa men kostar mest att verifiera.
 - Stöddata (`sup-*`, stodrad, indexrad) → kvar i `index.html`. Kan bli ett
   eget litet metadatasteg senare, oberoende av det här bygget.
 - Att bygga hela `index.html` ur mallar. Behövs inte för att nå målet.
+
+---
+
+## 9. A–Ö-registret — genererat ur kapitelindexet, med kortens vägvisare
+
+*Status: infört i discoverability-omgången. Datum: 2026-09-25.*
+
+### Problemet, mätt
+
+Den som vet vad tekniken heter men inte vilket kapitel den hör till hade två
+vägar: bläddra i kapitelindexet (6 393 px panelscroll, 134 rader) eller lita på
+`Ctrl`/`⌘`+`F`. Vid 375 px ligger indexet dessutom i en panel som bara är
+renderad medan `#sidomeny` är dokumentets `:target`; med panelen stängd är
+texten i ett `display:none`-subträd och webbläsarens sökning hittar den inte.
+Uppmätt i Chromium 153: `grid-template-rows: subgrid` ligger 32 rader och
+1 666 px ned i panelen, `@property` 47 rader, `:has()` 68 rader (3 385 px).
+
+### Vad som genereras
+
+`scripts/register.mjs` läser **kapitelindexet i `index.html`** — samma rader
+som redan bär namn, beskrivning, stödklasser (`sup-*`) och fragmentlänk — och
+skriver om två markerade områden:
+
+| Område | Markör | Innehåll |
+| ------ | ------ | -------- |
+| Registret | `<!-- register:start … -->` … `<!-- register:end -->` | bokstavsrad + en `<section class="reg-avsnitt">` per grupp med samma rader i A–Ö-ordning |
+| Kortens vägvisare | `<!-- demo-ctx:ID -->` … `<!-- /demo-ctx:ID -->` | två länkar sist i kortet: kapitlets sektion och kortets registergrupp |
+
+Det finns ingen andra lista att hålla i synk: namn, stödklasser och mål-id:n
+kopieras ordagrant ur kapitelindexet, och grupperna härleds ur namnen
+(`@`, `:`, `<`, `0–9`, A–Ö i svensk ordning). Rubriker och ankare skapas bara
+för grupper som faktiskt har rader, så registret kan inte visa en tom rubrik.
+
+### Kontroller (samma anda som bygget)
+
+`node scripts/register.mjs --check` (körs först av `npm run build:check`, alltså
+i CI:s stale-steg) fäller på:
+
+- registret är inte i fas med kapitelindexet (någon har bytt namn, lagt till
+  eller tagit bort en rad utan `npm run build`),
+- en teknik saknas i registret, förekommer två gånger eller har ett id som inte
+  finns exakt en gång i dokumentet,
+- bokstavsradens ankare stämmer inte med grupperna (antal, ordning, etikett),
+- vägvisaren i ett kort pekar på fel kapitel/grupp, saknas eller ligger utanför
+  kortet,
+- kapitelindexets radantal inte stämmer med antalet demo-kort i sektionen
+  (fångar en omkastad kapitelordning),
+- chipens nummer, sektionens `data-nr` eller `<h2>` inte stämmer med
+  kapitelrubriken i indexet.
+
+`scripts/register.test.mjs` injicerar defekter i det committade dokumentet och
+kräver att kontrollen rapporterar dem (stale, saknade markörer, omkastade
+kapitel, okända id:n) samt att ändringar **utanför** markörerna bevaras byte för
+byte. `tests/register-nav.mjs` verifierar samma sak i en riktig webbläsare:
+inventariet, fyndvägen, tangentbordsflödet, filtret, mobilen och frånvaron av
+horisontell scroll vid 320–1440 px.
+
+### Noll JavaScript, ingen ny mekanism
+
+Vyn växlas med en radiogrupp (`#vy-kapitel` / `#vy-register`) och `:has()`, som
+stödfiltret och temaväljaren. Bara en vy är renderad åt gången
+(`display:none`) — därför finns inga dolda tab-stopp i den inaktiva vyn.
+Båda vyernas länkar finns i DOM:en, men den andra listan genereras från
+kapitelindexet och behöver aldrig underhållas separat. Bokstavsankarna är vanliga länkar till riktiga `id:n`.
+Kortens vägvisare till registret pekar på en grupp (`#reg-g`), och panelen
+öppnas då av samma `:target`-modell som mobilmenyn redan använder; en synlig
+rad ("Visa kapitelindexet" → `#sidomeny`) tar tillbaka kapitelvyn när den
+kommit in den vägen.
+
+### Vad som INTE görs
+
+- Ingen fritextsökning. Registret är ett register, inte en sökning.
+- Ingen ny metadata: registret läser kapitelindexet, inte en separat databas.
+- Ingen migrering av de 119 omigrerade korten. Vägvisaren läggs in av bygget
+  för alla 133 kort, oavsett om kortet har en källa i `demos/` eller inte.

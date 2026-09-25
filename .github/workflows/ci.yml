@@ -30,6 +30,10 @@ jobs:
       - name: Genererade demos är i fas med källorna (stale-kontroll)
         run: node scripts/build.mjs --check
 
+      # Registret är en deterministisk härledning av kapitelindexet.
+      - name: A–Ö-registret är i fas med kapitelindexet (stale-kontroll)
+        run: node scripts/register.mjs --check
+
       - name: Struktur, zero-JS-löfte och ARIA-hygien
         run: node scripts/check.mjs
 
@@ -41,6 +45,9 @@ jobs:
 
       - name: Byggtest (determinism, härledning, stale-detektering)
         run: node scripts/build.test.mjs
+
+      - name: Registertest (inventarium, ankare, vägvisare, stale-detektering)
+        run: node scripts/register.test.mjs
 
   webblasare:
     name: Webbläsarkontroll (Playwright)
@@ -70,6 +77,10 @@ jobs:
       # stödfilter, räknare, kodvalv) verifieras vid 375–1440 px.
       - name: Nivå 2 — gränssnittets UX-kontrakt
         run: node tests/ux-polish.mjs
+
+      # Obligatoriskt: namnregister, bokstavsankare och kortvägvisare i Chromium.
+      - name: Nivå 2 — A–Ö-registret och kortens vägvisare
+        run: node tests/register-nav.mjs
 
       # Obligatoriskt: de källgenererade demona verifieras på sidan och
       # fristående (Grundpaketet + kodvalv) i en riktig Chromium.

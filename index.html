@@ -274,9 +274,13 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
   border-color: color-mix(in srgb, var(--acc) 22%, var(--line));
 }
 @supports (animation-timeline: view()) {
+  /* Hur långt kortet glider in nedifrån. Avståndet används på två ställen:
+     här och i scroll-margin-top för djuplänkar (se "Permalänk" nedan).
+     Ändra bara variabeln. */
+  :root { --bento-lyft: 22px; }
   .demo { animation: bento-in 1ms linear both; animation-timeline: view(); animation-range: entry 0% entry 18%; }
 }
-@keyframes bento-in { from { opacity: 0; translate: 0 22px; } }
+@keyframes bento-in { from { opacity: 0; translate: 0 var(--bento-lyft, 0px); } }
 .demo-titel {
   font-family: var(--mono); font-size: .82rem; letter-spacing: .04em;
   color: var(--acc); display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
@@ -2785,7 +2789,12 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
    permanent öppen på breda skärmar, och ingen av dem kan tvingas dit utan att
    förlita sig på UA-regler. */
 @media (max-width: 1119.98px) {
-  .sidomeny:target {
+  /* Panelen visas när den själv är :target (#sidomeny) — och när en grupp i
+     A–Ö-registret är det (#reg-g osv.), eftersom kortens vägvisare pekar dit.
+     I det senare fallet öppnas panelen med registervyn vald; samma enkla
+     :target-modell, ingen ny mekanism. */
+  .sidomeny:target,
+  body:has(.reg-avsnitt:target) .sidomeny {
     display: block; position: fixed; left: 0; top: var(--hh); z-index: 75;
     width: min(21rem, 90vw);
     background: color-mix(in srgb, var(--bg) 94%, black);
@@ -2820,8 +2829,10 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .meny-stang { display:none; text-decoration:none; font-family:var(--mono); font-size:.78rem; color:var(--dim); cursor:pointer; }
 @media (max-width: 1119.98px) {
   .meny-stang { display:inline-block; }
-  /* Öppna-knappen markeras som aktiv så länge panelen är :target. */
-  body:has(.sidomeny:target) .site .meny-oppna-knapp { color: var(--acc); }
+  /* Öppna-knappen markeras som aktiv så länge panelen är :target (även när
+     panelen öppnades via en registergrupp från ett kort). */
+  body:has(.sidomeny:target) .site .meny-oppna-knapp,
+  body:has(.reg-avsnitt:target) .site .meny-oppna-knapp { color: var(--acc); }
 }
 .meny-oppna-knapp { display:none; cursor:pointer; text-decoration:none; font-family:var(--mono); font-size:.78rem; letter-spacing:.06em; color:var(--dim); border:1px solid var(--line); border-radius:6px; padding:.32rem .6rem; white-space: nowrap; }
 @media (max-width: 1119.98px) { .meny-oppna-knapp { display:inline-block; } }
@@ -2844,7 +2855,12 @@ body:has(#f-firefox:checked)  .demo:not(.sup-firefox),
 body:has(#f-chrome:checked)   .index-rad:not(.sup-chrome),
 body:has(#f-edge:checked)     .index-rad:not(.sup-edge),
 body:has(#f-safari:checked)   .index-rad:not(.sup-safari),
-body:has(#f-firefox:checked)  .index-rad:not(.sup-firefox) { display: none; }
+body:has(#f-firefox:checked)  .index-rad:not(.sup-firefox),
+/* Samma filtrering i A–Ö-registret: samma stödklasser, samma regler. */
+body:has(#f-chrome:checked)   .reg-rad:not(.sup-chrome),
+body:has(#f-edge:checked)     .reg-rad:not(.sup-edge),
+body:has(#f-safari:checked)   .reg-rad:not(.sup-safari),
+body:has(#f-firefox:checked)  .reg-rad:not(.sup-firefox) { display: none; }
 /* Kap-rubriker utan synliga barn tonas ned */
 .filter-not { display:none; margin-top:.4rem; font-family:var(--mono); font-size:.7rem; color:var(--dim); }
 body:has(#f-chrome:checked) .filter-not, body:has(#f-edge:checked) .filter-not,
@@ -2889,6 +2905,88 @@ body:has(#f-safari:checked) .filter-not, body:has(#f-firefox:checked) .filter-no
 }
 body:has(#kompakt:checked) .index-kap ul { display:none; }
 body:has(#kompakt:checked) .index-kap summary { border-bottom-color: transparent; }
+
+/* ---------- Vy-växlare: kapitelindex ⇄ A–Ö-register ----------
+   Samma noll-JS-mönster som stödfiltret och temaväljaren: en radiogrupp där
+   valet stylas via :has(input:checked). Bara EN vy är renderad åt gången
+   (display:none på den andra) — därför blir inga dolda rader tab-stopp, och
+   ingen teknik finns i dokumentet två gånger. */
+.vyvaxlare { display:flex; flex-wrap:wrap; gap:.45rem; margin:.05rem 0 .9rem; }
+.vyvaxlare label { position:relative; }
+.vyvaxlare input { position:absolute; opacity:0; width:1px; height:1px; }
+.vyvaxlare span {
+  display:inline-flex; align-items:center; gap:.42rem; padding:.34rem .7rem;
+  border:1px solid var(--line); border-radius:99px; font-family:var(--mono);
+  font-size:.72rem; color:var(--dim); cursor:pointer;
+  transition: background .2s, color .2s, border-color .2s;
+}
+.vyvaxlare label:hover span { color:var(--ink); border-color: color-mix(in srgb, var(--acc) 45%, var(--line)); }
+.vyvaxlare label:has(input:checked) span { background:var(--acc); color:#0a0a0a; border-color:var(--acc); font-weight:600; }
+.vyvaxlare label:has(input:focus-visible) span { outline:2px solid var(--acc); outline-offset:2px; }
+@media (pointer: coarse) { .vyvaxlare span { padding:.45rem .8rem; } }
+
+.register { display:none; }
+.register-tips { display:none; }
+/* Bara synlig när registret tvingades fram av ett ankare (inte av växlaren). */
+.register-fran { display:none; margin:0 0 .9rem; font-family:var(--mono); font-size:.66rem; color:var(--dim); }
+.register-fran a { color:var(--acc); }
+body:has(.reg-avsnitt:target) .register-fran { display:block; }
+/* Registervyn är vald antingen med växlaren eller genom att ett registerankare
+   är :target (t.ex. när ett korts vägvisare pekar på #reg-g). */
+body:has(#vy-register:checked) .register,
+body:has(.reg-avsnitt:target) .register { display:block; }
+body:has(#vy-register:checked) .register-tips,
+body:has(.reg-avsnitt:target) .register-tips { display:block; }
+body:has(#vy-register:checked) .index-tips-kapitel,
+body:has(.reg-avsnitt:target) .index-tips-kapitel { display:none; }
+body:has(#vy-register:checked) nav.index,
+body:has(.reg-avsnitt:target) nav.index { display:none; }
+/* Kompakt-läget ("visa bara kapitel") gäller kapitelvyn. Raden finns kvar i
+   registervyn eftersom den också bär ☰-stängningen på telefon. */
+body:has(#vy-register:checked) .index-kompakt .vaxlare,
+body:has(.reg-avsnitt:target) .index-kompakt .vaxlare { display:none; }
+
+/* Text som bara är till för skärmläsare: alltid i tillgänglighetsträdet,
+   aldrig synlig. Används i registerrubrikerna så att de blir läsbara som
+   "Tekniker på A" utan att skräpa i den visuella raden. */
+.vh { position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
+
+/* Bokstavsraden: ett ankare per begynnelsebokstav (och en för @, :, <, 3).
+   Ankarna är vanliga länkar — ingen skriptad jakt. Träffytan är minst 24px
+   enligt WCAG 2.2 AA och större på pekskärm. */
+.reg-abc { display:flex; flex-wrap:wrap; gap:.22rem; list-style:none; margin:0 0 .9rem; padding:0; }
+.reg-abc a {
+  display:inline-flex; align-items:center; justify-content:center; min-width:1.7rem; min-height:1.7rem;
+  padding:0 .35rem; border:1px solid var(--line); border-radius:5px;
+  font-family:var(--mono); font-size:.68rem; color:var(--dim); text-decoration:none;
+  transition: color .2s, border-color .2s;
+}
+.reg-abc a:hover, .reg-abc a:focus-visible { color:var(--acc); border-color: color-mix(in srgb, var(--acc) 45%, var(--line)); }
+@media (pointer: coarse) { .reg-abc a { min-width:2rem; min-height:2rem; } }
+
+/* Registerraderna: namn + beskrivning, kapitelnummer och stödmarkörer.
+   Samma visuella språk som .index-rad — registret ska kännas som panelen,
+   inte som en importerad komponent. */
+.reg-avsnitt { scroll-margin-top: 4.5rem; } /* panelhuvudet är sticky: rubriken får inte hamna under det */
+.reg-rubrik {
+  display:flex; align-items:baseline; gap:.5rem; margin:0 0 .3rem; padding:.25rem 0;
+  border-bottom:1px solid var(--line); font-family:var(--mono); font-size:.74rem;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--acc);
+}
+.reg-rubrik .reg-antal { margin-left:auto; color:var(--dim); font-size:.66rem; letter-spacing:0; }
+.reg-lista { list-style:none; margin:0 0 1.1rem; padding:0; display:grid; gap:.2rem; grid-template-columns:minmax(0,1fr); }
+.reg-rad { min-width:0; }
+.reg-rad a {
+  display:flex; align-items:flex-start; gap:.5rem; padding:.3rem .35rem; border-radius:5px;
+  min-width:0; font-family:var(--mono); font-size:.72rem; color:var(--dim); text-decoration:none;
+  transition: background .15s, color .15s;
+}
+.reg-rad a:hover { background: var(--acc-soft); color: var(--acc); }
+.reg-rad .reg-namn { flex:1 1 auto; min-width:0; overflow-wrap:break-word; line-height:1.35; }
+.reg-rad .reg-desc { color: var(--dim); }
+.reg-rad .reg-kap { flex:none; margin-top:.36rem; font-size:.62rem; color:var(--dim); opacity:.85; }
+/* Pekdon: samma större träffyta som kapitelindexets rader (WCAG 2.2 AA). */
+@media (pointer: coarse) { .reg-rad a { padding-block:.5rem; font-size:.75rem; } }
 
 /* ---------- Live-räknare (CSS counters) ---------- */
 .raknare {
@@ -3029,11 +3127,32 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .demo-beskrivning { margin: .7rem 0 1.35rem; }
 
 
-/* Permalänk & :target-ring på kort */
+/* Permalänk & :target-ring på kort.
+   Kortet glider in 22px nedifrån med scroll-driven animation (bento-in).
+   Webbläsaren räknar fragmenthoppet mot den flyttade rutan, så en djuplänk
+   landade 22px för högt: kortets överkant hamnade delvis under den sticky
+   headern. Samma avstånd läggs därför till i scroll-marginalen — annars är
+   kravet "fragmentmål får inte skymmas av sidhuvudet" inte uppfyllt för de
+   kort som animeras in. Utan animationstidslinjer (Firefox) gäller den
+   vanliga marginalen. */
 .demo { scroll-margin-top: calc(var(--hh) + 1rem); }
+@supports (animation-timeline: view()) {
+  .demo { scroll-margin-top: calc(var(--hh) + 1rem + var(--bento-lyft, 0px)); }
+}
 .demo:target { border-color: var(--acc); box-shadow: 0 0 0 3px var(--acc-soft); }
 .demo-perma { margin-left:auto; font-family:var(--mono); font-size:.7rem; color:var(--dim); text-decoration:none; opacity:0; transition:opacity .2s; }
 .demo-titel:hover .demo-perma, .demo-titel:focus-within .demo-perma { opacity:1; }
+
+/* ---------- Vägvisare i varje kort: kapitel + registergrupp ----------
+   Texten är innehållet (en siffra eller en bokstav räcker inte i en
+   länklista): "Kapitel 02 · Layout & rutnät" och "I registret: G". Båda är
+   riktiga länkar, så de fungerar utan skript — den första scrollar till
+   kapitlets sektion, den andra öppnar panelen på rätt bokstav. */
+.demo-ctx { display:flex; flex-wrap:wrap; align-items:baseline; gap:.35rem .6rem; margin:1.1rem 0 0; padding-top:.7rem; border-top:1px dashed var(--line); font-family:var(--mono); font-size:.68rem; color:var(--dim); }
+.demo-ctx a { color:var(--dim); text-decoration:none; border-bottom:1px solid transparent; transition: color .2s, border-color .2s; }
+.demo-ctx a:hover, .demo-ctx a:focus-visible { color:var(--acc); border-bottom-color: color-mix(in srgb, var(--acc) 45%, transparent); }
+.demo-ctx .ctx-sep { color: var(--line); }
+@media (pointer: coarse) { .demo-ctx { font-size:.72rem; } .demo-ctx a { padding-block:.35rem; } }
 @media print { .sidomeny, .raknare, .bxfilter, .stodpanel { display:none !important; } }
 
 </style>
@@ -3116,6 +3235,14 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 <div class="skal">
 <aside class="sidomeny" id="sidomeny" aria-label="Index och filter">
   <div class="sidomeny-topp"><span class="sidomeny-rubrik">Alla tekniker</span><a class="meny-stang" href="#topp">stäng ✕</a></div>
+<!-- Vy-växlare: kapitelindexet (standard) eller A–Ö-registret. En radiogrupp,
+     alltså samma noll-JS-mönster som stödfiltret och temaväljaren. Bara en vy
+     är renderad åt gången (display:none på den andra), så dolda rader blir
+     aldrig tab-stopp och inget innehåll finns i dokumentet två gånger. -->
+<div class="vyvaxlare" role="radiogroup" aria-label="Sortering av indexet">
+  <label><input type="radio" name="indexvy" id="vy-kapitel" checked><span>Kapitel 01–10</span></label>
+  <label><input type="radio" name="indexvy" id="vy-register"><span>Register A–Ö</span></label>
+</div>
 <!-- Kapitelgenvägar: samma tolv mål som i sidhuvudet. På telefon är de den
      enda kapitelnavigeringen (sidhuvudets rad får inte plats där) och på
      breda skärmar en genväg förbi listan. Stäng-länken ligger fortfarande
@@ -3137,8 +3264,14 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 </nav>
   <div class="index-kompakt"><label class="vaxlare" for="kompakt" style="cursor:pointer"><input type="checkbox" id="kompakt"><span class="sparv"></span>Visa bara kapitel</label><a class="meny-oppna-knapp" href="#topp" aria-label="Stäng indexpanelen">☰</a></div>
   <p class="index-grund">Snippetsen bygger på <a href="#grundpaketet">Grundpaketet</a> — kopiera det först.</p>
-  <p class="index-tips">Söker du ett namn? <kbd>Ctrl</kbd>+<kbd>F</kbd> söker i hela listan.</p>
-<nav class="index" aria-label="Alla tekniker">
+  <p class="index-tips index-tips-kapitel">Söker du ett namn? Byt till <b>Register A–Ö</b> ovan — eller <kbd>Ctrl</kbd>+<kbd>F</kbd> i listan.</p>
+  <p class="index-tips register-tips">Samma 133 tekniker (och ordlistan) som kapitelindexet, sorterade A–Ö. Siffran till höger är kapitelnumret.</p>
+  <!-- Registret kan öppnas utan att växlaren rörs: kortens vägvisare pekar på en
+       bokstavsgrupp, och då är den gruppen :target. Den här raden syns bara i
+       det läget och tar tillbaka panelen till kapitelvyn (#sidomeny behåller
+       panelen öppen på telefon). -->
+  <p class="register-fran">Du kom hit via en bokstavslänk. <a href="#sidomeny">Visa kapitelindexet</a></p>
+<nav class="index" aria-label="Alla tekniker i kapitelordning">
 <details class="index-kap" open><summary>Färg<span class="antal">31</span></summary><ul>
 <li class="index-rad sup-chrome sup-edge sup-safari sup-firefox"><a href="#color-mix"><span class="rad-namn">color-mix() — blanda i valfri färgrymd</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
 <li class="index-rad sup-chrome sup-edge sup-safari"><a href="#color-mix-kontinuerligt"><span class="rad-namn">color-mix() kontinuerligt — scroll-länkad färgblandning, animation-timeline: scroll()</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class="n"></b></i></a></li>
@@ -3296,6 +3429,291 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 <li class="index-rad sup-chrome sup-edge sup-safari sup-firefox"><a href="#referens"><span class="rad-namn">Ordlista — alla begrepp på ett ställe</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
 </ul></details>
 </nav>
+<!-- A–Ö-registret: samma rader som kapitelindexet ovan, sorterade på
+     tekniknamn i stället för kapitel. Innehållet mellan markörerna GENERERAS
+     av scripts/register.mjs ur kapitelindexet — redigera det inte för hand
+     (se docs/demo-kalla.md §9). Vyn är dold tills "Register A–Ö" är vald, så
+     dess länkar är aldrig dolda tab-stopp. -->
+<nav class="register" id="index-register" aria-label="Alla tekniker i bokstavsordning">
+<!-- register:start — genererat av scripts/register.mjs ur kapitelindexet; redigera inte för hand -->
+<nav class="reg-abc-wrap" aria-label="Hoppa till begynnelsebokstav">
+<ul class="reg-abc">
+<li><a href="#reg-at">@</a></li>
+<li><a href="#reg-pseudo">:</a></li>
+<li><a href="#reg-element">&lt;</a></li>
+<li><a href="#reg-siffror">0–9</a></li>
+<li><a href="#reg-a">A</a></li>
+<li><a href="#reg-b">B</a></li>
+<li><a href="#reg-c">C</a></li>
+<li><a href="#reg-d">D</a></li>
+<li><a href="#reg-e">E</a></li>
+<li><a href="#reg-f">F</a></li>
+<li><a href="#reg-g">G</a></li>
+<li><a href="#reg-h">H</a></li>
+<li><a href="#reg-i">I</a></li>
+<li><a href="#reg-k">K</a></li>
+<li><a href="#reg-l">L</a></li>
+<li><a href="#reg-m">M</a></li>
+<li><a href="#reg-o">O</a></li>
+<li><a href="#reg-p">P</a></li>
+<li><a href="#reg-r">R</a></li>
+<li><a href="#reg-s">S</a></li>
+<li><a href="#reg-t">T</a></li>
+<li><a href="#reg-v">V</a></li>
+<li><a href="#reg-w">W</a></li>
+</ul>
+</nav>
+<section class="reg-avsnitt" id="reg-at" aria-labelledby="reg-at-rubrik">
+<h3 class="reg-rubrik" id="reg-at-rubrik"><span class="vh">Tekniker som börjar med </span>@<span class="reg-antal">17</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge"><a href="#container-scroll-state-snapped"><span class="reg-namn">@container scroll-state(snapped:) Chrome/Edge</span><span class="reg-kap" aria-hidden="true">04</span><i class="prikkar"><b class=""></b><b class=""></b><b class="n"></b><b class="n"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge"><a href="#container-scroll-state-stuck"><span class="reg-namn">@container scroll-state(stuck:) Chrome/Edge</span><span class="reg-kap" aria-hidden="true">04</span><i class="prikkar"><b class=""></b><b class=""></b><b class="n"></b><b class="n"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#container-style"><span class="reg-namn">@container style()<span class="reg-desc"> · fråga en egenskap, inte en storlek</span></span><span class="reg-kap" aria-hidden="true">02</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#counter-style"><span class="reg-namn">@counter-style<span class="reg-desc"> · egna listmarkörer</span></span><span class="reg-kap" aria-hidden="true">07</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge"><a href="#function"><span class="reg-namn">@function Chrome/Edge</span><span class="reg-kap" aria-hidden="true">03</span><i class="prikkar"><b class=""></b><b class=""></b><b class="s"></b><b class="n"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#layer"><span class="reg-namn">@layer<span class="reg-desc"> · lagerordning slår källordning</span></span><span class="reg-kap" aria-hidden="true">03</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#media-color-gamut"><span class="reg-namn">@media (color-gamut)<span class="reg-desc"> · fråga skärmen om färgdjup</span></span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#media-hover-pointer"><span class="reg-namn">@media (hover) &amp; (pointer)<span class="reg-desc"> · input-förmågor, inte bredd</span></span><span class="reg-kap" aria-hidden="true">09</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#media-scripting"><span class="reg-namn">@media (scripting)<span class="reg-desc"> · känn av om JS finns</span></span><span class="reg-kap" aria-hidden="true">09</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#media-print"><span class="reg-namn">@media print<span class="reg-desc"> · utskriftsvänlig artikel</span></span><span class="reg-kap" aria-hidden="true">02</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#property"><span class="reg-namn">@property<span class="reg-desc"> · typade anpassade egenskaper</span></span><span class="reg-kap" aria-hidden="true">03</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#property-sin-cos"><span class="reg-namn">@property + sin()/cos()<span class="reg-desc"> · trigonometri i stilmallen</span></span><span class="reg-kap" aria-hidden="true">04</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#property-trigonometri"><span class="reg-namn">@property + trigonometri<span class="reg-desc"> · bevis 05, se kapitel IV</span></span><span class="reg-kap" aria-hidden="true">05</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#property-border-angle"><span class="reg-namn">@property --border-angle<span class="reg-desc"> · andande kantlinje</span></span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#scope"><span class="reg-namn">@scope<span class="reg-desc"> · stilar med bäst-före-datum</span></span><span class="reg-kap" aria-hidden="true">03</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#starting-style"><span class="reg-namn">@starting-style<span class="reg-desc"> · bevis 04</span></span><span class="reg-kap" aria-hidden="true">05</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#starting-style-allow-discrete"><span class="reg-namn">@starting-style + allow-discrete<span class="reg-desc"> · animera in det som visas</span></span><span class="reg-kap" aria-hidden="true">05</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-pseudo" aria-labelledby="reg-pseudo-rubrik">
+<h3 class="reg-rubrik" id="reg-pseudo-rubrik"><span class="vh">Tekniker som börjar med </span>:<span class="reg-antal">9</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge"><a href="#details-content-interpolate-size"><span class="reg-namn">::details-content + interpolate-size</span><span class="reg-kap" aria-hidden="true">05</span><i class="prikkar"><b class=""></b><b class=""></b><b class="d"></b><b class="d"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#file-selector-button"><span class="reg-namn">::file-selector-button<span class="reg-desc"> · stilad filväljare</span></span><span class="reg-kap" aria-hidden="true">06</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge"><a href="#scroll-marker-scroll-button"><span class="reg-namn">::scroll-marker / ::scroll-button() Chrome/Edge</span><span class="reg-kap" aria-hidden="true">02</span><i class="prikkar"><b class=""></b><b class=""></b><b class="n"></b><b class="n"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#active-asymmetrisk-transition"><span class="reg-namn">:active + asymmetrisk transition<span class="reg-desc"> · håll för ljus</span></span><span class="reg-kap" aria-hidden="true">05</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#has-som-temavaxlare"><span class="reg-namn">:has() som temaväxlare<span class="reg-desc"> · bevis 02</span></span><span class="reg-kap" aria-hidden="true">05</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#nth-child-an-b-of-s"><span class="reg-namn">:nth-child(An+B of S)<span class="reg-desc"> · filtrera före du räknar</span></span><span class="reg-kap" aria-hidden="true">03</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#open"><span class="reg-namn">:open<span class="reg-desc"> · matcha öppnade element</span></span><span class="reg-kap" aria-hidden="true">05</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#target"><span class="reg-namn">:target<span class="reg-desc"> · navigering som tillstånd</span></span><span class="reg-kap" aria-hidden="true">05</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#where"><span class="reg-namn">:where()<span class="reg-desc"> · nollställd specificitet</span></span><span class="reg-kap" aria-hidden="true">03</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-element" aria-labelledby="reg-element-rubrik">
+<h3 class="reg-rubrik" id="reg-element-rubrik"><span class="vh">Tekniker som börjar med </span>&lt;<span class="reg-antal">4</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#details-name"><span class="reg-namn">&lt;details name="…"&gt;<span class="reg-desc"> · exklusiv accordion</span></span><span class="reg-kap" aria-hidden="true">06</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#details"><span class="reg-namn">&lt;details&gt;<span class="reg-desc"> · trädvy för sidofält</span></span><span class="reg-kap" aria-hidden="true">02</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox"><a href="#dialog"><span class="reg-namn">&lt;dialog&gt;<span class="reg-desc"> · sidopanel (drawer)</span></span><span class="reg-kap" aria-hidden="true">06</span><i class="prikkar"><b class=""></b><b class=""></b><b class="s"></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#dialog-commandfor"><span class="reg-namn">&lt;dialog&gt; + commandfor<span class="reg-desc"> · bekräftelsedialog</span></span><span class="reg-kap" aria-hidden="true">06</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-siffror" aria-labelledby="reg-siffror-rubrik">
+<h3 class="reg-rubrik" id="reg-siffror-rubrik"><span class="vh">Tekniker som börjar med </span>0–9<span class="reg-antal">4</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#3d-card-tilt"><span class="reg-namn">3D Card Tilt<span class="reg-desc"> · hover-matris + preserve-3d</span></span><span class="reg-kap" aria-hidden="true">04</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-safari"><a href="#3d-cover-flow"><span class="reg-namn">3D Cover Flow<span class="reg-desc"> · animation-timeline: view(inline)</span></span><span class="reg-kap" aria-hidden="true">02</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class="n"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#3d-textrulle"><span class="reg-namn">3D-textrulle<span class="reg-desc"> · transform-style: preserve-3d</span></span><span class="reg-kap" aria-hidden="true">07</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#4-bitars-binaradderare"><span class="reg-namn">4-bitars binäradderare<span class="reg-desc"> · logiska grindar &amp; aritmetik</span></span><span class="reg-kap" aria-hidden="true">10</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-a" aria-labelledby="reg-a-rubrik">
+<h3 class="reg-rubrik" id="reg-a-rubrik"><span class="vh">Tekniker som börjar med </span>A<span class="reg-antal">8</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#accent-color"><span class="reg-namn">accent-color<span class="reg-desc"> · nativa kontroller i tema</span></span><span class="reg-kap" aria-hidden="true">05</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#anchor-positioning"><span class="reg-namn">anchor-positioning<span class="reg-desc"> · snabbmeny (⋯)</span></span><span class="reg-kap" aria-hidden="true">06</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#animation-composition"><span class="reg-namn">animation-composition<span class="reg-desc"> · replace vs. add</span></span><span class="reg-kap" aria-hidden="true">04</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-safari"><a href="#animation-timeline-scroll"><span class="reg-namn">animation-timeline: scroll()<span class="reg-desc"> · krympande minisidhuvud</span></span><span class="reg-kap" aria-hidden="true">04</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class="n"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-safari"><a href="#animation-timeline-view"><span class="reg-namn">animation-timeline: view()<span class="reg-desc"> · scroll-in-reveal</span></span><span class="reg-kap" aria-hidden="true">04</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class="n"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-safari"><a href="#animerad-raknare"><span class="reg-namn">Animerad räknare<span class="reg-desc"> · @property + counter()</span></span><span class="reg-kap" aria-hidden="true">07</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class="n"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge"><a href="#appearance-base-select"><span class="reg-namn">appearance: base-select Chrome/Edge</span><span class="reg-kap" aria-hidden="true">06</span><i class="prikkar"><b class=""></b><b class=""></b><b class="s"></b><b class="d"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#attr"><span class="reg-namn">attr()<span class="reg-desc"> · data-attribut som innehåll</span></span><span class="reg-kap" aria-hidden="true">03</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-b" aria-labelledby="reg-b-rubrik">
+<h3 class="reg-rubrik" id="reg-b-rubrik"><span class="vh">Tekniker som börjar med </span>B<span class="reg-antal">1</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#background-blend-mode"><span class="reg-namn">background-blend-mode<span class="reg-desc"> · lager som möts i bakgrunden</span></span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-c" aria-labelledby="reg-c-rubrik">
+<h3 class="reg-rubrik" id="reg-c-rubrik"><span class="vh">Tekniker som börjar med </span>C<span class="reg-antal">12</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge"><a href="#calc-size"><span class="reg-namn">calc-size()<span class="reg-desc"> · animera till auto-höjd</span></span><span class="reg-kap" aria-hidden="true">06</span><i class="prikkar"><b class=""></b><b class=""></b><b class="n"></b><b class="n"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge"><a href="#caret-shape-caret-color"><span class="reg-namn">caret-shape / caret-color<span class="reg-desc"> · en markör med personlighet</span></span><span class="reg-kap" aria-hidden="true">05</span><i class="prikkar"><b class=""></b><b class=""></b><b class="n"></b><b class="n"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#clamp"><span class="reg-namn">clamp()<span class="reg-desc"> · flytande skala</span></span><span class="reg-kap" aria-hidden="true">09</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#color-mix"><span class="reg-namn">color-mix()<span class="reg-desc"> · blanda i valfri färgrymd</span></span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-safari"><a href="#color-mix-kontinuerligt"><span class="reg-namn">color-mix() kontinuerligt<span class="reg-desc"> · scroll-länkad färgblandning, animation-timeline: scroll()</span></span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class="n"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#conic-gradient"><span class="reg-namn">conic-gradient()<span class="reg-desc"> · färg runt ett varv</span></span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#container-type-size-behallarenheter-cqi"><span class="reg-namn">container-type: size + behållarenheter (cqi)</span><span class="reg-kap" aria-hidden="true">02</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#content-visibility-auto"><span class="reg-namn">content-visibility: auto<span class="reg-desc"> · rendera bara det synliga</span></span><span class="reg-kap" aria-hidden="true">02</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#contrast-color"><span class="reg-namn">contrast-color()<span class="reg-desc"> · automatisk textkontrast</span></span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge"><a href="#corner-shape-squircle"><span class="reg-namn">corner-shape: squircle Chrome/Edge</span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class="n"></b><b class="n"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#css-arkad"><span class="reg-namn">CSS-arkad<span class="reg-desc"> · counter() + kryssrutor</span></span><span class="reg-kap" aria-hidden="true">10</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#css-kalkylator"><span class="reg-namn">CSS-kalkylator<span class="reg-desc"> · counter-increment + :checked</span></span><span class="reg-kap" aria-hidden="true">06</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-d" aria-labelledby="reg-d-rubrik">
+<h3 class="reg-rubrik" id="reg-d-rubrik"><span class="vh">Tekniker som börjar med </span>D<span class="reg-antal">4</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-safari"><a href="#display-grid-lanes"><span class="reg-namn">display: grid-lanes Safari</span><span class="reg-kap" aria-hidden="true">02</span><i class="prikkar"><b class="n"></b><b class="n"></b><b class=""></b><b class="n"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#donutdiagram"><span class="reg-namn">Donutdiagram<span class="reg-desc"> · conic-gradient + mask</span></span><span class="reg-kap" aria-hidden="true">08</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#dubbeltumme-slider"><span class="reg-namn">Dubbeltumme-slider<span class="reg-desc"> · två overlappande range</span></span><span class="reg-kap" aria-hidden="true">06</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#dvh-svh-lvh"><span class="reg-namn">dvh / svh / lvh<span class="reg-desc"> · viewporten är inte ett fast tal</span></span><span class="reg-kap" aria-hidden="true">09</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-e" aria-labelledby="reg-e-rubrik">
+<h3 class="reg-rubrik" id="reg-e-rubrik"><span class="vh">Tekniker som börjar med </span>E<span class="reg-antal">1</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#easingfunktioner"><span class="reg-namn">Easingfunktioner<span class="reg-desc"> · samma resa, olika tempo</span></span><span class="reg-kap" aria-hidden="true">04</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-f" aria-labelledby="reg-f-rubrik">
+<h3 class="reg-rubrik" id="reg-f-rubrik"><span class="vh">Tekniker som börjar med </span>F<span class="reg-antal">15</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#facetterat-filter"><span class="reg-namn">Facetterat filter<span class="reg-desc"> · :has() som frågemotor</span></span><span class="reg-kap" aria-hidden="true">06</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#favorit-starburst"><span class="reg-namn">Favorit-starburst<span class="reg-desc"> · :checked + partikelring</span></span><span class="reg-kap" aria-hidden="true">06</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#filter-blur"><span class="reg-namn">filter: blur()<span class="reg-desc"> · bildeffekter utan bildredigering</span></span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#filter-contrast"><span class="reg-namn">filter: contrast()</span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#filter-drop-shadow"><span class="reg-namn">filter: drop-shadow()</span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#filter-grayscale"><span class="reg-namn">filter: grayscale()</span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#filter-hue-rotate"><span class="reg-namn">filter: hue-rotate()</span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#filter-invert"><span class="reg-namn">filter: invert()</span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#filter-saturate"><span class="reg-namn">filter: saturate()</span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#filter-sepia"><span class="reg-namn">filter: sepia()</span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#flerstegs-formular-wizard"><span class="reg-namn">Flerstegs formulär-wizard<span class="reg-desc"> · :has() router</span></span><span class="reg-kap" aria-hidden="true">06</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#font-variant-numeric"><span class="reg-namn">font-variant-numeric<span class="reg-desc"> · tabell-, ordinal- och nollformer</span></span><span class="reg-kap" aria-hidden="true">07</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#font-variation-settings"><span class="reg-namn">font-variation-settings<span class="reg-desc"> · variabelt typsnitt</span></span><span class="reg-kap" aria-hidden="true">07</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#formulartillstand-field-sizing-content"><span class="reg-namn">Formulärtillstånd + field-sizing: content</span><span class="reg-kap" aria-hidden="true">05</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#fore-efter-jamforare"><span class="reg-namn">Före/Efter-jämförare<span class="reg-desc"> · :has() + radiosteg</span></span><span class="reg-kap" aria-hidden="true">06</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-g" aria-labelledby="reg-g-rubrik">
+<h3 class="reg-rubrik" id="reg-g-rubrik"><span class="vh">Tekniker som börjar med </span>G<span class="reg-antal">4</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#gantt-schema"><span class="reg-namn">Gantt-schema<span class="reg-desc"> · grid-template-columns</span></span><span class="reg-kap" aria-hidden="true">08</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#gooey-liquid"><span class="reg-namn">Gooey Liquid<span class="reg-desc"> · SVG-filter + CSS-keyframe</span></span><span class="reg-kap" aria-hidden="true">04</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#grid-template-rows-subgrid"><span class="reg-namn">grid-template-rows: subgrid<span class="reg-desc"> · radjustering över flera kort</span></span><span class="reg-kap" aria-hidden="true">02</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#grundpaketet"><span class="reg-namn">Grundpaketet<span class="reg-desc"> · :root-variablerna hela referensen bygger på</span></span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-h" aria-labelledby="reg-h-rubrik">
+<h3 class="reg-rubrik" id="reg-h-rubrik"><span class="vh">Tekniker som börjar med </span>H<span class="reg-antal">3</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#heatmap"><span class="reg-namn">Heatmap<span class="reg-desc"> · color-mix() per cell</span></span><span class="reg-kap" aria-hidden="true">08</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#hover-hover"><span class="reg-namn">hover: hover</span><span class="reg-kap" aria-hidden="true">09</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#hyphens-auto"><span class="reg-namn">hyphens: auto<span class="reg-desc"> · smart avstavning</span></span><span class="reg-kap" aria-hidden="true">07</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-i" aria-labelledby="reg-i-rubrik">
+<h3 class="reg-rubrik" id="reg-i-rubrik"><span class="vh">Tekniker som börjar med </span>I<span class="reg-antal">3</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge"><a href="#if"><span class="reg-namn">if()<span class="reg-desc"> · villkor direkt i egenskapsvärdet</span></span><span class="reg-kap" aria-hidden="true">03</span><i class="prikkar"><b class=""></b><b class=""></b><b class="n"></b><b class="n"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-safari"><a href="#initial-letter"><span class="reg-namn">initial-letter<span class="reg-desc"> · försänkt initial</span></span><span class="reg-kap" aria-hidden="true">07</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class="n"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge"><a href="#interestfor"><span class="reg-namn">interestfor Chrome/Edge</span><span class="reg-kap" aria-hidden="true">06</span><i class="prikkar"><b class=""></b><b class=""></b><b class="n"></b><b class="n"></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-k" aria-labelledby="reg-k-rubrik">
+<h3 class="reg-rubrik" id="reg-k-rubrik"><span class="vh">Tekniker som börjar med </span>K<span class="reg-antal">3</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge sup-safari"><a href="#ken-burns"><span class="reg-namn">Ken Burns<span class="reg-desc"> · andande yta vid scroll-in</span></span><span class="reg-kap" aria-hidden="true">04</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class="n"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#klistrad-tabellrubrik"><span class="reg-namn">Klistrad tabellrubrik<span class="reg-desc"> · sticky + zebra-rader</span></span><span class="reg-kap" aria-hidden="true">08</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-safari"><a href="#kpi-fyllning"><span class="reg-namn">KPI-fyllning<span class="reg-desc"> · animation-timeline: view()</span></span><span class="reg-kap" aria-hidden="true">08</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class="n"></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-l" aria-labelledby="reg-l-rubrik">
+<h3 class="reg-rubrik" id="reg-l-rubrik"><span class="vh">Tekniker som börjar med </span>L<span class="reg-antal">5</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#light-dark"><span class="reg-namn">light-dark()<span class="reg-desc"> · tvåfärgat i en deklaration</span></span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#line-clamp"><span class="reg-namn">line-clamp<span class="reg-desc"> · bryt efter N rader med ellips</span></span><span class="reg-kap" aria-hidden="true">07</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#linear-gradient"><span class="reg-namn">linear-gradient()<span class="reg-desc"> · färg längs en riktning</span></span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#logiska-egenskaper-direction-rtl"><span class="reg-namn">Logiska egenskaper + direction: rtl</span><span class="reg-kap" aria-hidden="true">02</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#losenordsmatare"><span class="reg-namn">Lösenordsmätare<span class="reg-desc"> · pattern + :valid</span></span><span class="reg-kap" aria-hidden="true">06</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-m" aria-labelledby="reg-m-rubrik">
+<h3 class="reg-rubrik" id="reg-m-rubrik"><span class="vh">Tekniker som börjar med </span>M<span class="reg-antal">9</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#mask-image"><span class="reg-namn">mask-image<span class="reg-desc"> · sömlös kant-fade på scrollers</span></span><span class="reg-kap" aria-hidden="true">02</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#min-width-640px"><span class="reg-namn">min-width: 640px</span><span class="reg-kap" aria-hidden="true">09</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#mix-blend-mode-color-dodge"><span class="reg-namn">mix-blend-mode: color-dodge</span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#mix-blend-mode-difference"><span class="reg-namn">mix-blend-mode: difference</span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#mix-blend-mode-difference-27"><span class="reg-namn">mix-blend-mode: difference<span class="reg-desc"> · självinverterande text</span></span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#mix-blend-mode-luminosity"><span class="reg-namn">mix-blend-mode: luminosity</span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#mix-blend-mode-multiply"><span class="reg-namn">mix-blend-mode: multiply<span class="reg-desc"> · hur lager möts</span></span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#mix-blend-mode-overlay"><span class="reg-namn">mix-blend-mode: overlay</span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#mix-blend-mode-screen"><span class="reg-namn">mix-blend-mode: screen</span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-o" aria-labelledby="reg-o-rubrik">
+<h3 class="reg-rubrik" id="reg-o-rubrik"><span class="vh">Tekniker som börjar med </span>O<span class="reg-antal">3</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#offset-path"><span class="reg-namn">offset-path<span class="reg-desc"> · rörelse längs en bana</span></span><span class="reg-kap" aria-hidden="true">04</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#oklch-display-p3"><span class="reg-namn">oklch() / display-p3<span class="reg-desc"> · bred färgrymd</span></span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#referens"><span class="reg-namn">Ordlista<span class="reg-desc"> · alla begrepp på ett ställe</span></span><span class="reg-kap" aria-hidden="true">+</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-p" aria-labelledby="reg-p-rubrik">
+<h3 class="reg-rubrik" id="reg-p-rubrik"><span class="vh">Tekniker som börjar med </span>P<span class="reg-antal">4</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#popover-attributet"><span class="reg-namn">popover-attributet<span class="reg-desc"> · bevis 01</span></span><span class="reg-kap" aria-hidden="true">05</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox"><a href="#popover-hint"><span class="reg-namn">popover="hint"<span class="reg-desc"> · bevis 06</span></span><span class="reg-kap" aria-hidden="true">05</span><i class="prikkar"><b class=""></b><b class=""></b><b class="n"></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#prefers-color-scheme"><span class="reg-namn">prefers-color-scheme</span><span class="reg-kap" aria-hidden="true">09</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#prefers-reduced-motion"><span class="reg-namn">prefers-reduced-motion<span class="reg-desc"> · frågor bortom bredd, kapitel IX</span></span><span class="reg-kap" aria-hidden="true">09</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-r" aria-labelledby="reg-r-rubrik">
+<h3 class="reg-rubrik" id="reg-r-rubrik"><span class="vh">Tekniker som börjar med </span>R<span class="reg-antal">7</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#radial-gradient"><span class="reg-namn">radial-gradient()<span class="reg-desc"> · färg ut från en punkt</span></span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#radioflikar"><span class="reg-namn">Radioflikar<span class="reg-desc"> · :has() som router</span></span><span class="reg-kap" aria-hidden="true">05</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#repeat-auto-fit-minmax"><span class="reg-namn">repeat(auto-fit, minmax())<span class="reg-desc"> · responsivt utan brytpunkter</span></span><span class="reg-kap" aria-hidden="true">02</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#repeating-linear-gradient"><span class="reg-namn">repeating-linear-gradient()<span class="reg-desc"> · ett mönster som upprepas</span></span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#repeating-radial-gradient"><span class="reg-namn">repeating-radial-gradient()<span class="reg-desc"> · ringar i oändlighet</span></span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#rgb-from"><span class="reg-namn">rgb(from …)<span class="reg-desc"> · relativ färgsyntax</span></span><span class="reg-kap" aria-hidden="true">01</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#round-mod"><span class="reg-namn">round() / mod()<span class="reg-desc"> · heltals- och restmatematik</span></span><span class="reg-kap" aria-hidden="true">03</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-s" aria-labelledby="reg-s-rubrik">
+<h3 class="reg-rubrik" id="reg-s-rubrik"><span class="vh">Tekniker som börjar med </span>S<span class="reg-antal">7</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#scrollbar-width-color"><span class="reg-namn">scrollbar-width / -color<span class="reg-desc"> · tematiska rullningslister</span></span><span class="reg-kap" aria-hidden="true">09</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#shape-outside"><span class="reg-namn">shape-outside<span class="reg-desc"> · text som flyter runt en form</span></span><span class="reg-kap" aria-hidden="true">02</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#sibling-index"><span class="reg-namn">sibling-index()<span class="reg-desc"> · fördröjning utan JS-loop</span></span><span class="reg-kap" aria-hidden="true">07</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#sparklinje"><span class="reg-namn">Sparklinje<span class="reg-desc"> · inline --v per stapel</span></span><span class="reg-kap" aria-hidden="true">08</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#staplad-kpi-bar"><span class="reg-namn">Staplad KPI-bar<span class="reg-desc"> · flex + color-mix()</span></span><span class="reg-kap" aria-hidden="true">08</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#stjarnbetyg"><span class="reg-namn">Stjärnbetyg<span class="reg-desc"> · row-reverse + ~</span></span><span class="reg-kap" aria-hidden="true">06</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-safari"><a href="#svg-linjediagram"><span class="reg-namn">SVG-linjediagram<span class="reg-desc"> · scroll-driven uppritning</span></span><span class="reg-kap" aria-hidden="true">08</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class="n"></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-t" aria-labelledby="reg-t-rubrik">
+<h3 class="reg-rubrik" id="reg-t-rubrik"><span class="vh">Tekniker som börjar med </span>T<span class="reg-antal">8</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#text-box-trim"><span class="reg-namn">text-box-trim<span class="reg-desc"> · bort med typsnittets luft</span></span><span class="reg-kap" aria-hidden="true">07</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#text-emphasis"><span class="reg-namn">text-emphasis<span class="reg-desc"> · ostasiatiska betoningsprickar</span></span><span class="reg-kap" aria-hidden="true">07</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#text-orientation-upright"><span class="reg-namn">text-orientation: upright<span class="reg-desc"> · res varje tecken</span></span><span class="reg-kap" aria-hidden="true">07</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-safari"><a href="#text-wrap"><span class="reg-namn">text-wrap<span class="reg-desc"> · normal / balance / pretty</span></span><span class="reg-kap" aria-hidden="true">07</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class="n"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#textskimmer"><span class="reg-namn">Textskimmer<span class="reg-desc"> · @property + background-clip: text</span></span><span class="reg-kap" aria-hidden="true">07</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#textspoiler"><span class="reg-namn">Textspoiler<span class="reg-desc"> · filter: blur() + fokus</span></span><span class="reg-kap" aria-hidden="true">07</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-safari"><a href="#timeline-scope"><span class="reg-namn">timeline-scope<span class="reg-desc"> · sidonavigering som vet var du är</span></span><span class="reg-kap" aria-hidden="true">04</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class="n"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#tre-i-rad-tic-tac-toe"><span class="reg-namn">Tre i rad (Tic-Tac-Toe)<span class="reg-desc"> · :has() som spelmotor</span></span><span class="reg-kap" aria-hidden="true">10</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-v" aria-labelledby="reg-v-rubrik">
+<h3 class="reg-rubrik" id="reg-v-rubrik"><span class="vh">Tekniker som börjar med </span>V<span class="reg-antal">2</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge sup-safari"><a href="#view-timeline"><span class="reg-namn">view-timeline<span class="reg-desc"> · scrollen som klocka</span></span><span class="reg-kap" aria-hidden="true">04</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class="n"></b></i></a></li>
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#view-timeline-69"><span class="reg-namn">view-timeline<span class="reg-desc"> · bevis 03, se kapitel IV</span></span><span class="reg-kap" aria-hidden="true">05</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<section class="reg-avsnitt" id="reg-w" aria-labelledby="reg-w-rubrik">
+<h3 class="reg-rubrik" id="reg-w-rubrik"><span class="vh">Tekniker som börjar med </span>W<span class="reg-antal">1</span></h3>
+<ul class="reg-lista">
+<li class="reg-rad sup-chrome sup-edge sup-firefox sup-safari"><a href="#writing-mode"><span class="reg-namn">writing-mode<span class="reg-desc"> · vertikal text</span></span><span class="reg-kap" aria-hidden="true">07</span><i class="prikkar"><b class=""></b><b class=""></b><b class=""></b><b class=""></b></i></a></li>
+</ul>
+</section>
+<!-- register:end -->
+</nav>
 </aside>
 <main class="huvud">
 
@@ -3446,6 +3864,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .f-gray .swatch-yta {filter: grayscale(1);}
 .f-invert .swatch-yta {filter: invert(1);}
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+        <!-- demo-ctx:color-mix --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-c">I registret: C</a></p><!-- /demo-ctx:color-mix -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari" id="color-mix-kontinuerligt">
@@ -3489,6 +3908,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 }
 
 @keyframes mix-scrub {--mix-r: 100;}</textarea></details>
+        <!-- demo-ctx:color-mix-kontinuerligt --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-c">I registret: C</a></p><!-- /demo-ctx:color-mix-kontinuerligt -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-pct125" id="rgb-from">
@@ -3589,6 +4009,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .f-gray .swatch-yta {filter: grayscale(1);}
 .f-invert .swatch-yta {filter: invert(1);}
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+        <!-- demo-ctx:rgb-from --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-r">I registret: R</a></p><!-- /demo-ctx:rgb-from -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="oklch-display-p3">
@@ -3661,6 +4082,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .f-gray .swatch-yta {filter: grayscale(1);}
 .f-invert .swatch-yta {filter: invert(1);}
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+        <!-- demo-ctx:oklch-display-p3 --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-o">I registret: O</a></p><!-- /demo-ctx:oklch-display-p3 -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="light-dark">
@@ -3707,6 +4129,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 }
 .ld-light { color-scheme: light; }
 .ld-dark { color-scheme: dark; }</textarea></details>
+        <!-- demo-ctx:light-dark --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-l">I registret: L</a></p><!-- /demo-ctx:light-dark -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar grad-1 enh-deg45" id="linear-gradient">
@@ -3785,6 +4208,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .f-gray .swatch-yta {filter: grayscale(1);}
 .f-invert .swatch-yta {filter: invert(1);}
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+        <!-- demo-ctx:linear-gradient --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-l">I registret: L</a></p><!-- /demo-ctx:linear-gradient -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar grad-2 enh-mitt" id="radial-gradient">
@@ -3862,6 +4286,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .f-gray .swatch-yta {filter: grayscale(1);}
 .f-invert .swatch-yta {filter: invert(1);}
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+        <!-- demo-ctx:radial-gradient --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-r">I registret: R</a></p><!-- /demo-ctx:radial-gradient -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar grad-3 enh-deg45" id="conic-gradient">
@@ -3940,6 +4365,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .f-gray .swatch-yta {filter: grayscale(1);}
 .f-invert .swatch-yta {filter: invert(1);}
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+        <!-- demo-ctx:conic-gradient --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-c">I registret: C</a></p><!-- /demo-ctx:conic-gradient -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar grad-4 enh-band" id="repeating-linear-gradient">
@@ -4019,6 +4445,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .f-gray .swatch-yta {filter: grayscale(1);}
 .f-invert .swatch-yta {filter: invert(1);}
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+        <!-- demo-ctx:repeating-linear-gradient --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-r">I registret: R</a></p><!-- /demo-ctx:repeating-linear-gradient -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar grad-5 enh-band" id="repeating-radial-gradient">
@@ -4095,6 +4522,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .f-gray .swatch-yta {filter: grayscale(1);}
 .f-invert .swatch-yta {filter: invert(1);}
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+        <!-- demo-ctx:repeating-radial-gradient --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-r">I registret: R</a></p><!-- /demo-ctx:repeating-radial-gradient -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar f-blur enh-px" id="filter-blur">
@@ -4169,6 +4597,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .f-gray .swatch-yta {filter: grayscale(1);}
 .f-invert .swatch-yta {filter: invert(1);}
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+        <!-- demo-ctx:filter-blur --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-f">I registret: F</a></p><!-- /demo-ctx:filter-blur -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar f-contrast enh-pct50" id="filter-contrast">
@@ -4244,6 +4673,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .f-gray .swatch-yta {filter: grayscale(1);}
 .f-invert .swatch-yta {filter: invert(1);}
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+        <!-- demo-ctx:filter-contrast --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-f">I registret: F</a></p><!-- /demo-ctx:filter-contrast -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar f-saturate enh-pct50" id="filter-saturate">
@@ -4319,6 +4749,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .f-gray .swatch-yta {filter: grayscale(1);}
 .f-invert .swatch-yta {filter: invert(1);}
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+        <!-- demo-ctx:filter-saturate --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-f">I registret: F</a></p><!-- /demo-ctx:filter-saturate -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar f-hue enh-deg45" id="filter-hue-rotate">
@@ -4400,6 +4831,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .f-gray .swatch-yta {filter: grayscale(1);}
 .f-invert .swatch-yta {filter: invert(1);}
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+        <!-- demo-ctx:filter-hue-rotate --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-f">I registret: F</a></p><!-- /demo-ctx:filter-hue-rotate -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar f-sepia enh-pct125" id="filter-sepia">
@@ -4473,6 +4905,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .f-gray .swatch-yta {filter: grayscale(1);}
 .f-invert .swatch-yta {filter: invert(1);}
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+        <!-- demo-ctx:filter-sepia --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-f">I registret: F</a></p><!-- /demo-ctx:filter-sepia -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar f-gray enh-pct125" id="filter-grayscale">
@@ -4546,6 +4979,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .f-gray .swatch-yta {filter: grayscale(1);}
 .f-invert .swatch-yta {filter: invert(1);}
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+        <!-- demo-ctx:filter-grayscale --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-f">I registret: F</a></p><!-- /demo-ctx:filter-grayscale -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar f-invert enh-pct125" id="filter-invert">
@@ -4620,6 +5054,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .f-gray .swatch-yta {filter: grayscale(1);}
 .f-invert .swatch-yta {filter: invert(1);}
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+        <!-- demo-ctx:filter-invert --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-f">I registret: F</a></p><!-- /demo-ctx:filter-invert -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar f-drop enh-px2" id="filter-drop-shadow">
@@ -4693,6 +5128,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .f-gray .swatch-yta {filter: grayscale(1);}
 .f-invert .swatch-yta {filter: invert(1);}
 .f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+        <!-- demo-ctx:filter-drop-shadow --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-f">I registret: F</a></p><!-- /demo-ctx:filter-drop-shadow -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-overlapp" id="mix-blend-mode-multiply">
@@ -4736,6 +5172,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .blend-tile-solo::before, .blend-tile-solo::after {width: 3.8rem; height: 3.8rem;}
 .blend-tile-solo::before {left: .9rem; top: 1.1rem;}
 .blend-tile-solo::after {left: 2.7rem; top: 1.1rem;}</textarea></details>
+        <!-- demo-ctx:mix-blend-mode-multiply --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-m">I registret: M</a></p><!-- /demo-ctx:mix-blend-mode-multiply -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-overlapp" id="mix-blend-mode-screen">
@@ -4779,6 +5216,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .blend-tile-solo::before, .blend-tile-solo::after {width: 3.8rem; height: 3.8rem;}
 .blend-tile-solo::before {left: .9rem; top: 1.1rem;}
 .blend-tile-solo::after {left: 2.7rem; top: 1.1rem;}</textarea></details>
+        <!-- demo-ctx:mix-blend-mode-screen --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-m">I registret: M</a></p><!-- /demo-ctx:mix-blend-mode-screen -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-overlapp" id="mix-blend-mode-overlay">
@@ -4822,6 +5260,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .blend-tile-solo::before, .blend-tile-solo::after {width: 3.8rem; height: 3.8rem;}
 .blend-tile-solo::before {left: .9rem; top: 1.1rem;}
 .blend-tile-solo::after {left: 2.7rem; top: 1.1rem;}</textarea></details>
+        <!-- demo-ctx:mix-blend-mode-overlay --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-m">I registret: M</a></p><!-- /demo-ctx:mix-blend-mode-overlay -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-overlapp" id="mix-blend-mode-difference">
@@ -4865,6 +5304,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .blend-tile-solo::before, .blend-tile-solo::after {width: 3.8rem; height: 3.8rem;}
 .blend-tile-solo::before {left: .9rem; top: 1.1rem;}
 .blend-tile-solo::after {left: 2.7rem; top: 1.1rem;}</textarea></details>
+        <!-- demo-ctx:mix-blend-mode-difference --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-m">I registret: M</a></p><!-- /demo-ctx:mix-blend-mode-difference -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-overlapp" id="mix-blend-mode-color-dodge">
@@ -4908,6 +5348,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .blend-tile-solo::before, .blend-tile-solo::after {width: 3.8rem; height: 3.8rem;}
 .blend-tile-solo::before {left: .9rem; top: 1.1rem;}
 .blend-tile-solo::after {left: 2.7rem; top: 1.1rem;}</textarea></details>
+        <!-- demo-ctx:mix-blend-mode-color-dodge --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-m">I registret: M</a></p><!-- /demo-ctx:mix-blend-mode-color-dodge -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-overlapp" id="mix-blend-mode-luminosity">
@@ -4951,6 +5392,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .blend-tile-solo::before, .blend-tile-solo::after {width: 3.8rem; height: 3.8rem;}
 .blend-tile-solo::before {left: .9rem; top: 1.1rem;}
 .blend-tile-solo::after {left: 2.7rem; top: 1.1rem;}</textarea></details>
+        <!-- demo-ctx:mix-blend-mode-luminosity --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-m">I registret: M</a></p><!-- /demo-ctx:mix-blend-mode-luminosity -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="property-border-angle">
@@ -4989,6 +5431,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
   animation: rotera-kant 4s linear infinite;
 }
 @keyframes rotera-kant { to { --border-angle: 1turn; } }</textarea></details>
+        <!-- demo-ctx:property-border-angle --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-at">I registret: @</a></p><!-- /demo-ctx:property-border-angle -->
     </article>
 
     <article class="demo sup-chrome sup-edge" id="corner-shape-squircle">
@@ -5027,6 +5470,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 .squircle-row .cs-bevel    {corner-shape: bevel;}
 .squircle-row .cs-notch    {corner-shape: notch;}
 .squircle-row .cs-scoop    {corner-shape: scoop;}</textarea></details>
+        <!-- demo-ctx:corner-shape-squircle --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-c">I registret: C</a></p><!-- /demo-ctx:corner-shape-squircle -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="contrast-color">
@@ -5066,6 +5510,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 @supports (color: contrast-color(red)) {
   .chip {color: contrast-color(var(--chip-bg));}
 }</textarea></details>
+        <!-- demo-ctx:contrast-color --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-c">I registret: C</a></p><!-- /demo-ctx:contrast-color -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="mix-blend-mode-difference-27">
@@ -5094,6 +5539,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
   background: repeating-linear-gradient(45deg, var(--acc) 0 12px, color-mix(in srgb, var(--acc) 40%, #6ea8ff) 12px 24px);
   display: grid; place-items: center;}
 .scrim-demo span {color: #fff; mix-blend-mode: difference; font-family: var(--disp); font-weight: 800; font-size: 1.3rem;}</textarea></details>
+        <!-- demo-ctx:mix-blend-mode-difference-27 --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-m">I registret: M</a></p><!-- /demo-ctx:mix-blend-mode-difference-27 -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="grundpaketet">
@@ -5119,6 +5565,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</textarea></details>
+        <!-- demo-ctx:grundpaketet --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-g">I registret: G</a></p><!-- /demo-ctx:grundpaketet -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="background-blend-mode">
@@ -5137,6 +5584,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 
 .demo-yta {position: relative; border-radius: 4px;}
 .nd-bb {height:6rem; border-radius:12px; background-image: radial-gradient(circle at 30% 30%, var(--acc), transparent 60%), radial-gradient(circle at 75% 70%, #6ea8ff, transparent 60%), linear-gradient(120deg,#222,#333); background-blend-mode: screen, multiply, normal;}</textarea></details>
+        <!-- demo-ctx:background-blend-mode --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-b">I registret: B</a></p><!-- /demo-ctx:background-blend-mode -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="media-color-gamut">
@@ -5160,6 +5608,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   .nd-gamut .p3 {display:block;}
   .nd-gamut .srgb {text-decoration:line-through; opacity:.5;}
 }</textarea></details>
+        <!-- demo-ctx:media-color-gamut --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-at">I registret: @</a></p><!-- /demo-ctx:media-color-gamut -->
     </article>
 
   </div>
@@ -5228,6 +5677,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .autofit-grid &gt; div {aspect-ratio: 1; border-radius: 10px; border: 1px dashed var(--line);
   display:grid; place-items:center; font-family:var(--mono); font-size:.78rem; color:var(--dim);
   background: var(--bg2);}</textarea></details>
+        <!-- demo-ctx:repeat-auto-fit-minmax --><p class="demo-ctx"><a class="ctx-kap" href="#layout">Kapitel 02 · Layout &amp; rutnät</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-r">I registret: R</a></p><!-- /demo-ctx:repeat-auto-fit-minmax -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="grid-template-rows-subgrid">
@@ -5287,6 +5737,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .subgrid-card h4 {font-family:var(--disp); font-size:1rem; font-weight:700;}
 .subgrid-card p {font-size:.82rem; color:var(--dim);}
 .subgrid-card .fot {align-self:end; font-family:var(--mono); font-size:.72rem; color:var(--acc);}</textarea></details>
+        <!-- demo-ctx:grid-template-rows-subgrid --><p class="demo-ctx"><a class="ctx-kap" href="#layout">Kapitel 02 · Layout &amp; rutnät</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-g">I registret: G</a></p><!-- /demo-ctx:grid-template-rows-subgrid -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="container-type-size-behallarenheter-cqi">
@@ -5364,6 +5815,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @container rymd (height &lt; 170px) {
   .langtext {display: none;}
 }</textarea></details>
+        <!-- demo-ctx:container-type-size-behallarenheter-cqi --><p class="demo-ctx"><a class="ctx-kap" href="#layout">Kapitel 02 · Layout &amp; rutnät</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-c">I registret: C</a></p><!-- /demo-ctx:container-type-size-behallarenheter-cqi -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="container-style">
@@ -5423,6 +5875,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   .sq-items {flex-direction: column;}
   .sq-item {text-align:left;}
 }</textarea></details>
+        <!-- demo-ctx:container-style --><p class="demo-ctx"><a class="ctx-kap" href="#layout">Kapitel 02 · Layout &amp; rutnät</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-at">I registret: @</a></p><!-- /demo-ctx:container-style -->
     </article>
 
     <article class="demo rtl-scope sup-chrome sup-edge sup-safari sup-firefox" id="logiska-egenskaper-direction-rtl">
@@ -5457,6 +5910,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .demo-yta {position: relative; border-radius: 4px;}
 .rtl-scope .rtl-demo {padding-inline: 1.3rem; border-inline-start: 4px solid var(--acc); border-radius: 4px; background: var(--bg2); font-size: .9rem;}
 .rtl-scope:has(#rtl-toggle:checked) .rtl-demo {direction: rtl;}</textarea></details>
+        <!-- demo-ctx:logiska-egenskaper-direction-rtl --><p class="demo-ctx"><a class="ctx-kap" href="#layout">Kapitel 02 · Layout &amp; rutnät</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-l">I registret: L</a></p><!-- /demo-ctx:logiska-egenskaper-direction-rtl -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="shape-outside">
@@ -5492,6 +5946,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   shape-outside: circle(50%); clip-path: circle(50%);
   background: radial-gradient(circle at 35% 30%, #fff, var(--acc) 55%, color-mix(in srgb, var(--acc) 30%, transparent));
 }</textarea></details>
+        <!-- demo-ctx:shape-outside --><p class="demo-ctx"><a class="ctx-kap" href="#layout">Kapitel 02 · Layout &amp; rutnät</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-s">I registret: S</a></p><!-- /demo-ctx:shape-outside -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge" id="scroll-marker-scroll-button">
@@ -5540,6 +5995,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   .carousel::scroll-button(left) {content: "←";}
   .carousel::scroll-button(right) {content: "→";}
 }</textarea></details>
+        <!-- demo-ctx:scroll-marker-scroll-button --><p class="demo-ctx"><a class="ctx-kap" href="#layout">Kapitel 02 · Layout &amp; rutnät</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-pseudo">I registret: :</a></p><!-- /demo-ctx:scroll-marker-scroll-button -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari" id="3d-cover-flow">
@@ -5588,6 +6044,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 }
 
 @keyframes cf-rotate {transform: rotateY(52deg) scale(.82); border-color: var(--line); opacity: .55;}</textarea></details>
+        <!-- demo-ctx:3d-cover-flow --><p class="demo-ctx"><a class="ctx-kap" href="#layout">Kapitel 02 · Layout &amp; rutnät</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-siffror">I registret: 0–9</a></p><!-- /demo-ctx:3d-cover-flow -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-mask jmfbar" id="mask-image">
@@ -5640,6 +6097,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .edge-scroll::-webkit-scrollbar {display: none;}
 .edge-scroll &gt; span {flex: 0 0 4.5rem; height: 3rem; border-radius: 8px; background: var(--bg2); border: 1px solid var(--line);
   display: grid; place-items: center; font-family: var(--mono); font-size: .78rem; color: var(--dim);}</textarea></details>
+        <!-- demo-ctx:mask-image --><p class="demo-ctx"><a class="ctx-kap" href="#layout">Kapitel 02 · Layout &amp; rutnät</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-m">I registret: M</a></p><!-- /demo-ctx:mask-image -->
     </article>
 
     <article class="demo sup-safari jmfbar" id="display-grid-lanes">
@@ -5682,6 +6140,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @supports (display: grid-lanes) {
   .lanes {display: grid-lanes; grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));}
 }</textarea></details>
+        <!-- demo-ctx:display-grid-lanes --><p class="demo-ctx"><a class="ctx-kap" href="#layout">Kapitel 02 · Layout &amp; rutnät</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-d">I registret: D</a></p><!-- /demo-ctx:display-grid-lanes -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="details">
@@ -5727,6 +6186,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .tree-nav details[open] &gt; summary::before {rotate: 90deg;}
 .tree-nav a {display: block; padding: .3rem .5rem; color: var(--dim); text-decoration: none; border-radius: 6px;}
 .tree-nav a:hover {background: var(--acc-soft); color: var(--acc);}</textarea></details>
+        <!-- demo-ctx:details --><p class="demo-ctx"><a class="ctx-kap" href="#layout">Kapitel 02 · Layout &amp; rutnät</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-element">I registret: &lt;</a></p><!-- /demo-ctx:details -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="media-print">
@@ -5791,6 +6251,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .fig-cap {margin-top: .5rem; font-family: var(--mono); font-size: .7rem; color: var(--dim); text-align: center;}
 .fig-cap b {color: var(--acc); font-weight: 600;}
 .fig.stor-fig {padding: 1.1rem 1.2rem .9rem;}</textarea></details>
+        <!-- demo-ctx:media-print --><p class="demo-ctx"><a class="ctx-kap" href="#layout">Kapitel 02 · Layout &amp; rutnät</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-at">I registret: @</a></p><!-- /demo-ctx:media-print -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-hojd jmfbar" id="content-visibility-auto">
@@ -5832,6 +6293,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .nd-cv-list {display:grid; gap:.4rem; max-height:9rem; overflow:auto; border:1px solid var(--line); border-radius:10px; padding:.6rem;}
 .nd-cv-list div {content-visibility:auto; contain-intrinsic-size: 1.6rem; padding:.35rem .5rem; border-radius:6px; background:var(--bg2); font-family:var(--mono); font-size:.74rem; color:var(--dim);}
 .nd-cv-list div:nth-child(5n) {color:var(--acc);}</textarea></details>
+        <!-- demo-ctx:content-visibility-auto --><p class="demo-ctx"><a class="ctx-kap" href="#layout">Kapitel 02 · Layout &amp; rutnät</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-c">I registret: C</a></p><!-- /demo-ctx:content-visibility-auto -->
     </article>
 
   </div>
@@ -5882,6 +6344,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @layer demo-bas {
   .layer-box {background: #3d4a63; color: #fff;}
 }</textarea></details>
+        <!-- demo-ctx:layer --><p class="demo-ctx"><a class="ctx-kap" href="#kaskad">Kapitel 03 · Kaskad &amp; räckvidd</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-at">I registret: @</a></p><!-- /demo-ctx:layer -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="scope">
@@ -5926,6 +6389,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @scope (.scope-a) to (.scope-b) {
   .etikett {color: var(--acc); font-weight: 700;}
 }</textarea></details>
+        <!-- demo-ctx:scope --><p class="demo-ctx"><a class="ctx-kap" href="#kaskad">Kapitel 03 · Kaskad &amp; räckvidd</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-at">I registret: @</a></p><!-- /demo-ctx:scope -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="where">
@@ -5957,6 +6421,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .spec-btn {padding:.5rem 1rem; border-radius: 8px; font-family: var(--mono); font-size: .82rem;}
 :where(.spec-demo) .spec-btn {background: var(--acc-soft); border: 1px solid var(--acc); color: var(--acc);}
 .spec-vinn {background: var(--good); color: #0a0a0a; border: 1px solid var(--good);}</textarea></details>
+        <!-- demo-ctx:where --><p class="demo-ctx"><a class="ctx-kap" href="#kaskad">Kapitel 03 · Kaskad &amp; räckvidd</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-pseudo">I registret: :</a></p><!-- /demo-ctx:where -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="property">
@@ -5991,6 +6456,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .fig-cap {margin-top: .5rem; font-family: var(--mono); font-size: .7rem; color: var(--dim); text-align: center;}
 .fig-cap b {color: var(--acc); font-weight: 600;}
 .fig.stor-fig {padding: 1.1rem 1.2rem .9rem;}</textarea></details>
+        <!-- demo-ctx:property --><p class="demo-ctx"><a class="ctx-kap" href="#kaskad">Kapitel 03 · Kaskad &amp; räckvidd</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-at">I registret: @</a></p><!-- /demo-ctx:property -->
     </article>
 
     <article class="demo sup-chrome sup-edge jmfbar" id="function">
@@ -6025,6 +6491,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @supports (padding: --fluid-rytm(1rem, 4cqi, 2rem)) {
   .fn-card {padding: --fluid-rytm(1rem, 4cqi, 2rem);}
 }</textarea></details>
+        <!-- demo-ctx:function --><p class="demo-ctx"><a class="ctx-kap" href="#kaskad">Kapitel 03 · Kaskad &amp; räckvidd</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-at">I registret: @</a></p><!-- /demo-ctx:function -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="nth-child-an-b-of-s">
@@ -6068,6 +6535,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .nth-box {width: 2.2rem; height: 2.2rem; border-radius: 8px; border: 1px solid var(--line); background: var(--bg2); display:grid; place-items:center; font-family: var(--mono); font-size:.78rem; color: var(--dim);}
 .nth-box.mal {color: var(--ink); border-color: color-mix(in srgb, var(--acc) 40%, var(--line));}
 .nth-row .nth-box:nth-child(even of .mal) {background: var(--acc); color: #0a0a0a; font-weight: 700; border-color: var(--acc);}</textarea></details>
+        <!-- demo-ctx:nth-child-an-b-of-s --><p class="demo-ctx"><a class="ctx-kap" href="#kaskad">Kapitel 03 · Kaskad &amp; räckvidd</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-pseudo">I registret: :</a></p><!-- /demo-ctx:nth-child-an-b-of-s -->
     </article>
 
     <article class="demo sup-chrome sup-edge" id="if">
@@ -6092,6 +6560,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .nd-if:has(#nd-varna:checked) { --varning: ja; }
 .nd-if label { display:flex; align-items:center; gap:.5rem; font-family:var(--mono); font-size:.8rem; color:var(--dim); cursor:pointer; }
 .nd-if .kort { padding:1rem; border-radius:12px; border:1px solid var(--line); background: var(--bg2); color: var(--ink); font-size:.86rem; background: if(style(--varning: ja), #5a1d1d, var(--bg2)); color: if(style(--varning: ja), #ffd7d7, var(--ink)); }</textarea></details>
+        <!-- demo-ctx:if --><p class="demo-ctx"><a class="ctx-kap" href="#kaskad">Kapitel 03 · Kaskad &amp; räckvidd</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-i">I registret: I</a></p><!-- /demo-ctx:if -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar" id="round-mod">
@@ -6135,6 +6604,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .nd-math .bar {height:1.4rem; border-radius:6px; background:var(--acc-soft); position:relative; overflow:hidden;}
 .nd-math .bar i {position:absolute; inset:0 auto 0 0; background:var(--acc); width: round(57%, 8px);}
 .nd-math .bar.mod i {width: calc(mod(140px, 90px)); background:#6ea8ff;}</textarea></details>
+        <!-- demo-ctx:round-mod --><p class="demo-ctx"><a class="ctx-kap" href="#kaskad">Kapitel 03 · Kaskad &amp; räckvidd</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-r">I registret: R</a></p><!-- /demo-ctx:round-mod -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="attr">
@@ -6153,6 +6623,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .nd-attr a { color:var(--dim); text-decoration:none; font-family:var(--mono); font-size:.8rem; }
 .nd-attr a::after { content: " → " attr(data-url); color: var(--acc); }
 .nd-attr a:hover { color: var(--ink); }</textarea></details>
+        <!-- demo-ctx:attr --><p class="demo-ctx"><a class="ctx-kap" href="#kaskad">Kapitel 03 · Kaskad &amp; räckvidd</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-a">I registret: A</a></p><!-- /demo-ctx:attr -->
     </article>
 
   </div>
@@ -6308,6 +6779,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @keyframes snurrm {--m: 1turn;}
 
 @keyframes pulsa {scale: 1.18; box-shadow: 0 0 34px 10px var(--acc-soft), 0 0 120px 40px color-mix(in srgb, var(--acc) 14%, transparent);}</textarea></details>
+        <!-- demo-ctx:property-sin-cos --><p class="demo-ctx"><a class="ctx-kap" href="#rorelse">Kapitel 04 · Rörelse &amp; tid</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-at">I registret: @</a></p><!-- /demo-ctx:property-sin-cos -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari" id="animation-timeline-view">
@@ -6350,6 +6822,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 }
 
 @keyframes reveal-in {opacity: 1; translate: 0 0;}</textarea></details>
+        <!-- demo-ctx:animation-timeline-view --><p class="demo-ctx"><a class="ctx-kap" href="#rorelse">Kapitel 04 · Rörelse &amp; tid</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-a">I registret: A</a></p><!-- /demo-ctx:animation-timeline-view -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="offset-path">
@@ -6378,6 +6851,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   animation: lopa 5s linear infinite;}
 
 @keyframes lopa {offset-distance: 100%;}</textarea></details>
+        <!-- demo-ctx:offset-path --><p class="demo-ctx"><a class="ctx-kap" href="#rorelse">Kapitel 04 · Rörelse &amp; tid</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-o">I registret: O</a></p><!-- /demo-ctx:offset-path -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="animation-composition">
@@ -6422,6 +6896,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @keyframes bump-y {translate: 0 -10px;}
 
 @keyframes bump-x {translate: calc(100% - 16px) 0;}</textarea></details>
+        <!-- demo-ctx:animation-composition --><p class="demo-ctx"><a class="ctx-kap" href="#rorelse">Kapitel 04 · Rörelse &amp; tid</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-a">I registret: A</a></p><!-- /demo-ctx:animation-composition -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="easingfunktioner">
@@ -6477,6 +6952,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .ease-lbl {font-family: var(--mono); font-size: .74rem; color: var(--dim); margin-bottom: .15rem;}
 
 @keyframes race {left: calc(100% - 13px);}</textarea></details>
+        <!-- demo-ctx:easingfunktioner --><p class="demo-ctx"><a class="ctx-kap" href="#rorelse">Kapitel 04 · Rörelse &amp; tid</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-e">I registret: E</a></p><!-- /demo-ctx:easingfunktioner -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari" id="view-timeline">
@@ -6601,6 +7077,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @keyframes visare {rotate: 3turn;}
 
 @keyframes citat {opacity: 0; translate: 0 20px;}</textarea></details>
+        <!-- demo-ctx:view-timeline --><p class="demo-ctx"><a class="ctx-kap" href="#rorelse">Kapitel 04 · Rörelse &amp; tid</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-v">I registret: V</a></p><!-- /demo-ctx:view-timeline -->
     </article>
 
     <article class="demo sup-chrome sup-edge" id="container-scroll-state-stuck">
@@ -6634,6 +7111,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   .stuck-inner {background: var(--acc); color: #0a0a0a; box-shadow: 0 8px 18px color-mix(in srgb, var(--acc) 25%, transparent);}
 }
   }</textarea></details>
+        <!-- demo-ctx:container-scroll-state-stuck --><p class="demo-ctx"><a class="ctx-kap" href="#rorelse">Kapitel 04 · Rörelse &amp; tid</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-at">I registret: @</a></p><!-- /demo-ctx:container-scroll-state-stuck -->
     </article>
 
     <article class="demo sup-chrome sup-edge" id="container-scroll-state-snapped">
@@ -6670,6 +7148,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   .snap-card-inner {opacity: 1; scale: 1; border-color: var(--acc); color: var(--acc);}
 }
   }</textarea></details>
+        <!-- demo-ctx:container-scroll-state-snapped --><p class="demo-ctx"><a class="ctx-kap" href="#rorelse">Kapitel 04 · Rörelse &amp; tid</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-at">I registret: @</a></p><!-- /demo-ctx:container-scroll-state-snapped -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari" id="animation-timeline-scroll">
@@ -6702,6 +7181,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 }
 
 @keyframes krymp-header {padding-block: .4rem; background: color-mix(in srgb, var(--bg2) 88%, transparent); backdrop-filter: blur(6px); box-shadow: 0 4px 14px rgb(0 0 0 / .3);}</textarea></details>
+        <!-- demo-ctx:animation-timeline-scroll --><p class="demo-ctx"><a class="ctx-kap" href="#rorelse">Kapitel 04 · Rörelse &amp; tid</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-a">I registret: A</a></p><!-- /demo-ctx:animation-timeline-scroll -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari" id="ken-burns">
@@ -6727,6 +7207,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 }
 
 @keyframes andas {scale: 1.15;}</textarea></details>
+        <!-- demo-ctx:ken-burns --><p class="demo-ctx"><a class="ctx-kap" href="#rorelse">Kapitel 04 · Rörelse &amp; tid</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-k">I registret: K</a></p><!-- /demo-ctx:ken-burns -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari" id="timeline-scope">
@@ -6784,6 +7265,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 }
 
 @keyframes spy-pa {color: var(--acc); background: var(--acc-soft); font-weight: 700;}</textarea></details>
+        <!-- demo-ctx:timeline-scope --><p class="demo-ctx"><a class="ctx-kap" href="#rorelse">Kapitel 04 · Rörelse &amp; tid</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-t">I registret: T</a></p><!-- /demo-ctx:timeline-scope -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="3d-card-tilt">
@@ -6883,6 +7365,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .tilt-wrap:has(.z-7:hover) .tilt-card {transform: rotateX(-12deg) rotateY(-12deg) translateZ(8px); box-shadow: 12px -8px 36px rgb(0 0 0 / .5); border-color: color-mix(in srgb, var(--acc) 40%, var(--line));}
 .tilt-wrap:has(.z-8:hover) .tilt-card {transform: rotateX(-12deg) rotateY(0deg) translateZ(8px); box-shadow: 0 -8px 36px rgb(0 0 0 / .5); border-color: color-mix(in srgb, var(--acc) 40%, var(--line));}
 .tilt-wrap:has(.z-9:hover) .tilt-card {transform: rotateX(-12deg) rotateY(12deg) translateZ(8px); box-shadow: -12px -8px 36px rgb(0 0 0 / .5); border-color: color-mix(in srgb, var(--acc) 40%, var(--line));}</textarea></details>
+        <!-- demo-ctx:3d-card-tilt --><p class="demo-ctx"><a class="ctx-kap" href="#rorelse">Kapitel 04 · Rörelse &amp; tid</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-siffror">I registret: 0–9</a></p><!-- /demo-ctx:3d-card-tilt -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="gooey-liquid">
@@ -6940,6 +7423,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @keyframes gooey-droppe {transform: translateY(0) scale(0.8);}
 
 @keyframes gooey-snurr {transform: translateX(-3.8rem) scale(0.85);}</textarea></details>
+        <!-- demo-ctx:gooey-liquid --><p class="demo-ctx"><a class="ctx-kap" href="#rorelse">Kapitel 04 · Rörelse &amp; tid</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-g">I registret: G</a></p><!-- /demo-ctx:gooey-liquid -->
     </article>
 
   </div>
@@ -7039,6 +7523,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   user-select: none; -webkit-user-select: none; touch-action: manipulation;}
 .hall:hover {box-shadow: 0 0 22px var(--acc-soft);}
 .hall:active {translate: 0 2px; background: color-mix(in srgb, var(--acc) 38%, transparent); box-shadow: 0 0 34px var(--acc-soft);}</textarea></details>
+        <!-- demo-ctx:active-asymmetrisk-transition --><p class="demo-ctx"><a class="ctx-kap" href="#interaktion">Kapitel 05 · Interaktion utan skript</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-pseudo">I registret: :</a></p><!-- /demo-ctx:active-asymmetrisk-transition -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="popover-attributet">
@@ -7124,6 +7609,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @supports (anchor-name: --x) {
   .pop.hint {inset: auto; margin: 0 0 .7rem 0; position-anchor: --hintanchor; position-area: top; position-try-fallbacks: flip-block;}
 }</textarea></details>
+        <!-- demo-ctx:popover-attributet --><p class="demo-ctx"><a class="ctx-kap" href="#interaktion">Kapitel 05 · Interaktion utan skript</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-p">I registret: P</a></p><!-- /demo-ctx:popover-attributet -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="has-som-temavaxlare">
@@ -7209,6 +7695,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @supports (anchor-name: --x) {
   .pop.hint {inset: auto; margin: 0 0 .7rem 0; position-anchor: --hintanchor; position-area: top; position-try-fallbacks: flip-block;}
 }</textarea></details>
+        <!-- demo-ctx:has-som-temavaxlare --><p class="demo-ctx"><a class="ctx-kap" href="#interaktion">Kapitel 05 · Interaktion utan skript</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-pseudo">I registret: :</a></p><!-- /demo-ctx:has-som-temavaxlare -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="view-timeline-69">
@@ -7277,6 +7764,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @supports (anchor-name: --x) {
   .pop.hint {inset: auto; margin: 0 0 .7rem 0; position-anchor: --hintanchor; position-area: top; position-try-fallbacks: flip-block;}
 }</textarea></details>
+        <!-- demo-ctx:view-timeline-69 --><p class="demo-ctx"><a class="ctx-kap" href="#interaktion">Kapitel 05 · Interaktion utan skript</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-v">I registret: V</a></p><!-- /demo-ctx:view-timeline-69 -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="starting-style">
@@ -7362,6 +7850,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @supports (anchor-name: --x) {
   .pop.hint {inset: auto; margin: 0 0 .7rem 0; position-anchor: --hintanchor; position-area: top; position-try-fallbacks: flip-block;}
 }</textarea></details>
+        <!-- demo-ctx:starting-style --><p class="demo-ctx"><a class="ctx-kap" href="#interaktion">Kapitel 05 · Interaktion utan skript</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-at">I registret: @</a></p><!-- /demo-ctx:starting-style -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="property-trigonometri">
@@ -7434,6 +7923,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @supports (anchor-name: --x) {
   .pop.hint {inset: auto; margin: 0 0 .7rem 0; position-anchor: --hintanchor; position-area: top; position-try-fallbacks: flip-block;}
 }</textarea></details>
+        <!-- demo-ctx:property-trigonometri --><p class="demo-ctx"><a class="ctx-kap" href="#interaktion">Kapitel 05 · Interaktion utan skript</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-at">I registret: @</a></p><!-- /demo-ctx:property-trigonometri -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-firefox" id="popover-hint">
@@ -7512,6 +8002,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   .ord-hint {anchor-name: --hintanchor;}
   .pop.hint {inset: auto; margin: 0 0 .7rem 0; position-anchor: --hintanchor; position-area: top; position-try-fallbacks: flip-block;}
 }</textarea></details>
+        <!-- demo-ctx:popover-hint --><p class="demo-ctx"><a class="ctx-kap" href="#interaktion">Kapitel 05 · Interaktion utan skript</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-p">I registret: P</a></p><!-- /demo-ctx:popover-hint -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="radioflikar">
@@ -7563,6 +8054,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .tabs:has(#tab-a:checked) .pa,
 .tabs:has(#tab-b:checked) .pb,
 .tabs:has(#tab-c:checked) .pc {display: block;}</textarea></details>
+        <!-- demo-ctx:radioflikar --><p class="demo-ctx"><a class="ctx-kap" href="#interaktion">Kapitel 05 · Interaktion utan skript</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-r">I registret: R</a></p><!-- /demo-ctx:radioflikar -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="target">
@@ -7609,6 +8101,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .target-panel code { color: var(--ink); }
 .target-panel:target { display:block; }
 .target-stack:not(:has(:target)) .target-panel:first-child { display:block; }</textarea></details>
+        <!-- demo-ctx:target --><p class="demo-ctx"><a class="ctx-kap" href="#interaktion">Kapitel 05 · Interaktion utan skript</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-pseudo">I registret: :</a></p><!-- /demo-ctx:target -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="formulartillstand-field-sizing-content">
@@ -7657,6 +8150,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .form-field input:in-range:not(:placeholder-shown) {border-color: var(--good);}
 .form-field input:out-of-range {border-color: var(--bad);}
 .form-field input:placeholder-shown {border-style: dashed;}</textarea></details>
+        <!-- demo-ctx:formulartillstand-field-sizing-content --><p class="demo-ctx"><a class="ctx-kap" href="#interaktion">Kapitel 05 · Interaktion utan skript</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-f">I registret: F</a></p><!-- /demo-ctx:formulartillstand-field-sizing-content -->
     </article>
 
     <article class="demo sup-chrome sup-edge" id="details-content-interpolate-size">
@@ -7710,6 +8204,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .demo-details[open]::details-content {height: auto; opacity: 1;}
 .demo-details .inneh {padding: 0 1.2rem 1.2rem; font-size: .86rem; color: var(--dim);}
 .faq-group .inneh {padding: 0 .9rem .9rem; font-size: .84rem; color: var(--dim); border-top: 1px solid var(--line); padding-top: .6rem;}</textarea></details>
+        <!-- demo-ctx:details-content-interpolate-size --><p class="demo-ctx"><a class="ctx-kap" href="#interaktion">Kapitel 05 · Interaktion utan skript</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-pseudo">I registret: :</a></p><!-- /demo-ctx:details-content-interpolate-size -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="starting-style-allow-discrete">
@@ -7745,6 +8240,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 }
 
 @keyframes rulla {translate: -300ch 0;}</textarea></details>
+        <!-- demo-ctx:starting-style-allow-discrete --><p class="demo-ctx"><a class="ctx-kap" href="#interaktion">Kapitel 05 · Interaktion utan skript</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-at">I registret: @</a></p><!-- /demo-ctx:starting-style-allow-discrete -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="open">
@@ -7763,6 +8259,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .nd-open details:open { border-color:var(--acc); }
 .nd-open details:open summary { color:var(--acc); }
 .nd-open summary { cursor:pointer; font-family:var(--mono); font-size:.8rem; }</textarea></details>
+        <!-- demo-ctx:open --><p class="demo-ctx"><a class="ctx-kap" href="#interaktion">Kapitel 05 · Interaktion utan skript</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-pseudo">I registret: :</a></p><!-- /demo-ctx:open -->
     </article>
 
     <article class="demo sup-chrome sup-edge" id="caret-shape-caret-color">
@@ -7778,6 +8275,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 
 .demo-yta {position: relative; border-radius: 4px;}
 .nd-caret input { width:100%; padding:.7rem .9rem; border-radius:10px; border:1px solid var(--line); background:var(--bg2); color:var(--ink); font:inherit; caret-color:var(--acc); caret-shape: bar; }</textarea></details>
+        <!-- demo-ctx:caret-shape-caret-color --><p class="demo-ctx"><a class="ctx-kap" href="#interaktion">Kapitel 05 · Interaktion utan skript</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-c">I registret: C</a></p><!-- /demo-ctx:caret-shape-caret-color -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="accent-color">
@@ -7795,6 +8293,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .nd-accent { display:grid; gap:.6rem; }
 .nd-accent label { display:flex; gap:.6rem; align-items:center; font-size:.86rem; color:var(--dim); }
 .nd-accent input { accent-color: var(--acc); width:1.1rem; height:1.1rem; }</textarea></details>
+        <!-- demo-ctx:accent-color --><p class="demo-ctx"><a class="ctx-kap" href="#interaktion">Kapitel 05 · Interaktion utan skript</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-a">I registret: A</a></p><!-- /demo-ctx:accent-color -->
     </article>
 
   </div>
@@ -7884,6 +8383,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @keyframes citat {opacity: 0; translate: 0 20px;}
 
 @keyframes citatslut {opacity: 0; translate: 0 20px;}</textarea></details>
+        <!-- demo-ctx:dialog-commandfor --><p class="demo-ctx"><a class="ctx-kap" href="#komponenter">Kapitel 06 · Komponenter</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-element">I registret: &lt;</a></p><!-- /demo-ctx:dialog-commandfor -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-firefox" id="dialog">
@@ -7945,6 +8445,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   .drawer[open] {translate: -100% 0;}
   .drawer[open]::backdrop {opacity: 0;}
 }</textarea></details>
+        <!-- demo-ctx:dialog --><p class="demo-ctx"><a class="ctx-kap" href="#komponenter">Kapitel 06 · Komponenter</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-element">I registret: &lt;</a></p><!-- /demo-ctx:dialog -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="anchor-positioning">
@@ -8007,6 +8508,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @starting-style {
   .ctx-menu:popover-open {opacity: 0; scale: .95;}
 }</textarea></details>
+        <!-- demo-ctx:anchor-positioning --><p class="demo-ctx"><a class="ctx-kap" href="#komponenter">Kapitel 06 · Komponenter</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-a">I registret: A</a></p><!-- /demo-ctx:anchor-positioning -->
     </article>
 
     <article class="demo sup-chrome sup-edge" id="interestfor">
@@ -8053,6 +8555,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @starting-style {
   .hint-tip:popover-open {opacity: 0; translate: 0 4px;}
 }</textarea></details>
+        <!-- demo-ctx:interestfor --><p class="demo-ctx"><a class="ctx-kap" href="#komponenter">Kapitel 06 · Komponenter</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-i">I registret: I</a></p><!-- /demo-ctx:interestfor -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="stjarnbetyg">
@@ -8086,6 +8589,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .star-rating input {position: absolute; opacity: 0; width: 1px; height: 1px;}
 .star-rating label {font-size: 1.6rem; color: var(--line); cursor: pointer; transition: color .15s; line-height: 1;}
 .star-rating label:hover, .star-rating label:hover ~ label, .star-rating input:checked ~ label {color: var(--acc);}</textarea></details>
+        <!-- demo-ctx:stjarnbetyg --><p class="demo-ctx"><a class="ctx-kap" href="#komponenter">Kapitel 06 · Komponenter</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-s">I registret: S</a></p><!-- /demo-ctx:stjarnbetyg -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="losenordsmatare">
@@ -8120,6 +8624,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .pwd-meter span { display: block; height: 100%; width: 0; transition: width .3s ease, background .3s ease; }
 .pwd-field:has(input:not(:placeholder-shown):invalid) .pwd-meter span { width: 40%; background: var(--bad); }
 .pwd-field:has(input:valid) .pwd-meter span { width: 100%; background: var(--good); }</textarea></details>
+        <!-- demo-ctx:losenordsmatare --><p class="demo-ctx"><a class="ctx-kap" href="#komponenter">Kapitel 06 · Komponenter</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-l">I registret: L</a></p><!-- /demo-ctx:losenordsmatare -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="details-name">
@@ -8163,6 +8668,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .faq-group summary::after {content: "+"; margin-left: auto; color: var(--acc); transition: rotate .2s;}
 .faq-group details[open] summary::after {rotate: 45deg;}
 .faq-group .inneh {padding: 0 .9rem .9rem; font-size: .84rem; color: var(--dim); border-top: 1px solid var(--line); padding-top: .6rem;}</textarea></details>
+        <!-- demo-ctx:details-name --><p class="demo-ctx"><a class="ctx-kap" href="#komponenter">Kapitel 06 · Komponenter</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-element">I registret: &lt;</a></p><!-- /demo-ctx:details-name -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge" id="appearance-base-select">
@@ -8218,6 +8724,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 }
 .select-fallback-note { display: none; font-family: var(--mono); font-size: .72rem; color: var(--dim); margin-top: .5rem; }
 @supports not (appearance: base-select) { .select-fallback-note { display: block; } }</textarea></details>
+        <!-- demo-ctx:appearance-base-select --><p class="demo-ctx"><a class="ctx-kap" href="#komponenter">Kapitel 06 · Komponenter</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-a">I registret: A</a></p><!-- /demo-ctx:appearance-base-select -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="facetterat-filter">
@@ -8270,6 +8777,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .filter-scope:has(#f-tech:not(:checked)) .filter-card[data-cat="tech"],
 .filter-scope:has(#f-design:not(:checked)) .filter-card[data-cat="design"],
 .filter-scope:has(#f-motion:not(:checked)) .filter-card[data-cat="motion"] {display: none;}</textarea></details>
+        <!-- demo-ctx:facetterat-filter --><p class="demo-ctx"><a class="ctx-kap" href="#komponenter">Kapitel 06 · Komponenter</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-f">I registret: F</a></p><!-- /demo-ctx:facetterat-filter -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="dubbeltumme-slider">
@@ -8304,6 +8812,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .dual-slider input[type="range"]::-webkit-slider-thumb { appearance: none; pointer-events: auto; width: 18px; height: 18px; border-radius: 50%; background: var(--acc); cursor: grab; box-shadow: 0 0 0 3px var(--bg); }
 .dual-slider input[type="range"]::-moz-range-thumb { pointer-events: auto; width: 18px; height: 18px; border: 0; border-radius: 50%; background: var(--acc); cursor: grab; box-shadow: 0 0 0 3px var(--bg); }
 .dual-track { position: absolute; width: 100%; height: 4px; border-radius: 99px; background: var(--line); }</textarea></details>
+        <!-- demo-ctx:dubbeltumme-slider --><p class="demo-ctx"><a class="ctx-kap" href="#komponenter">Kapitel 06 · Komponenter</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-d">I registret: D</a></p><!-- /demo-ctx:dubbeltumme-slider -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="file-selector-button">
@@ -8334,6 +8843,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .filval:has(:focus-visible) {border-color: var(--acc); background: var(--acc-soft);}
 .filval input[type="file"]::file-selector-button {padding: .5rem 1rem; border-radius: 8px; border: 0; background: var(--acc); color: #0a0a0a;
   font: inherit; font-weight: 600; cursor: pointer; margin-right: .6rem;}</textarea></details>
+        <!-- demo-ctx:file-selector-button --><p class="demo-ctx"><a class="ctx-kap" href="#komponenter">Kapitel 06 · Komponenter</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-pseudo">I registret: :</a></p><!-- /demo-ctx:file-selector-button -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="favorit-starburst">
@@ -8370,6 +8880,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @keyframes pop-stjarna {transform: scale(1.4) rotate(14deg);}
 
 @keyframes burst-ring {opacity: 1; scale: .3;}</textarea></details>
+        <!-- demo-ctx:favorit-starburst --><p class="demo-ctx"><a class="ctx-kap" href="#komponenter">Kapitel 06 · Komponenter</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-f">I registret: F</a></p><!-- /demo-ctx:favorit-starburst -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="css-kalkylator">
@@ -8409,6 +8920,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   display: flex; justify-content: space-between; font-family: var(--disp); font-weight: 700; font-size: 1.1rem;}
 .kassa-tot .antal::after {content: counter(antal) " valda"; font-family: var(--mono); font-weight: 400; font-size: .76rem; color: var(--dim);}
 .kassa-tot .pris::after {content: counter(summa) " kr"; color: var(--acc);}</textarea></details>
+        <!-- demo-ctx:css-kalkylator --><p class="demo-ctx"><a class="ctx-kap" href="#komponenter">Kapitel 06 · Komponenter</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-c">I registret: C</a></p><!-- /demo-ctx:css-kalkylator -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="fore-efter-jamforare">
@@ -8543,6 +9055,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   letter-spacing: .04em;
   white-space: nowrap;
   z-index: 6;}</textarea></details>
+        <!-- demo-ctx:fore-efter-jamforare --><p class="demo-ctx"><a class="ctx-kap" href="#komponenter">Kapitel 06 · Komponenter</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-f">I registret: F</a></p><!-- /demo-ctx:fore-efter-jamforare -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="flerstegs-formular-wizard">
@@ -8726,6 +9239,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .wizard-wrap:has(#wz-step3:checked) .node-1,
 .wizard-wrap:has(#wz-step3:checked) .node-2 {border-color: var(--acc); color: var(--acc); background: var(--panel);}
 .wizard-wrap:has(#wz-step3:checked) .node-3 {border-color: var(--acc); color: #000; background: var(--acc); box-shadow: 0 0 12px var(--acc-soft);}</textarea></details>
+        <!-- demo-ctx:flerstegs-formular-wizard --><p class="demo-ctx"><a class="ctx-kap" href="#komponenter">Kapitel 06 · Komponenter</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-f">I registret: F</a></p><!-- /demo-ctx:flerstegs-formular-wizard -->
     </article>
 
     <article class="demo sup-chrome sup-edge" id="calc-size">
@@ -8798,6 +9312,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   padding: 1.1rem;
   border-top: 1px solid var(--line);
 }</textarea></details>
+        <!-- demo-ctx:calc-size --><p class="demo-ctx"><a class="ctx-kap" href="#komponenter">Kapitel 06 · Komponenter</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-c">I registret: C</a></p><!-- /demo-ctx:calc-size -->
     </article>
 
   </div>
@@ -8862,6 +9377,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .vf-demo:has(#vfw-900:checked) .vf-sample {font-variation-settings: "wght" 900;}
 .vf-hover {margin-top: .9rem; font-family: var(--disp); font-size: clamp(1.2rem, 4vw, 1.7rem); color: var(--dim); font-variation-settings: "wght" var(--w); transition: --w .5s ease, color .5s ease;}
 .vf-hover:hover {--w: 900; color: var(--acc);}</textarea></details>
+        <!-- demo-ctx:font-variation-settings --><p class="demo-ctx"><a class="ctx-kap" href="#typografi">Kapitel 07 · Typografi</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-f">I registret: F</a></p><!-- /demo-ctx:font-variation-settings -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari labbar enh-dropcap jmfbar" id="initial-letter">
@@ -8921,6 +9437,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .fig.stor-fig {padding: 1.1rem 1.2rem .9rem;}
 .dropcap {font-size: .94rem; color: var(--dim); text-wrap: pretty;}
 .dropcap::first-letter {initial-letter: 3 3; font-family: var(--disp); font-weight: 800; color: var(--acc); margin-inline-end: .08em;}</textarea></details>
+        <!-- demo-ctx:initial-letter --><p class="demo-ctx"><a class="ctx-kap" href="#typografi">Kapitel 07 · Typografi</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-i">I registret: I</a></p><!-- /demo-ctx:initial-letter -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari jmfbar" id="text-wrap">
@@ -8953,6 +9470,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .wc-normal h4 {text-wrap: wrap;}
 .wc-balance h4 {text-wrap: balance;}
 .wc-pretty h4 {text-wrap: pretty;}</textarea></details>
+        <!-- demo-ctx:text-wrap --><p class="demo-ctx"><a class="ctx-kap" href="#typografi">Kapitel 07 · Typografi</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-t">I registret: T</a></p><!-- /demo-ctx:text-wrap -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="text-box-trim">
@@ -8980,6 +9498,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .trim-compare p {background: var(--acc-soft); padding: 0 .4rem; font-size: 1.05rem;}
 .trim-on {text-box: trim-start;}
 .trim-compare figcaption {font-family: var(--mono); font-size: .7rem; color: var(--dim); margin-top: .3rem;}</textarea></details>
+        <!-- demo-ctx:text-box-trim --><p class="demo-ctx"><a class="ctx-kap" href="#typografi">Kapitel 07 · Typografi</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-t">I registret: T</a></p><!-- /demo-ctx:text-box-trim -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-sparr jmfbar" id="writing-mode">
@@ -9041,6 +9560,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .fig-cap b {color: var(--acc); font-weight: 600;}
 .fig.stor-fig {padding: 1.1rem 1.2rem .9rem;}
 .vertical-heading {writing-mode: vertical-rl; text-orientation: mixed; height: 11rem; font-family: var(--disp); font-weight: 700; font-size: 1.5rem; letter-spacing: .05em; margin-inline: auto;}</textarea></details>
+        <!-- demo-ctx:writing-mode --><p class="demo-ctx"><a class="ctx-kap" href="#typografi">Kapitel 07 · Typografi</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-w">I registret: W</a></p><!-- /demo-ctx:writing-mode -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="counter-style">
@@ -9073,6 +9593,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .counter-compare li::marker {color: var(--acc); font-family: var(--mono); font-weight: 600;}
 .cc-hakparentes {list-style: hakparentes;}
 .cc-romersk {list-style: romersk;}</textarea></details>
+        <!-- demo-ctx:counter-style --><p class="demo-ctx"><a class="ctx-kap" href="#typografi">Kapitel 07 · Typografi</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-at">I registret: @</a></p><!-- /demo-ctx:counter-style -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="sibling-index">
@@ -9117,6 +9638,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .lucka {width: .5em;}
 
 @keyframes valta {rotate: 0deg; translate: 0 0;}</textarea></details>
+        <!-- demo-ctx:sibling-index --><p class="demo-ctx"><a class="ctx-kap" href="#typografi">Kapitel 07 · Typografi</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-s">I registret: S</a></p><!-- /demo-ctx:sibling-index -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="textskimmer">
@@ -9139,6 +9661,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   animation: skimra 3s linear infinite;}
 
 @keyframes skimra {--shimmer-x: 150%;}</textarea></details>
+        <!-- demo-ctx:textskimmer --><p class="demo-ctx"><a class="ctx-kap" href="#typografi">Kapitel 07 · Typografi</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-t">I registret: T</a></p><!-- /demo-ctx:textskimmer -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="textspoiler">
@@ -9163,6 +9686,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .spoiler span {display: inline-block; filter: blur(6px); transition: filter .25s ease;}
 .spoiler:hover, .spoiler:focus-visible {background: var(--acc-soft); color: var(--ink);}
 .spoiler:hover span, .spoiler:focus-visible span {filter: blur(0);}</textarea></details>
+        <!-- demo-ctx:textspoiler --><p class="demo-ctx"><a class="ctx-kap" href="#typografi">Kapitel 07 · Typografi</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-t">I registret: T</a></p><!-- /demo-ctx:textspoiler -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="3d-textrulle">
@@ -9189,6 +9713,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .roll-char .bak {position: absolute; inset: 0; transform: rotateX(-90deg) translateZ(.55em); color: var(--acc);}
 .roll-char .fram {transform: rotateX(0deg) translateZ(.55em);}
 .roll-link:hover .roll-char, .roll-link:focus-visible .roll-char {transform: rotateX(90deg);}</textarea></details>
+        <!-- demo-ctx:3d-textrulle --><p class="demo-ctx"><a class="ctx-kap" href="#typografi">Kapitel 07 · Typografi</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-siffror">I registret: 0–9</a></p><!-- /demo-ctx:3d-textrulle -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox labbar enh-spalter jmfbar" id="hyphens-auto">
@@ -9248,6 +9773,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .hyphen-compare figcaption {margin-top: .4rem; font-family: var(--mono); font-size: .7rem; color: var(--acc);}
 .hyphen-demo {columns: 2; column-gap: 1.2rem; font-size: .86rem; color: var(--dim); hyphens: auto;}
 .hyphen-demo.no-hyphen {hyphens: none;}</textarea></details>
+        <!-- demo-ctx:hyphens-auto --><p class="demo-ctx"><a class="ctx-kap" href="#typografi">Kapitel 07 · Typografi</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-h">I registret: H</a></p><!-- /demo-ctx:hyphens-auto -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari" id="animerad-raknare">
@@ -9274,6 +9800,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 }
 
 @keyframes raknare {--num-count: 92;}</textarea></details>
+        <!-- demo-ctx:animerad-raknare --><p class="demo-ctx"><a class="ctx-kap" href="#typografi">Kapitel 07 · Typografi</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-a">I registret: A</a></p><!-- /demo-ctx:animerad-raknare -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-rader jmfbar" id="line-clamp">
@@ -9312,6 +9839,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 
 .demo-yta {position: relative; border-radius: 4px;}
 .nd-clamp {max-width:22rem; font-size:.86rem; color:var(--dim); display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; line-clamp:3;}</textarea></details>
+        <!-- demo-ctx:line-clamp --><p class="demo-ctx"><a class="ctx-kap" href="#typografi">Kapitel 07 · Typografi</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-l">I registret: L</a></p><!-- /demo-ctx:line-clamp -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-emph jmfbar" id="text-emphasis">
@@ -9351,6 +9879,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 
 .demo-yta {position: relative; border-radius: 4px;}
 .nd-emph {font-size:1rem; color:var(--ink); text-emphasis: filled dot var(--acc); text-emphasis-style: filled dot;}</textarea></details>
+        <!-- demo-ctx:text-emphasis --><p class="demo-ctx"><a class="ctx-kap" href="#typografi">Kapitel 07 · Typografi</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-t">I registret: T</a></p><!-- /demo-ctx:text-emphasis -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-grad jmfbar" id="font-variant-numeric">
@@ -9396,6 +9925,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .nd-fvn .tab {font-variant-numeric: tabular-nums;}
 .nd-fvn .ord {font-variant-numeric: ordinal;}
 .nd-fvn .zero {font-variant-numeric: slashed-zero;}</textarea></details>
+        <!-- demo-ctx:font-variant-numeric --><p class="demo-ctx"><a class="ctx-kap" href="#typografi">Kapitel 07 · Typografi</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-f">I registret: F</a></p><!-- /demo-ctx:font-variant-numeric -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-sparr jmfbar" id="text-orientation-upright">
@@ -9435,6 +9965,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 
 .demo-yta {position: relative; border-radius: 4px;}
 .nd-vert {writing-mode:vertical-rl; text-orientation:upright; height:9rem; font-family:var(--disp); font-weight:700; letter-spacing:.1em; margin-inline:auto; color:var(--acc);}</textarea></details>
+        <!-- demo-ctx:text-orientation-upright --><p class="demo-ctx"><a class="ctx-kap" href="#typografi">Kapitel 07 · Typografi</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-t">I registret: T</a></p><!-- /demo-ctx:text-orientation-upright -->
     </article>
 
   </div>
@@ -9500,6 +10031,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .spark {display: flex; align-items: end; gap: 4px; height: 4.5rem;}
 .spark span {flex: 1; min-height: 2px; border-radius: 3px 3px 0 0; background: color-mix(in oklch, var(--acc), transparent 30%); height: calc(var(--v, 0) * 1%); transition: height .4s cubic-bezier(.2,.8,.2,1);}
 .spark span:last-child {background: var(--acc);}</textarea></details>
+        <!-- demo-ctx:sparklinje --><p class="demo-ctx"><a class="ctx-kap" href="#data">Kapitel 08 · Data &amp; visualisering</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-s">I registret: S</a></p><!-- /demo-ctx:sparklinje -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="donutdiagram">
@@ -9541,6 +10073,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .donut span { font-family: var(--disp); font-weight: 700; -webkit-mask: none; mask: none; color: var(--ink); }
 .donut-legend { display: flex; gap: 1rem; justify-content: center; margin-top: .8rem; font-family: var(--mono); font-size: .74rem; color: var(--dim); }
 .donut-legend b { display: inline-block; width: .6rem; height: .6rem; border-radius: 2px; margin-right: .3rem; }</textarea></details>
+        <!-- demo-ctx:donutdiagram --><p class="demo-ctx"><a class="ctx-kap" href="#data">Kapitel 08 · Data &amp; visualisering</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-d">I registret: D</a></p><!-- /demo-ctx:donutdiagram -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="gantt-schema">
@@ -9575,6 +10108,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .gantt {display: grid; grid-template-columns: repeat(12, 1fr); gap: .4rem;}
 .gantt-row {grid-column: var(--start) / span var(--span); background: var(--acc); color: #0a0a0a; border-radius: 6px; padding: .4rem .6rem; font-family: var(--mono); font-size: .74rem; font-weight: 600;}
 .gantt-row.alt {background: #6ea8ff;}</textarea></details>
+        <!-- demo-ctx:gantt-schema --><p class="demo-ctx"><a class="ctx-kap" href="#data">Kapitel 08 · Data &amp; visualisering</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-g">I registret: G</a></p><!-- /demo-ctx:gantt-schema -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox labbar enh-cell jmfbar" id="heatmap">
@@ -9627,6 +10161,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .demo-yta {position: relative; border-radius: 4px;}
 .heatmap {display: flex; flex-wrap: wrap; gap: 3px;}
 .heatmap span {width: 1.6rem; height: 1.6rem; border-radius: 3px; background: color-mix(in oklch, var(--acc) calc(var(--val, 0) * 1%), var(--bg2));}</textarea></details>
+        <!-- demo-ctx:heatmap --><p class="demo-ctx"><a class="ctx-kap" href="#data">Kapitel 08 · Data &amp; visualisering</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-h">I registret: H</a></p><!-- /demo-ctx:heatmap -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="staplad-kpi-bar">
@@ -9656,6 +10191,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .demo-yta {position: relative; border-radius: 4px;}
 .stack-bar {display: flex; height: 2.4rem; border-radius: 99px; overflow: hidden;}
 .stack-bar span {flex-basis: calc(var(--v) * 1%); display: grid; place-items: center; color: #fff; font-family: var(--mono); font-size: .72rem; font-weight: 700;}</textarea></details>
+        <!-- demo-ctx:staplad-kpi-bar --><p class="demo-ctx"><a class="ctx-kap" href="#data">Kapitel 08 · Data &amp; visualisering</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-s">I registret: S</a></p><!-- /demo-ctx:staplad-kpi-bar -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari" id="svg-linjediagram">
@@ -9686,6 +10222,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 }
 
 @keyframes rita {stroke-dashoffset: 0;}</textarea></details>
+        <!-- demo-ctx:svg-linjediagram --><p class="demo-ctx"><a class="ctx-kap" href="#data">Kapitel 08 · Data &amp; visualisering</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-s">I registret: S</a></p><!-- /demo-ctx:svg-linjediagram -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari" id="kpi-fyllning">
@@ -9718,6 +10255,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 }
 
 @keyframes kpi-fyll {width: var(--kpi);}</textarea></details>
+        <!-- demo-ctx:kpi-fyllning --><p class="demo-ctx"><a class="ctx-kap" href="#data">Kapitel 08 · Data &amp; visualisering</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-k">I registret: K</a></p><!-- /demo-ctx:kpi-fyllning -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="klistrad-tabellrubrik">
@@ -9767,6 +10305,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .data-tbl thead th {position: sticky; top: 0; background: var(--bg2); box-shadow: inset 0 -1px 0 var(--line);}
 .data-tbl tbody tr:nth-child(even) {background: color-mix(in srgb, var(--bg2) 60%, transparent);}
 .data-tbl tbody tr:hover {background: var(--acc-soft);}</textarea></details>
+        <!-- demo-ctx:klistrad-tabellrubrik --><p class="demo-ctx"><a class="ctx-kap" href="#data">Kapitel 08 · Data &amp; visualisering</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-k">I registret: K</a></p><!-- /demo-ctx:klistrad-tabellrubrik -->
     </article>
 
   </div>
@@ -9820,6 +10359,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .vh-a {height: min(5rem, 7dvh);}
 .vh-b {height: min(5rem, 7svh);}
 .vh-c {height: min(5rem, 7lvh);}</textarea></details>
+        <!-- demo-ctx:dvh-svh-lvh --><p class="demo-ctx"><a class="ctx-kap" href="#responsiv">Kapitel 09 · Responsiv &amp; adaptiv</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-d">I registret: D</a></p><!-- /demo-ctx:dvh-svh-lvh -->
     </article>
 
     <article class="demo stor fluid-demo sup-chrome sup-edge sup-safari sup-firefox" id="clamp">
@@ -9859,6 +10399,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .fig-cap {margin-top: .5rem; font-family: var(--mono); font-size: .7rem; color: var(--dim); text-align: center;}
 .fig-cap b {color: var(--acc); font-weight: 600;}
 .fig.stor-fig {padding: 1.1rem 1.2rem .9rem;}</textarea></details>
+        <!-- demo-ctx:clamp --><p class="demo-ctx"><a class="ctx-kap" href="#responsiv">Kapitel 09 · Responsiv &amp; adaptiv</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-c">I registret: C</a></p><!-- /demo-ctx:clamp -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="prefers-reduced-motion">
@@ -9885,6 +10426,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .media-list {display:grid; gap:.6rem;}
 .media-list div {padding:.7rem .9rem; border:1px solid var(--line); border-radius:10px; font-size:.84rem; color:var(--dim); background:var(--bg2);}
 .media-list code {color: var(--acc);}</textarea></details>
+        <!-- demo-ctx:prefers-reduced-motion --><p class="demo-ctx"><a class="ctx-kap" href="#responsiv">Kapitel 09 · Responsiv &amp; adaptiv</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-p">I registret: P</a></p><!-- /demo-ctx:prefers-reduced-motion -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="prefers-color-scheme">
@@ -9908,6 +10450,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .media-list {display:grid; gap:.6rem;}
 .media-list div {padding:.7rem .9rem; border:1px solid var(--line); border-radius:10px; font-size:.84rem; color:var(--dim); background:var(--bg2);}
 .media-list code {color: var(--acc);}</textarea></details>
+        <!-- demo-ctx:prefers-color-scheme --><p class="demo-ctx"><a class="ctx-kap" href="#responsiv">Kapitel 09 · Responsiv &amp; adaptiv</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-p">I registret: P</a></p><!-- /demo-ctx:prefers-color-scheme -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="hover-hover">
@@ -9934,6 +10477,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .media-list {display:grid; gap:.6rem;}
 .media-list div {padding:.7rem .9rem; border:1px solid var(--line); border-radius:10px; font-size:.84rem; color:var(--dim); background:var(--bg2);}
 .media-list code {color: var(--acc);}</textarea></details>
+        <!-- demo-ctx:hover-hover --><p class="demo-ctx"><a class="ctx-kap" href="#responsiv">Kapitel 09 · Responsiv &amp; adaptiv</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-h">I registret: H</a></p><!-- /demo-ctx:hover-hover -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="min-width-640px">
@@ -9969,6 +10513,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .media-list {display:grid; gap:.6rem;}
 .media-list div {padding:.7rem .9rem; border:1px solid var(--line); border-radius:10px; font-size:.84rem; color:var(--dim); background:var(--bg2);}
 .media-list code {color: var(--acc);}</textarea></details>
+        <!-- demo-ctx:min-width-640px --><p class="demo-ctx"><a class="ctx-kap" href="#responsiv">Kapitel 09 · Responsiv &amp; adaptiv</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-m">I registret: M</a></p><!-- /demo-ctx:min-width-640px -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="media-scripting">
@@ -9991,6 +10536,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   .nd-script .js-nej {display:none;}
   .nd-script .js-ja {display:block; padding:.8rem 1rem; border-radius:10px; background:var(--bg2); border:1px solid var(--line); color:var(--dim); font-family:var(--mono); font-size:.8rem;}
 }</textarea></details>
+        <!-- demo-ctx:media-scripting --><p class="demo-ctx"><a class="ctx-kap" href="#responsiv">Kapitel 09 · Responsiv &amp; adaptiv</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-at">I registret: @</a></p><!-- /demo-ctx:media-scripting -->
     </article>
 
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox jmfbar" id="scrollbar-width-color">
@@ -10009,6 +10555,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 
 .demo-yta {position: relative; border-radius: 4px;}
 .nd-sb {max-height:7rem; overflow:auto; scrollbar-width:thin; scrollbar-color: var(--acc) var(--bg2); border:1px solid var(--line); border-radius:10px; padding:.6rem; font-size:.84rem; color:var(--dim);}</textarea></details>
+        <!-- demo-ctx:scrollbar-width-color --><p class="demo-ctx"><a class="ctx-kap" href="#responsiv">Kapitel 09 · Responsiv &amp; adaptiv</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-s">I registret: S</a></p><!-- /demo-ctx:scrollbar-width-color -->
     </article>
 
     <article class="demo stor sup-chrome sup-edge sup-safari sup-firefox" id="media-hover-pointer">
@@ -10036,6 +10583,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
   .nd-pek .fin {display:block;}
   .nd-pek .grov {display:none;}
 }</textarea></details>
+        <!-- demo-ctx:media-hover-pointer --><p class="demo-ctx"><a class="ctx-kap" href="#responsiv">Kapitel 09 · Responsiv &amp; adaptiv</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-at">I registret: @</a></p><!-- /demo-ctx:media-hover-pointer -->
     </article>
 
   </div>
@@ -10448,6 +10996,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .ttt-game:has(#s3-o:checked):has(#s5-o:checked):has(#s7-o:checked) .ttt-win-o {display: flex;}
 
 @keyframes win-pop {opacity: 0; scale: .92;}</textarea></details>
+        <!-- demo-ctx:tre-i-rad-tic-tac-toe --><p class="demo-ctx"><a class="ctx-kap" href="#logik">Kapitel 10 · Logik &amp; tillstånd</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-t">I registret: T</a></p><!-- /demo-ctx:tre-i-rad-tic-tac-toe -->
     </article>
 
     <!-- Whack-a-Mole / Arkad -->
@@ -10595,6 +11144,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 @keyframes mole-drift-1 {translate: 0 0;}
 
 @keyframes mole-drift-3 {translate: 0 0;}</textarea></details>
+        <!-- demo-ctx:css-arkad --><p class="demo-ctx"><a class="ctx-kap" href="#logik">Kapitel 10 · Logik &amp; tillstånd</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-c">I registret: C</a></p><!-- /demo-ctx:css-arkad -->
     </article>
 
     <!-- 4-bitars Binäradderare & Logiska Grindar -->
@@ -10775,6 +11325,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 .logic-lab:has(#bit-b0:checked) .gate-or .gate-lamp {background: var(--acc); box-shadow: 0 0 8px var(--acc);}
 .logic-lab:has(#bit-a0:checked):not(:has(#bit-b0:checked)) .gate-xor .gate-lamp,
 .logic-lab:has(#bit-b0:checked):not(:has(#bit-a0:checked)) .gate-xor .gate-lamp {background: #7cc4ff; box-shadow: 0 0 8px #7cc4ff;}</textarea></details>
+        <!-- demo-ctx:4-bitars-binaradderare --><p class="demo-ctx"><a class="ctx-kap" href="#logik">Kapitel 10 · Logik &amp; tillstånd</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-siffror">I registret: 0–9</a></p><!-- /demo-ctx:4-bitars-binaradderare -->
     </article>
 
   </div>
