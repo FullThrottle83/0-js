@@ -344,6 +344,64 @@ export function mergeBaselineDemos(existingDemos, measured) {
   return { ...existingDemos, ...measured };
 }
 
+/**
+ * Avsiktliga, granskade DOM-skillnader — aldrig ett sätt att dölja drift.
+ *
+ * Filterbatchen (åtta demos, `demos/_delat/filter-motiv.css`) gav varje
+ * filter-swatch en gemensam klass, `f-motiv`. Utan den måste det delade
+ * motivet antingen räkna upp alla åtta filter (då bär varje kopia med sig de
+ * sju andras selektorer) eller publiceras åtta gånger. Klassen har ingen
+ * egen regel och ändrar ingen beräknad stil: den enda regel den väljer är
+ * `.f-motiv .swatch-yta`, som bär exakt samma fyra lager som den gamla
+ * nioväljar-regeln.
+ *
+ * Varje post låser BÅDA sidor av jämförelsen: `before` måste vara det värde
+ * baslinjen har och `after` det värde det nuvarande dokumentet ska ha.
+ * Skulle baslinjen fångas om efter migreringen faller posten i stället för
+ * att dölja skillnaden. Allt annat — övriga attribut, struktur, text,
+ * beräknade stilar och geometri — jämförs fortsatt exakt.
+ */
+export const INTENTIONAL_DIFFS = [
+  { id: 'filter-blur', path: 'div:nth-child(5)>span:nth-child(1)', before: 'swatch f-blur', after: 'swatch f-blur f-motiv' },
+  { id: 'filter-contrast', path: 'div:nth-child(5)>span:nth-child(1)', before: 'swatch f-contrast', after: 'swatch f-contrast f-motiv' },
+  { id: 'filter-saturate', path: 'div:nth-child(5)>span:nth-child(1)', before: 'swatch f-saturate', after: 'swatch f-saturate f-motiv' },
+  { id: 'filter-hue-rotate', path: 'div:nth-child(5)>span:nth-child(1)', before: 'swatch f-hue', after: 'swatch f-hue f-motiv' },
+  { id: 'filter-sepia', path: 'div:nth-child(5)>span:nth-child(1)', before: 'swatch f-sepia', after: 'swatch f-sepia f-motiv' },
+  { id: 'filter-grayscale', path: 'div:nth-child(5)>span:nth-child(1)', before: 'swatch f-gray', after: 'swatch f-gray f-motiv' },
+  { id: 'filter-invert', path: 'div:nth-child(5)>span:nth-child(1)', before: 'swatch f-invert', after: 'swatch f-invert f-motiv' },
+  { id: 'filter-drop-shadow', path: 'div:nth-child(5)>span:nth-child(1)', before: 'swatch f-drop', after: 'swatch f-drop f-motiv' },
+];
+
+/**
+ * Normalisera de avsiktliga skillnaderna för ett demo i EN mätning, så att
+ * allt annat kan jämföras exakt. Kastar om posten inte stämmer precis — en
+ * post som inte längre beskriver verkligheten är ett fel, inte en ursäkt.
+ * Returnerar noteringar om vad som normaliserades (för rapporten).
+ */
+export function applyIntentionalDiffs(baselineState, measuredState, id) {
+  const notes = [];
+  for (const d of INTENTIONAL_DIFFS.filter((x) => x.id === id)) {
+    const i = measuredState.elements.findIndex((e) => e.path === d.path);
+    const j = baselineState.elements.findIndex((e) => e.path === d.path);
+    if (i === -1 || j === -1) {
+      throw new Error(`${id}: avsiktlig skillnad pekar på en nod som inte mäts (${d.path})`);
+    }
+    const inBaseline = baselineState.elements[j].class;
+    const inDocument = measuredState.elements[i].class;
+    if (inBaseline !== d.before || inDocument !== d.after) {
+      throw new Error(`${id} ${d.path}: avsiktlig skillnad stämmer inte — baslinjen har "${inBaseline}" `
+        + `(väntat "${d.before}"), dokumentet har "${inDocument}" (väntat "${d.after}")`);
+    }
+    if (!baselineState.html.includes(`class="${d.before}"`) || !measuredState.html.includes(`class="${d.after}"`)) {
+      throw new Error(`${id}: den avsiktliga klassen syns inte likadant i markup-strängen`);
+    }
+    measuredState.elements[i].class = d.before;
+    measuredState.html = measuredState.html.replace(`class="${d.after}"`, `class="${d.before}"`);
+    notes.push(`${d.path}: class "${d.before}" → "${d.after}" (avsiktlig gemensam motivklass)`);
+  }
+  return notes;
+}
+
 async function main() {
   const args = process.argv.slice(2);
   const capture = args.includes('--capture');
@@ -503,15 +561,24 @@ async function main() {
     console.error(`✗ ${id}: saknas i baslinjen — kör --capture på pre-migrerings-dokumentet`);
     failures++;
   }
+  /** Avsiktliga skillnader som normaliserats, per demo (för rapporten). */
+  const intentional = new Map();
   for (const id of ids.filter((i) => baseline.demos[i])) {
     const states = Object.keys(baseline.demos[id]);
     const problems = [];
     const softNotes = [];
     const geometryNotes = [];
     const reportedNotes = [];
+    const intentionalNotes = new Set();
     for (const state of states) {
       const current = measured[id][state];
       if (!current) { problems.push(`tillståndet "${state}" mäts inte längre`); continue; }
+      try {
+        for (const note of applyIntentionalDiffs(baseline.demos[id][state], current, id)) intentionalNotes.add(note);
+      } catch (e) {
+        problems.push(`${e.message}`);
+        continue;
+      }
       const diff = diffMeasurements(baseline.demos[id][state], current, state === 'default' ? id : `${id}[${state}]`, { strict, geometryStrict, styleStrict });
       compared += diff.compared;
       problems.push(...diff.hard);
@@ -526,6 +593,7 @@ async function main() {
         problems.push(`nytt tillstånd "${state}" saknas i baslinjen — fånga baslinjen från pre-migrerings-dokumentet`);
       }
     }
+    if (intentionalNotes.size) intentional.set(id, [...intentionalNotes]);
     if (problems.length) {
       failures++;
       console.error(`✗ ${id}: ${problems.length} avvikelse(r) mot baslinjen`);
@@ -535,12 +603,19 @@ async function main() {
       const unstable = Object.values(measured[id]).flatMap((m) => m.unstable ?? []);
       const soft = softNotes.length;
       const reported = reportedNotes.length;
-      console.log(`✓ ${id}: ${states.length} tillstånd ${problems.length ? 'avviker' : 'identiska med baslinjen'}${soft ? ` (${soft} geometrivärden inom tolerans)` : ''}${geometryNotes.length ? ` (${geometryNotes.length} geometrivärden utanför toleransen — varning)` : ''}${reported ? ` (${reported} stilvärden rapporterade — annat bygge)` : ''}${unstable.length ? `, ${unstable.length} ostabila värden undantogs` : ''}`);
+      const documented = intentionalNotes.size
+        ? ` (${intentionalNotes.size} avsiktlig(a) klasskillnad(er) normaliserade — se INTENTIONAL_DIFFS)` : '';
+      console.log(`✓ ${id}: ${states.length} tillstånd ${problems.length ? 'avviker' : 'identiska med baslinjen'}${soft ? ` (${soft} geometrivärden inom tolerans)` : ''}${geometryNotes.length ? ` (${geometryNotes.length} geometrivärden utanför toleransen — varning)` : ''}${reported ? ` (${reported} stilvärden rapporterade — annat bygge)` : ''}${unstable.length ? `, ${unstable.length} ostabila värden undantogs` : ''}${documented}`);
       if (geometryNotes.length && verbose) for (const g of geometryNotes.slice(0, 5)) console.log(`    ! ${g}`);
       if (reported && verbose) for (const r of reportedNotes.slice(0, 5)) console.log(`    ~ ${r}`);
       valuesOutsideTolerance.push(...geometryNotes);
       if (soft && verbose) for (const s of softNotes) console.log(`    · ${s}`);
     }
+  }
+
+  if (intentional.size) {
+    console.log(`Avsiktliga, dokumenterade DOM-skillnader — ${intentional.size} demo(n), inget annat normaliseras:`);
+    for (const [id, notes] of intentional) for (const n of notes) console.log(`  · ${id}: ${n}`);
   }
 
   console.log('');

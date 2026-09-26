@@ -33,7 +33,7 @@ import {
   BuildError, DEMO_DIR, DELAT_DIR, INDEX, MAX_ROWS,
 } from './build.mjs';
 import { DEMO_SPEC, MIGRATED_IDS } from './demo-spec.mjs';
-import { mergeBaselineDemos } from '../tests/demo-parity.mjs';
+import { mergeBaselineDemos, applyIntentionalDiffs, INTENTIONAL_DIFFS } from '../tests/demo-parity.mjs';
 import { checkDocument } from './check.mjs';
 import { checkSnippets, extractSnippets, splitParts, declaredVars, usedVars, stripCssComments } from './check-snippets.mjs';
 
@@ -619,30 +619,156 @@ const ordered = MIGRATED_IDS.map((id) => [id, sources.get(id)]);
     'relativfärg- och gamut-kodvalven bär inte varandras CSS');
 }
 
-/* 12. De övriga 8 Grupp B-demona är orörda ------------------------------ */
+/* 12. Grupp B — filterfamiljen: motivägande, en publicerad kopia, rena valv */
 {
-  const GROUP_B_REST = ['filter-blur', 'filter-contrast',
-    'filter-saturate', 'filter-hue-rotate', 'filter-sepia', 'filter-grayscale', 'filter-invert',
-    'filter-drop-shadow'];
-  assert(GROUP_B_REST.length === 8, 'exakt åtta Group B-demos återstår efter migrationen');
-  const built = build(html, sources, fragments);
-  for (const id of GROUP_B_REST) {
-    assert(!MIGRATED_IDS.includes(id), `${id} är fortfarande omigrerat (senare batch)`);
-    const art = built.slice(built.search(new RegExp(`<article class="demo[^"]*" id="${id}">`)));
-    const vault = art.slice(0, art.indexOf('</article>')).match(/<textarea class="kod"[^>]*>([\s\S]*?)<\/textarea>/)[1];
-    // De omigrerade valven är oförändrade: de bär fortfarande hela kapitelblocket.
-    assert(vault.includes('KAPITEL 01'), `${id}: kodvalvet är oförändrat (bär fortfarande kapitelblocket)`);
+  /** Den enda gemensamma klassen: motivet kan ägas av EN regel i EN fil. */
+  const MOTIF_CLASS = 'f-motiv';
+  /** Motivets fyra lager, i målningsordning (överst först). */
+  const MOTIF_LAYERS = [
+    'radial-gradient(circle at 22% 28%, #fff 0 7%, transparent 8%)',
+    'radial-gradient(circle at 74% 68%, rgb(255 255 255 / .55) 0 5%, transparent 6%)',
+    'repeating-linear-gradient(90deg, rgb(0 0 0 / .22) 0 6px, transparent 6px 18px)',
+    'linear-gradient(120deg, var(--acc), #6ea8ff 60%, #ff6ab0)',
+  ];
+  const FILTERS = [
+    { id: 'filter-blur', cls: 'f-blur', decl: 'blur(3px)' },
+    { id: 'filter-contrast', cls: 'f-contrast', decl: 'contrast(2.1)' },
+    { id: 'filter-saturate', cls: 'f-saturate', decl: 'saturate(2.6)' },
+    { id: 'filter-hue-rotate', cls: 'f-hue', decl: 'hue-rotate(120deg)' },
+    { id: 'filter-sepia', cls: 'f-sepia', decl: 'sepia(.85)' },
+    { id: 'filter-grayscale', cls: 'f-gray', decl: 'grayscale(1)' },
+    { id: 'filter-invert', cls: 'f-invert', decl: 'invert(1)' },
+    { id: 'filter-drop-shadow', cls: 'f-drop', decl: 'drop-shadow(0 0 8px var(--acc)) brightness(.9)' },
+  ];
+  /** Alla 16 Grupp B-demos: 3 färglabb + 5 gradienter + 8 filter. */
+  const GROUP_B = ['color-mix', 'rgb-from', 'oklch-display-p3',
+    'linear-gradient', 'radial-gradient', 'conic-gradient', 'repeating-linear-gradient',
+    'repeating-radial-gradient', ...FILTERS.map((f) => f.id)];
+
+  /* a) Inget Group B-kort finns kvar utanför källorna. */
+  assert(GROUP_B.length === 16, 'Grupp B omfattar 16 demos');
+  assert(GROUP_B.every((id) => MIGRATED_IDS.includes(id)),
+    `alla 16 Grupp B-demon är migrerade (${GROUP_B.filter((id) => !MIGRATED_IDS.includes(id)).join(', ') || 'inga kvar'})`);
+
+  /* b) Motivet ägs av fragmentet och publiceras exakt en gång. */
+  const frag = fragments.get('filter-motiv');
+  assert(frag, 'fragmentet filter-motiv finns');
+  const fragBlocks = topLevelBlocks(frag.css);
+  assert(fragBlocks.length === 1 && fragBlocks[0].startsWith(`.${MOTIF_CLASS} .swatch-yta{`),
+    '#delat:filter-motiv: exakt en regel, och den bärs av den gemensamma klassen');
+  for (const layer of MOTIF_LAYERS) {
+    assert(frag.css.includes(layer), `#delat:filter-motiv: lagret finns (${layer.slice(0, 42)}…)`);
   }
-  // Live-CSS för de omigrerade finns kvar i stilbladet.
-  const sheet = stylesheet(built);
-  for (const sel of ['.grad-row', '.filter-row', '.filter-row .swatch-yta',
-    ...['blur', 'contrast', 'saturate', 'hue', 'sepia', 'gray', 'invert', 'drop'].map(n => `.f-${n} .swatch-yta`)]) {
-    assert(sheet.includes(sel), `stilbladet behåller ${sel} (används av de 8 omigrerade Group B-demos)`);
-  }
+  assert(MOTIF_LAYERS.every((l, i, all) => i === 0 || frag.css.indexOf(all[i - 1]) < frag.css.indexOf(l)),
+    '#delat:filter-motiv: lagren står i rätt ordning');
+  const sheet = stylesheet(html);
   const sheetBlocks = topLevelBlocks(sheet);
+  assert(sheetBlocks.filter((b) => b.startsWith(`.${MOTIF_CLASS} .swatch-yta{`)).length === 1,
+    'motivregeln publiceras EXAKT en gång i stilbladet');
+  // Den gamla nioväljar-regeln får inte finnas kvar som en andra implementation.
+  assert(!sheet.includes('.filter-row .swatch-yta'),
+    'den gamla nioväljar-regeln för motivet är borta (ingen redundant andra kopia)');
+  assert((sheet.match(/circle at 22% 28%/g) ?? []).length === 1,
+    'motivets första lager förekommer exakt en gång i hela stilbladet');
+  assert((sheet.match(/circle at 74% 68%/g) ?? []).length === 1,
+    'motivets andra lager förekommer exakt en gång i hela stilbladet');
   assert(sheetBlocks.filter((b) => b.startsWith('.rel-row{')).length === 1
     && sheetBlocks.filter((b) => b.startsWith('.gamut-row{')).length === 1,
   'de unika rgb-from- och gamut-layoutreglerna publiceras exakt en gång ur källorna');
+
+  for (const f of FILTERS) {
+    const src = sources.get(f.id);
+    /* c) Ägandet per källa: tre delade fragment, en egen deklaration. */
+    assert(src.includes.join(' ') === 'swatch swatch-solo filter-motiv',
+      `#${f.id}: begär swatch + swatch-solo + filter-motiv`);
+    assert(new RegExp(`class="swatch ${f.cls} ${MOTIF_CLASS}"`).test(src.markup),
+      `#${f.id}: markupen bär den delade motivklassen`);
+    assert(canon(src.css) === canon(`.${f.cls} .swatch-yta { filter: ${f.decl}; }`),
+      `#${f.id}: demots egen CSS är exakt den egna filter-deklarationen`);
+    assert(src.liveCss.includes(`.labbar.${f.cls}`) && src.liveCss.includes('var(--lv)'),
+      `#${f.id}: laboratoriets --lv-regel är live-only`);
+
+    /* d) Kodvalvet: komplett motiv, eget filter, ingenting annat. */
+    const vault = snippetFor(html, f.id);
+    const css = stripCssComments(splitParts(vault).cssPart);
+    for (const layer of MOTIF_LAYERS) {
+      assert(vault.includes(layer), `#${f.id}: kodvalvet bär motivlagret (${layer.slice(0, 42)}…)`);
+    }
+    assert(MOTIF_LAYERS.every((l, i, all) => i === 0 || vault.indexOf(all[i - 1]) < vault.indexOf(l)),
+      `#${f.id}: kodvalvets fyra motivlager står i rätt ordning`);
+    assert(!css.includes('--lv'), `#${f.id}: kodvalvet är oberoende av sidans --lv`);
+    assert(!/\.labbar|KAPITEL 01|\.cm-row|\.rel-|\.gamut-|\.grad-|\.filter-row/.test(css),
+      `#${f.id}: kodvalvet bär varken sidscenografi eller främmande kapitel-CSS`);
+    const selectors = [...css.matchAll(/([^{}]+)\{/g)].map((m) => m[1].trim());
+    const allowed = ['.demo-yta', '.swatch', '.swatch-yta', '.swatch-lbl', '.swatch-solo',
+      '.swatch-solo > .swatch', '.swatch-solo .swatch-yta', `.${MOTIF_CLASS} .swatch-yta`, `.${f.cls} .swatch-yta`];
+    assert(selectors.length === allowed.length && selectors.every((s) => allowed.includes(s)),
+      `#${f.id}: exakt ägande av kodvalvets selektorer (${selectors.join(' ')})`);
+    for (const other of FILTERS.filter((o) => o.id !== f.id)) {
+      assert(!css.includes(`.${other.cls} `), `#${f.id}: kodvalvet innehåller inte ${other.id}s CSS`);
+    }
+    /* e) Både demots egen regel och labbets publiceras exakt en gång. */
+    assert(sheetBlocks.filter((b) => b.startsWith(`.${f.cls} .swatch-yta{`)).length === 1,
+      `#${f.id}: filterregeln publiceras exakt en gång`);
+    assert(sheetBlocks.filter((b) => b.startsWith(`.labbar.${f.cls} .swatch-yta{`)).length === 1,
+      `#${f.id}: laboratorieregeln publiceras exakt en gång`);
+  }
+
+  /* f) Stale: motivfragmentet ändras utan ombyggnad når alla åtta valv —
+       och inget annat. */
+  const editedFrag = new Map(fragments).set('filter-motiv', { ...frag, css: `${frag.css}\n/* redigerad */` });
+  const genFrag = build(html, sources, editedFrag);
+  assert(genFrag !== html, 'ändrat motivfragment ⇒ genererat dokument skiljer sig från committat');
+  assert(staleDemos(html, genFrag, sources, editedFrag).includes('delat:filter-motiv'),
+    'stale-rapporten pekar ut delat:filter-motiv');
+  for (const f of FILTERS) {
+    assert(snippetFor(genFrag, f.id).includes('/* redigerad */'),
+      `#${f.id}: ändrat motivfragment når ända in i kodvalvet`);
+  }
+  for (const id of MIGRATED_IDS.filter((id) => !FILTERS.some((f) => f.id === id))) {
+    assert(!snippetFor(genFrag, id).includes('/* redigerad */'),
+      `#${id}: motivfragmentet läcker inte in i ett valv som inte begär det`);
+  }
+
+  /* g) Stale: en enskild filterkälla ändras ⇒ bara den pekas ut. */
+  for (const f of FILTERS) {
+    const src = sources.get(f.id);
+    const changed = new Map(sources).set(f.id, { ...src, css: src.css.replace('{', '{ /* ändrad källa */') });
+    const generated = build(html, changed, fragments);
+    assert(generated !== html && staleDemos(html, generated, changed, fragments).join(',') === f.id,
+      `stale-detektering pekar ut endast ${f.id} när dess kanoniska CSS ändras`);
+  }
+
+  /* h) Saknat eller okänt motivfragment avvisas — aldrig tyst utelämnat. */
+  throwsBuildError(
+    () => build(html, sources, new Map([...fragments].filter(([n]) => n !== 'filter-motiv'))),
+    'saknad fragmentfil (demos/_delat/filter-motiv.css) avvisas',
+  );
+  throwsBuildError(
+    () => build(html, new Map(sources).set('filter-blur', {
+      ...sources.get('filter-blur'), includes: ['swatch', 'swatch-solo', 'filter-motiv- fel'],
+    }), fragments),
+    'okänt data-include ("filter-motiv- fel") avvisas',
+  );
+
+  /* i) Negativ regression: tas motivklassen bort ur EN källa upptäcks det —
+       både av stale-kontrollen och av täckningskontrollen nedan. */
+  const motifCovered = (code) => new RegExp(`class="swatch f-[a-z-]+ ${MOTIF_CLASS}"`).test(code);
+  for (const f of FILTERS) {
+    assert(motifCovered(snippetFor(html, f.id)), `#${f.id}: kodvalvet bär motivklassen`);
+    const stripped = { ...sources.get(f.id), markup: sources.get(f.id).markup.replace(` ${MOTIF_CLASS}`, '') };
+    const mutated = build(html, new Map(sources).set(f.id, stripped), fragments);
+    assert(mutated !== html, `#${f.id}: borttagen motivklass gör index.html stale`);
+    assert(!motifCovered(snippetFor(mutated, f.id)),
+      `#${f.id}: borttagen motivklass ⇒ kodvalvet saknar motivet (täckningstestet hade fällt)`);
+  }
+
+  /* j) Inventariet runt omkring är orört. */
+  const built = build(html, sources, fragments);
+  assert((built.match(/<li class="reg-rad/g) ?? []).length === 134,
+    `A–Ö-registret har 134 poster (${(built.match(/<li class="reg-rad/g) ?? []).length})`);
+  assert((built.match(/<article class="demo[\s"]/g) ?? []).length === EXPECTED_DEMOS,
+    `${EXPECTED_DEMOS} demos i det genererade dokumentet`);
 }
 
 
@@ -681,6 +807,60 @@ const ordered = MIGRATED_IDS.map((id) => [id, sources.get(id)]);
     rejected = /target/.test(e.message) && /skriva över/.test(e.message);
   }
   assert(rejected, '--merge avvisar försök att skriva över ett befintligt demo-id');
+}
+
+/* 14. Det avsiktliga paritetsundantaget är smalt och låst åt båda håll ---- */
+{
+  /** Minimal mätning: en nod med en klass, plus markup-strängen. */
+  const fake = (cls) => ({
+    elements: [{ path: 'div:nth-child(5)>span:nth-child(1)', tag: 'span', class: cls, id: '', text: '' }],
+    html: `<span class="${cls}"></span>`,
+    controls: [],
+    unstable: [],
+  });
+  const FILTER_PATH = 'div:nth-child(5)>span:nth-child(1)';
+  assert(INTENTIONAL_DIFFS.length === 8 && INTENTIONAL_DIFFS.every((d) => d.path === FILTER_PATH),
+    'undantagslistan omfattar exakt åtta poster, alla på en och samma nodtyp');
+  for (const d of INTENTIONAL_DIFFS) {
+    assert(MIGRATED_IDS.includes(d.id), `#${d.id}: undantaget gäller en migrerad demo`);
+  }
+  // a) Den deklarerade skillnaden normaliseras — och bara den.
+  const notes = applyIntentionalDiffs(fake('swatch f-blur'), fake('swatch f-blur f-motiv'), 'filter-blur');
+  assert(notes.length === 1, `filter-blur: en avsiktlig skillnad normaliseras (${notes.length})`);
+  const untouched = applyIntentionalDiffs(fake('swatch grad-1'), fake('swatch grad-1'), 'linear-gradient');
+  assert(untouched.length === 0, 'linear-gradient: inget undantag, inget normaliseras');
+  const normalized = fake('swatch f-blur f-motiv');
+  applyIntentionalDiffs(fake('swatch f-blur'), normalized, 'filter-blur');
+  assert(normalized.elements[0].class === 'swatch f-blur'
+    && normalized.html === '<span class="swatch f-blur"></span>',
+  'filter-blur: bara klasstoken normaliseras — markup-strängen och noden följer med');
+
+  // b) En ODokumenterad klasskillnad på samma nod normaliseras inte: den kastar.
+  const throws = (fn) => { try { fn(); return false; } catch (e) { return /avsiktlig skillnad stämmer inte/.test(e.message); } };
+  assert(throws(() => applyIntentionalDiffs(fake('swatch f-blur'), fake('swatch f-blur oannonserad'), 'filter-blur')),
+    'filter-blur: en odokumenterad klass på samma nod avvisas (undantaget kan inte vidgas tyst)');
+  assert(throws(() => applyIntentionalDiffs(fake('swatch f-blur'), fake('swatch f-motiv'), 'filter-blur')),
+    'filter-blur: en borttagen filterklass avvisas');
+  const notExempt = applyIntentionalDiffs(fake('swatch grad-1'), fake('swatch grad-1 f-motiv'), 'linear-gradient');
+  assert(notExempt.length === 0,
+    'linear-gradient: motivklassen på ett icke-filterkort normaliseras inte — skillnaden fäller pariteten');
+  // c) En omfångad baslinje (klassen redan i båda leden) döljs inte heller.
+  assert(throws(() => applyIntentionalDiffs(fake('swatch f-blur f-motiv'), fake('swatch f-blur f-motiv'), 'filter-blur')),
+    'filter-blur: en omfångad post-e-migrering-baslinje faller i stället för att dölja skillnaden');
+  assert(throws(() => applyIntentionalDiffs(fake('swatch f-blur'), fake('swatch f-blur f-motiv f-extra'), 'filter-blur')),
+    'filter-blur: en extra klass utöver den avsiktliga avvisas');
+  // d) En post som pekar på en nod som inte mäts alls är ett fel.
+  let missing = false;
+  try { applyIntentionalDiffs(fake('swatch f-blur'), fake('swatch f-blur f-motiv'), 'filter-finns-inte'); } catch (e) { missing = true; }
+  assert(!missing, 'ett demo utan deklarerat undantag normaliserar ingenting (inga fel, ingen ändring)');
+  let badPath = false;
+  try {
+    applyIntentionalDiffs(
+      { ...fake('swatch f-blur'), elements: [{ path: 'något-annat', class: 'swatch f-blur' }] },
+      fake('swatch f-blur f-motiv'), 'filter-blur',
+    );
+  } catch (e) { badPath = /inte mäts/.test(e.message); }
+  assert(badPath, 'en post vars nod inte mäts avvisas');
 }
 
 console.log('');

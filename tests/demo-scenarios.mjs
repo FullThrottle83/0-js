@@ -122,6 +122,48 @@ export const SCENARIOS = {
     { name: 'lv-8', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="8"]').check(); } },
     { name: 'theme-syra', apply: async ({ page }) => { await page.locator('#tema-syra').check(); } },
   ],
+  /* Grupp B — filterfamiljen. Samma reglage som gradienterna, men varje demo
+     räknar om --lv till sin egen enhet (px, procent, grader). */
+  'filter-blur': [
+    { name: 'lv-0', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="0"]').check(); } },
+    { name: 'lv-8', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="8"]').check(); } },
+    { name: 'theme-syra', apply: async ({ page }) => { await page.locator('#tema-syra').check(); } },
+  ],
+  'filter-contrast': [
+    { name: 'lv-0', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="0"]').check(); } },
+    { name: 'lv-8', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="8"]').check(); } },
+    { name: 'theme-syra', apply: async ({ page }) => { await page.locator('#tema-syra').check(); } },
+  ],
+  'filter-saturate': [
+    { name: 'lv-0', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="0"]').check(); } },
+    { name: 'lv-8', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="8"]').check(); } },
+    { name: 'theme-syra', apply: async ({ page }) => { await page.locator('#tema-syra').check(); } },
+  ],
+  'filter-hue-rotate': [
+    { name: 'lv-0', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="0"]').check(); } },
+    { name: 'lv-8', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="8"]').check(); } },
+    { name: 'theme-syra', apply: async ({ page }) => { await page.locator('#tema-syra').check(); } },
+  ],
+  'filter-sepia': [
+    { name: 'lv-0', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="0"]').check(); } },
+    { name: 'lv-8', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="8"]').check(); } },
+    { name: 'theme-syra', apply: async ({ page }) => { await page.locator('#tema-syra').check(); } },
+  ],
+  'filter-grayscale': [
+    { name: 'lv-0', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="0"]').check(); } },
+    { name: 'lv-8', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="8"]').check(); } },
+    { name: 'theme-syra', apply: async ({ page }) => { await page.locator('#tema-syra').check(); } },
+  ],
+  'filter-invert': [
+    { name: 'lv-0', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="0"]').check(); } },
+    { name: 'lv-8', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="8"]').check(); } },
+    { name: 'theme-syra', apply: async ({ page }) => { await page.locator('#tema-syra').check(); } },
+  ],
+  'filter-drop-shadow': [
+    { name: 'lv-0', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="0"]').check(); } },
+    { name: 'lv-8', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="8"]').check(); } },
+    { name: 'theme-syra', apply: async ({ page }) => { await page.locator('#tema-syra').check(); } },
+  ],
 };
 
 /** Scenarier för ett id (tom lista om demot inte är interaktivt). */

@@ -1,0 +1,18 @@
+<!--
+  demo: filter-hue-rotate
+  Kanonisk källa för både live-demon och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+  Grupp B: swatch-familjen, .swatch-solo och det fyrskiktade filtermotivet är
+  delade (demos/_delat/) och begärs med data-include. .f-hue är demots enda
+  egen regel; labbets --lv-skala är sidans scenografi och ligger i data-live.
+-->
+<div class="demo-yta swatch-solo"><span class="swatch f-hue f-motiv"><span class="swatch-yta"></span><span class="swatch-lbl">hue-rotate</span></span></div>
+<style data-include="swatch swatch-solo filter-motiv"></style>
+<style>
+.f-hue .swatch-yta { filter: hue-rotate(120deg); }
+</style>
+<style data-live>
+/* Reglerbart filter: --lv (0–8) blir 0–360 graders nyansrotation. Labbet är sidans
+   scenografi och kopieras inte. */
+.labbar.f-hue .swatch-yta { filter: hue-rotate(calc(var(--lv) * 45deg)); }
+</style>

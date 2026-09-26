@@ -659,6 +659,290 @@ for (const [id, n, declaration] of GRADIENTS) {
   };
 }
 
+/* ---- batch 5 (Grupp B — filterfamiljen) -------------------------------- */
+
+/**
+ * Det delade fyrskiktade motivet, i den ordning lagren målas (överst först).
+ * Ägs av demos/_delat/filter-motiv.css — den enda plats där det står.
+ */
+export const MOTIF_LAYERS = [
+  'radial-gradient(circle at 22% 28%, #fff 0 7%, transparent 8%)',
+  'radial-gradient(circle at 74% 68%, rgb(255 255 255 / .55) 0 5%, transparent 6%)',
+  'repeating-linear-gradient(90deg, rgb(0 0 0 / .22) 0 6px, transparent 6px 18px)',
+  'linear-gradient(120deg, var(--acc), #6ea8ff 60%, #ff6ab0)',
+];
+
+/**
+ * Beräknad referens för en deklaration: samma dokument, samma variabler, så
+ * att jämförelsen aldrig hänger på hur webbläsaren råkar serialisera värdet.
+ */
+const referenceFor = (t, prop, declaration) => t.page.evaluate(([prefix, prop, decl]) => {
+  const probe = document.createElement('span');
+  document.querySelector(prefix).append(probe);
+  probe.style.setProperty(prop, decl);
+  const value = getComputedStyle(probe).getPropertyValue(prop);
+  probe.remove();
+  return value;
+}, [t.prefix, prop, declaration]);
+
+/**
+ * Målat bevis för ett filter. Två kloner av demots yta renderas i samma
+ * dokument på hela pixelpositioner: den ena med demots filterklass, den andra
+ * utan. Båda bär det delade motivet — .f-motiv sitter på svatchen och tas
+ * inte bort — så den enda skillnaden är filtret. Pixlarna läses ur riktiga
+ * elementskärmbilder; inget påstående bygger på deklarationstext.
+ */
+async function paintPair(t, cls, { clip = true } = {}) {
+  await t.page.evaluate(([prefix, cls, clip]) => {
+    const root = document.querySelector(prefix);
+    for (const [key, keep] of [['a', true], ['b', false]]) {
+      const host = document.createElement('div');
+      host.id = `motiv-prov-${key}`;
+      // Hela pixelpositioner: annars hamnar de två klonerna på olika
+      // delpixelrader och per-pixeljämförelsen mäter lägesbrus, inte färg.
+      host.style.cssText = `position:fixed;left:0;top:${key === 'a' ? 0 : 150}px;`
+        + 'background:#000;padding:12px;width:30rem;box-sizing:content-box';
+      const clone = root.cloneNode(true);
+      if (!keep) clone.querySelector('.swatch').classList.remove(cls);
+      if (!clip) clone.querySelectorAll('.swatch').forEach((s) => { s.style.overflow = 'visible'; });
+      host.append(clone);
+      document.body.append(host);
+    }
+  }, [t.prefix, cls, clip]);
+
+  const shots = {};
+  for (const key of ['a', 'b']) {
+    shots[key] = (await t.page.locator(`#motiv-prov-${key} .swatch-yta`).screenshot()).toString('base64');
+    shots[`host-${key}`] = (await t.page.locator(`#motiv-prov-${key}`).screenshot()).toString('base64');
+  }
+
+  const out = await t.page.evaluate(async (shots) => {
+    const load = async (data) => {
+      const image = new Image();
+      image.src = 'data:image/png;base64,' + data;
+      await image.decode();
+      const canvas = document.createElement('canvas');
+      canvas.width = image.width; canvas.height = image.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(image, 0, 0);
+      return { w: image.width, h: image.height, data: ctx.getImageData(0, 0, image.width, image.height).data };
+    };
+    const luma = (d, i) => 0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2];
+    const satOf = (d, i) => Math.max(d[i], d[i + 1], d[i + 2]) - Math.min(d[i], d[i + 1], d[i + 2]);
+    const hueOf = (d, i) => {
+      const r = d[i] / 255, g = d[i + 1] / 255, b = d[i + 2] / 255;
+      const max = Math.max(r, g, b), min = Math.min(r, g, b), c = max - min;
+      if (c === 0) return null;
+      const h = max === r ? ((g - b) / c) % 6 : max === g ? (b - r) / c + 2 : (r - g) / c + 4;
+      return ((h * 60) + 360) % 360;
+    };
+    const round = (n, p = 2) => Number(n.toFixed(p));
+    /** Insätt 3 px: kanterna påverkas av rundning i skärmbilden. */
+    const stats = (img) => {
+      const d = img.data;
+      const INSET = 3;
+      let meanLuma = 0, meanSat = 0, maxSat = 0, sharp = 0, rb = 0, n = 0, hx = 0, hy = 0, hn = 0;
+      const lumor = [];
+      for (let y = INSET; y < img.h - INSET; y++) {
+        for (let x = INSET; x < img.w - INSET; x++) {
+          const i = (y * img.w + x) * 4;
+          const l = luma(d, i);
+          lumor.push(l);
+          meanLuma += l; meanSat += satOf(d, i); maxSat = Math.max(maxSat, satOf(d, i));
+          rb += d[i] - d[i + 2]; n++;
+          const hue = hueOf(d, i);
+          if (hue !== null) { const a = hue * Math.PI / 180; hx += Math.cos(a); hy += Math.sin(a); hn++; }
+        }
+      }
+      for (let y = INSET; y < img.h - INSET; y++) {
+        for (let x = INSET; x < img.w - INSET - 1; x++) {
+          const i = (y * img.w + x) * 4, j = i + 4;
+          sharp += Math.abs(luma(d, i) - luma(d, j)) + Math.abs(d[i + 1] - d[j + 1]);
+        }
+      }
+      const mean = meanLuma / n;
+      let variance = 0;
+      for (const l of lumor) variance += (l - mean) ** 2;
+      return {
+        w: img.w, h: img.h,
+        meanLuma: round(meanLuma / n),
+        stdLuma: round(Math.sqrt(variance / n)),
+        meanSat: round(meanSat / n),
+        maxSat,
+        sharpness: round(sharp / n, 3),
+        meanRminusB: round(rb / n),
+        meanHue: round((Math.atan2(hy / hn, hx / hn) * 180 / Math.PI + 360) % 360, 1),
+      };
+    };
+    /** Ljus och värme i randen ovanför ytan (innanför provrutans utfyllnad). */
+    const ring = (img) => {
+      const d = img.data;
+      let sum = 0, warm = 0, n = 0;
+      for (let y = 3; y < 12; y++) {
+        for (let x = 12; x < img.w - 12; x++) {
+          const i = (y * img.w + x) * 4;
+          sum += luma(d, i); warm += d[i] - d[i + 2]; n++;
+        }
+      }
+      return { luma: round(sum / n), warm: round(warm / n) };
+    };
+    const A = await load(shots.a);
+    const B = await load(shots.b);
+    let invDiff = 0, absDiff = 0, px = 0;
+    const INSET = 3;
+    for (let y = INSET; y < A.h - INSET; y++) {
+      for (let x = INSET; x < A.w - INSET; x++) {
+        const i = (y * A.w + x) * 4;
+        invDiff += Math.abs(A.data[i] - (255 - B.data[i]));
+        absDiff += Math.abs(A.data[i] - B.data[i]);
+        px++;
+      }
+    }
+    return {
+      filtered: stats(A),
+      reference: stats(B),
+      inverted: round(invDiff / px),
+      changed: round(absDiff / px),
+      ringFiltered: ring(await load(shots['host-a'])),
+      ringReference: ring(await load(shots['host-b'])),
+    };
+  }, shots);
+
+  await t.page.evaluate(() => {
+    document.getElementById('motiv-prov-a').remove();
+    document.getElementById('motiv-prov-b').remove();
+  });
+  return out;
+}
+
+/**
+ * Ett filter per demo. `lab(lv)` är sidans laboratorieregel (live-only),
+ * `own` är deklarationen som faktiskt kopieras, och `paint` är påståendet om
+ * de målade pixlarna — inte bara om den beräknade deklarationen.
+ */
+const FILTERS = [
+  {
+    id: 'filter-blur', cls: 'f-blur', own: 'blur(3px)', dflt: 3,
+    lab: (lv) => `blur(${lv}px)`,
+    paint: (m) => [m.filtered.sharpness < m.reference.sharpness * 0.75,
+      `suddet jämnar ut motivet (skärpa ${m.filtered.sharpness} mot ${m.reference.sharpness} ofiltrerat)`],
+  },
+  {
+    id: 'filter-contrast', cls: 'f-contrast', own: 'contrast(2.1)', dflt: 4,
+    lab: (lv) => `contrast(${lv * 50}%)`,
+    paint: (m) => [m.filtered.stdLuma > m.reference.stdLuma * 1.3,
+      `mellantonerna sprids (standardavvikelse ${m.filtered.stdLuma} mot ${m.reference.stdLuma})`],
+  },
+  {
+    id: 'filter-saturate', cls: 'f-saturate', own: 'saturate(2.6)', dflt: 5,
+    lab: (lv) => `saturate(${lv * 50}%)`,
+    paint: (m) => [m.filtered.meanSat > m.reference.meanSat * 1.6,
+      `mättnaden växer (${m.filtered.meanSat} mot ${m.reference.meanSat})`],
+  },
+  {
+    id: 'filter-hue-rotate', cls: 'f-hue', own: 'hue-rotate(120deg)', dflt: 3,
+    lab: (lv) => `hue-rotate(${lv * 45}deg)`,
+    paint: (m) => {
+      const shift = ((m.filtered.meanHue - m.reference.meanHue) % 360 + 360) % 360;
+      return [shift > 90 && shift < 150,
+        `nyansen flyttas runt hjulet (${shift.toFixed(1)}° · ${m.reference.meanHue}° → ${m.filtered.meanHue}°)`];
+    },
+  },
+  {
+    id: 'filter-sepia', cls: 'f-sepia', own: 'sepia(.85)', dflt: 7,
+    lab: (lv) => `sepia(${lv * 12.5}%)`,
+    paint: (m) => [m.filtered.meanRminusB > m.reference.meanRminusB + 40 && m.filtered.meanSat < m.reference.meanSat,
+      `paletten dras mot brunt (r−b ${m.filtered.meanRminusB} mot ${m.reference.meanRminusB}, mättnad ${m.filtered.meanSat} mot ${m.reference.meanSat})`],
+  },
+  {
+    id: 'filter-grayscale', cls: 'f-gray', own: 'grayscale(1)', dflt: 8,
+    lab: (lv) => `grayscale(${lv * 12.5}%)`,
+    paint: (m) => [m.filtered.maxSat <= 8 && m.filtered.meanSat <= 1 && m.reference.meanSat > 40
+      && Math.abs(m.filtered.meanLuma - m.reference.meanLuma) < 2,
+      `färgen försvinner, ljusheten står kvar (mättnad ${m.filtered.meanSat}, max ${m.filtered.maxSat}, ljus ${m.filtered.meanLuma} mot ${m.reference.meanLuma})`],
+  },
+  {
+    id: 'filter-invert', cls: 'f-invert', own: 'invert(1)', dflt: 8,
+    lab: (lv) => `invert(${lv * 12.5}%)`,
+    paint: (m) => [m.inverted <= 2 && m.changed > 60,
+      `varje pixel blir sin motsats (medelavvikelse från 255−original ${m.inverted}, ändring ${m.changed})`],
+  },
+  {
+    id: 'filter-drop-shadow', cls: 'f-drop', own: 'drop-shadow(0 0 8px var(--acc)) brightness(.9)', dflt: 4,
+    lab: (lv) => `drop-shadow(0 0 ${lv * 2}px var(--acc)) brightness(.9)`,
+    paint: (m) => [(m.filtered.meanLuma / m.reference.meanLuma > 0.85) && (m.filtered.meanLuma / m.reference.meanLuma < 0.95),
+      `brightness(.9) dämpar ytan (ljus ${m.filtered.meanLuma} mot ${m.reference.meanLuma})`],
+  },
+];
+
+for (const f of FILTERS) {
+  CHECKS[f.id] = {
+    page: async (t) => {
+      t.expect(await t.count('.swatch') === 1, `${f.id}: sidan: en enda svatch`);
+      t.expect(await t.style('.swatch-yta', 'height') === '96px', `${f.id}: sidan: delad .swatch-solo-geometri`);
+      t.expect(await t.rootStyle('max-width') === '352px', `${f.id}: sidan: delad .swatch-solo-bredd`);
+      // Det delade motivet: alla fyra lager, i rätt ordning.
+      const bg = await t.style('.swatch-yta', 'background-image');
+      t.expect(bg === await referenceFor(t, 'background-image', MOTIF_LAYERS.join(', ')),
+        `${f.id}: sidan: det fyrskiktade motivet i rätt ordning`);
+      // Standardläget är laboratoriets värde (live-only-regeln vinner).
+      t.expect(await t.style('.swatch-yta', 'filter') === await referenceFor(t, 'filter', f.lab(f.dflt)),
+        `${f.id}: sidan: laboratoriets standardvärde ger ${f.lab(f.dflt)}`);
+      const seen = [];
+      for (const lv of [0, 8]) {
+        await t.page.locator(t.cardSel(`.labb-steg input[data-v="${lv}"]`)).check();
+        await settle(t);
+        t.expect(await t.rootStyle('--lv') === String(lv), `${f.id}: sidan: reglaget sätter --lv=${lv}`);
+        const value = await t.style('.swatch-yta', 'filter');
+        seen.push(value);
+        t.expect(value === await referenceFor(t, 'filter', f.lab(lv)),
+          `${f.id}: sidan: --lv: ${lv} ger ${f.lab(lv)} (live-only-regeln)`);
+      }
+      t.expect(seen[0] !== seen[1], `${f.id}: sidan: laboratoriet ändrar filtret (${seen.join(' → ')})`);
+    },
+    isolated: async (t, v) => {
+      const surface = await t.page.evaluate((prefix) => {
+        const el = document.querySelector(`${prefix} .swatch-yta`);
+        const r = el.getBoundingClientRect();
+        return { w: r.width, h: r.height, filter: getComputedStyle(el).filter, bg: getComputedStyle(el).backgroundImage };
+      }, t.prefix);
+      t.expect(surface.w > 0 && surface.h === 96,
+        `${f.id}: fristående kodvalv: ytan har mått (${surface.w}×${surface.h} px)`);
+      t.expect(surface.bg === await referenceFor(t, 'background-image', MOTIF_LAYERS.join(', ')),
+        `${f.id}: fristående kodvalv: det kompletta fyrskiktade motivet ur fragmentet`);
+      t.expect(surface.filter === await referenceFor(t, 'filter', f.own),
+        `${f.id}: fristående kodvalv: endast det egna filtret (${surface.filter})`);
+      t.expect(await t.rootStyle('--lv') === '', `${f.id}: fristående kodvalv: ingen --lv-scenografi krävs`);
+      t.expect((await unresolvedVars(t.page)).length === 0,
+        `${f.id}: fristående kodvalv: alla var() löses upp (${(await unresolvedVars(t.page)).join(', ') || 'inga olösta'})`);
+      const selectors = await snippetSelectors(t.page);
+      t.expect(selectors.includes(`.${f.cls} .swatch-yta`) && selectors.includes('.f-motiv .swatch-yta'),
+        `${f.id}: fristående kodvalv: egen filterregel och delat motiv`);
+      t.expect(selectors.filter((s) => /\.f-/.test(s)).length === 2,
+        `${f.id}: fristående kodvalv: bara det egna filtret och den delade motivklassen (${selectors.filter((s) => /\.f-/.test(s)).join(', ')})`);
+      t.expect(!/\.(labbar|cm-row|rel-|gamut-|grad-|filter-row)/.test(selectors.join(' ')),
+        `${f.id}: fristående kodvalv: ingen laboratorie-, blandnings-, relativ-, gamut- eller gradient-CSS`);
+      // Det målade beviset: filtret måste synas i pixlarna på motivet.
+      const m = await paintPair(t, f.cls);
+      t.expect(m.filtered.w === m.reference.w && m.filtered.h === m.reference.h,
+        `${f.id}: fristående kodvalv: filtrerat och ofiltrerat prov har samma mått`);
+      t.expect(m.changed > 1,
+        `${f.id}: fristående kodvalv: filtret ändrar de målade pixlarna (${m.changed})`);
+      const [ok, message] = f.paint(m);
+      t.expect(ok, `${f.id}: fristående kodvalv: ${message}`);
+      t.expect(v.acc.startsWith('#'), `${f.id}: Grundpaketets accent används av motivet`);
+      if (f.id === 'filter-drop-shadow') {
+        // Skuggan klipps på sidan av .swatch { overflow: hidden } (oförändrat
+        // beteende). Utan klippningen målar drop-shadow() ändå en varm gloria:
+        // beviset att deklarationen inte är overksam.
+        const glow = await paintPair(t, f.cls, { clip: false });
+        t.expect(glow.ringFiltered.luma > 5 && glow.ringFiltered.warm > 5 && glow.ringReference.luma < 1,
+          `drop-shadow: fristående kodvalv: skuggan målar utanför formen (ljus ${glow.ringFiltered.luma}, värme ${glow.ringFiltered.warm} mot ${glow.ringReference.luma} ofiltrerat)`);
+      }
+    },
+  };
+}
+
 /** #rrggbb → [r, g, b] (Grundpaketets variabler är hex). */
 function hexToRgb(hex) {
   const m = hex.trim().match(/^#([0-9a-f]{6})$/i);
@@ -731,15 +1015,25 @@ async function main() {
   })) === MIGRATED_IDS.length * 2,
   `sidan: ${MIGRATED_IDS.length} migrerade kort har markup-markörer i DOM:en`);
 
-  for (const id of ['filter-blur', 'filter-contrast', 'filter-saturate', 'filter-hue-rotate', 'filter-sepia', 'filter-grayscale', 'filter-invert', 'filter-drop-shadow']) {
-    await open(id);
-    const filter = await page.locator(`#${id} .swatch-yta`).evaluate(e => {
-      const s = getComputedStyle(e), r = e.getBoundingClientRect();
-      return { background: s.backgroundImage, filter: s.filter, width: r.width, height: r.height };
-    });
-    assert(filter.background.includes('repeating-linear-gradient') && filter.background.includes('radial-gradient') && filter.filter !== 'none' && filter.width > 0 && filter.height === 96,
-      `${id}: unmigrated filter retains layered motif, active filter and shared geometry`);
-  }
+  /* Det delade motivet: en publicerad regel, exakt åtta konsumenter. */
+  const motif = await page.evaluate(() => {
+    const rules = [...document.styleSheets].flatMap((s) => [...s.cssRules])
+      .filter((r) => (r.selectorText ?? '').includes('.f-motiv'));
+    return {
+      rules: rules.map((r) => r.selectorText),
+      cards: [...document.querySelectorAll('article.demo')].filter((a) => a.querySelector('.f-motiv')).map((a) => a.id),
+      surfaces: [...document.querySelectorAll('.f-motiv .swatch-yta')].map((e) => {
+        const s = getComputedStyle(e);
+        return { layers: (s.backgroundImage.match(/-gradient\(/g) ?? []).length, filter: s.filter };
+      }),
+    };
+  });
+  assert(motif.rules.length === 1 && motif.rules[0] === '.f-motiv .swatch-yta',
+    `sidan: motivet publiceras av exakt en regel (${motif.rules.join(' | ')})`);
+  assert(motif.cards.length === 8 && motif.surfaces.length === 8,
+    `sidan: exakt åtta filterkort bär motivklassen (${motif.cards.join(', ')})`);
+  assert(motif.surfaces.every((s) => s.layers === 4 && s.filter !== 'none'),
+    `sidan: varje filteryta har fyra lager och ett aktivt filter (${JSON.stringify(motif.surfaces)})`);
 
   await browser.close();
   console.log('');

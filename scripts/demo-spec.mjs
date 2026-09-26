@@ -193,6 +193,46 @@ export const DEMO_SPEC = [
     shared: ['swatch', 'swatch-solo'],
     note: 'Grupp B: egen gradientregel; --lv är endast laboratoriets scenografi',
   },
+  {
+    id: 'filter-blur', type: 'batch-5', anchors: [], liveCss: true,
+    shared: ['swatch', 'swatch-solo', 'filter-motiv'],
+    note: 'Grupp B: det fyrskiktade motivet ägs av det delade filter-motiv-fragmentet; .f-blur är bara sin egen filter-deklaration, labbets --lv-skala är live-only',
+  },
+  {
+    id: 'filter-contrast', type: 'batch-5', anchors: [], liveCss: true,
+    shared: ['swatch', 'swatch-solo', 'filter-motiv'],
+    note: 'Grupp B: motivet delas; .f-contrast är bara sin egen filter-deklaration, labbets --lv-skala är live-only',
+  },
+  {
+    id: 'filter-saturate', type: 'batch-5', anchors: [], liveCss: true,
+    shared: ['swatch', 'swatch-solo', 'filter-motiv'],
+    note: 'Grupp B: motivet delas; .f-saturate är bara sin egen filter-deklaration, labbets --lv-skala är live-only',
+  },
+  {
+    id: 'filter-hue-rotate', type: 'batch-5', anchors: [], liveCss: true,
+    shared: ['swatch', 'swatch-solo', 'filter-motiv'],
+    note: 'Grupp B: motivet delas; .f-hue är bara sin egen filter-deklaration, labbets --lv-skala är live-only',
+  },
+  {
+    id: 'filter-sepia', type: 'batch-5', anchors: [], liveCss: true,
+    shared: ['swatch', 'swatch-solo', 'filter-motiv'],
+    note: 'Grupp B: motivet delas; .f-sepia är bara sin egen filter-deklaration, labbets --lv-skala är live-only',
+  },
+  {
+    id: 'filter-grayscale', type: 'batch-5', anchors: [], liveCss: true,
+    shared: ['swatch', 'swatch-solo', 'filter-motiv'],
+    note: 'Grupp B: motivet delas; .f-gray är bara sin egen filter-deklaration, labbets --lv-skala är live-only',
+  },
+  {
+    id: 'filter-invert', type: 'batch-5', anchors: [], liveCss: true,
+    shared: ['swatch', 'swatch-solo', 'filter-motiv'],
+    note: 'Grupp B: motivet delas; .f-invert är bara sin egen filter-deklaration, labbets --lv-skala är live-only',
+  },
+  {
+    id: 'filter-drop-shadow', type: 'batch-5', anchors: [], liveCss: true,
+    shared: ['swatch', 'swatch-solo', 'filter-motiv'],
+    note: 'Grupp B: motivet delas; .f-drop är bara sin egen filter-deklaration (drop-shadow + brightness), labbets --lv-skala är live-only',
+  },
 ];
 
 /** Alla migrerade id:n, i manifestets ordning. */
