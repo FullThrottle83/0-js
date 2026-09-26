@@ -2223,6 +2223,7 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 }
 @keyframes skimra { to { --shimmer-x: 150%; } }
 
+/* demo:textspoiler:css */
 .spoiler {
   display: inline-block; padding: .05em .4em; border-radius: 4px; background: var(--ink); color: transparent;
   cursor: pointer; user-select: none; overflow: hidden;
@@ -2230,6 +2231,7 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .spoiler span { display: inline-block; filter: blur(6px); transition: filter .25s ease; }
 .spoiler:hover, .spoiler:focus-visible { background: var(--acc-soft); color: var(--ink); }
 .spoiler:hover span, .spoiler:focus-visible span { filter: blur(0); }
+/* /demo:textspoiler:css */
 
 .roll-link { display: inline-flex; perspective: 500px; font-family: var(--disp); font-weight: 700; font-size: 1.6rem; cursor: default; }
 .roll-char { position: relative; display: inline-block; transform-style: preserve-3d; transition: transform .3s cubic-bezier(.2,.8,.2,1); transition-delay: calc(var(--i, 0) * 35ms); }
@@ -9647,20 +9649,25 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
         <line x1="60" y1="15" x2="100" y2="15" class="strk" marker-end="url(#pil)" />
         <text x="130" y="20" text-anchor="middle" font-family="var(--mono)" font-size="9" class="acc">spoiler!</text></svg>
         <p class="fig-cap">filter: blur(6px) → blur(0) vid :hover/:focus-visible.</p></div>
+      <!-- demo:textspoiler:markup -->
+      <!-- Suddigheten är bara presentation, texten finns kvar i HTML-källan. Använd aldrig mönstret för hemligheter. -->
       <p class="demo-yta" style="font-size:.94rem; color:var(--dim);">Filmslutet: <span class="spoiler" tabindex="0" aria-label="Spoiler, fokusera eller hovra för att avslöja"><span>hunden överlever</span></span></p>
+      <!-- /demo:textspoiler:markup -->
       <p class="labb-hint">Suddigheten är bara presentation — texten finns fortfarande i HTML-källan. CSS är <b>inte</b> åtkomstkontroll, så använd aldrig mönstret för hemligheter.</p>
-    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="11" aria-label="Kod för Textspoiler — filter: blur() + fokus">&lt;!-- HTML --&gt;
+    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="14" aria-label="Kod för Textspoiler — filter: blur() + fokus">&lt;!-- HTML --&gt;
 &lt;!-- Suddigheten är bara presentation, texten finns kvar i HTML-källan. Använd aldrig mönstret för hemligheter. --&gt;
 &lt;p class="demo-yta" style="font-size:.94rem; color:var(--dim);"&gt;Filmslutet: &lt;span class="spoiler" tabindex="0" aria-label="Spoiler, fokusera eller hovra för att avslöja"&gt;&lt;span&gt;hunden överlever&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
-.spoiler {display: inline-block; padding: .05em .4em; border-radius: 4px; background: var(--ink); color: transparent;
-  cursor: pointer; user-select: none; overflow: hidden;}
-.spoiler span {display: inline-block; filter: blur(6px); transition: filter .25s ease;}
-.spoiler:hover, .spoiler:focus-visible {background: var(--acc-soft); color: var(--ink);}
-.spoiler:hover span, .spoiler:focus-visible span {filter: blur(0);}</textarea></details>
+.spoiler {
+  display: inline-block; padding: .05em .4em; border-radius: 4px; background: var(--ink); color: transparent;
+  cursor: pointer; user-select: none; overflow: hidden;
+}
+.spoiler span { display: inline-block; filter: blur(6px); transition: filter .25s ease; }
+.spoiler:hover, .spoiler:focus-visible { background: var(--acc-soft); color: var(--ink); }
+.spoiler:hover span, .spoiler:focus-visible span { filter: blur(0); }</textarea></details>
         <!-- demo-ctx:textspoiler --><p class="demo-ctx"><a class="ctx-kap" href="#typografi">Kapitel 07 · Typografi</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-t">I registret: T</a></p><!-- /demo-ctx:textspoiler -->
     </article>
 

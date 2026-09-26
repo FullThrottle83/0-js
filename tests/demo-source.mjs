@@ -593,6 +593,93 @@ const CHECKS = {
       t.expect(await t.count('.donut-legend b') === 3, 'donut: fristående kodvalv: tre förklaringar');
     },
   },
+
+  /* ---- Grupp C-piloten (avvikande valv) -------------------------------- */
+  textspoiler: {
+    page: async (t, v) => {
+      t.expect(await t.count('.spoiler') === 1, 'textspoiler: sidan: ett suddat parti i markupen');
+      t.expect(await t.attr('.spoiler', 'tabindex') === '0', 'textspoiler: sidan: partiet går att nå med tangentbordet');
+      t.expect((await t.attr('.spoiler', 'aria-label') ?? '').startsWith('Spoiler'),
+        'textspoiler: sidan: aria-label beskriver vad partiet gör');
+      // Varningen hör till markupen, men ligger utanför .demo-yta: därför syns
+      // den som en kommentarnod i kortet utan att paritetsmätningen ser den.
+      t.expect(await t.page.evaluate(() => {
+        const walker = document.createTreeWalker(document.getElementById('textspoiler'), NodeFilter.SHOW_COMMENT);
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          if (node.textContent.includes('Använd aldrig mönstret för hemligheter')) return true;
+        }
+        return false;
+      }), 'textspoiler: sidan: varningen ur källan finns som kommentarnod i kortet');
+      t.expect(await t.style('.spoiler span', 'filter') === 'blur(6px)', 'textspoiler: sidan: texten är suddig i vila');
+      t.expect(await t.style('.spoiler', 'color') === 'rgba(0, 0, 0, 0)', 'textspoiler: sidan: texten är genomskinlig i vila');
+      const resting = await t.style('.spoiler', 'background-color');
+      // Dokumentet har scroll-behavior: smooth, så ankarhoppet från hash-
+      // navigeringen kan fortfarande rulla. Vänta tills sidan står stilla och
+      // flytta sedan pekaren till elementets mitt: locator.hover() mätte sin
+      // punkt medan scrollen pågick och hamnade vid sidan av partiet.
+      await settled(t.page, () => window.scrollY);
+      const box = await t.page.evaluate(async (sel) => {
+        const el = document.querySelector(sel);
+        el.scrollIntoView({ block: 'center', behavior: 'instant' });
+        await new Promise((r) => requestAnimationFrame(r));
+        const r = el.getBoundingClientRect();
+        return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+      }, t.prefix + ' .spoiler');
+      await t.page.mouse.move(box.x, box.y, { steps: 4 });
+      await settle(t);
+      t.expect(await t.style('.spoiler span', 'filter') === 'blur(0px)', 'textspoiler: sidan: hover avslöjar texten');
+      const hovered = await t.style('.spoiler', 'background-color');
+      t.expect(hovered !== resting, `textspoiler: sidan: hover byter bakgrund (${resting} → ${hovered})`);
+      // Tangentbordet: bort med pekaren, fokusera, Tab bort och Shift+Tab
+      // tillbaka — då kommer fokus på riktigt från tangentbordet.
+      await t.page.mouse.move(0, 0);
+      await t.page.locator(t.prefix + ' .spoiler').focus();
+      await t.page.keyboard.press('Tab');
+      await t.page.keyboard.press('Shift+Tab');
+      await settle(t);
+      t.expect(await t.page.evaluate((sel) => document.querySelector(sel).matches(':focus-visible'), t.prefix + ' .spoiler'),
+        'textspoiler: sidan: tangentbordsfokus ger :focus-visible');
+      t.expect(await t.style('.spoiler span', 'filter') === 'blur(0px)', 'textspoiler: sidan: fokus avslöjar texten');
+      t.expect(await t.style('.spoiler', 'color') === `rgb(${hexToRgb(v.ink).join(', ')})`,
+        'textspoiler: sidan: fokus ger läsbar textfärg');
+      t.expect(await t.style('.spoiler', 'outline-style') === 'solid',
+        'textspoiler: sidan: fokusringen kommer från sidans egen :focus-visible-regel');
+    },
+    isolated: async (t) => {
+      t.expect(await t.count('.spoiler') === 1, 'textspoiler: fristående kodvalv: partiet finns i markupen');
+      t.expect(await t.attr('.spoiler', 'tabindex') === '0' && (await t.attr('.spoiler', 'aria-label') ?? '').startsWith('Spoiler'),
+        'textspoiler: fristående kodvalv: tabindex och aria-label följde med i markupen');
+      t.expect(await t.style('.spoiler span', 'filter') === 'blur(6px)',
+        'textspoiler: fristående kodvalv: suddigheten kommer från demots egen regel');
+      t.expect((await unresolvedVars(t.page)).length === 0,
+        `textspoiler: fristående kodvalv: alla var() löses upp (${(await unresolvedVars(t.page)).join(', ') || 'inga olösta'})`);
+      const selectors = await snippetSelectors(t.page);
+      const own = selectors.filter((s) => /^\.spoiler/.test(s)).sort();
+      const expected = ['.spoiler', '.spoiler span', '.spoiler:hover span, .spoiler:focus-visible span',
+        '.spoiler:hover, .spoiler:focus-visible'].sort();
+      t.expect(JSON.stringify(own) === JSON.stringify(expected),
+        `textspoiler: fristående kodvalv: kodvalvet bär exakt demots fyra regler (${selectors.join(' | ')})`);
+      // I kopian är partiet enda tab-stoppet: ett riktigt Tab räcker.
+      await t.page.keyboard.press('Tab');
+      await settle(t);
+      t.expect(await t.page.evaluate(() => document.activeElement?.classList.contains('spoiler')),
+        'textspoiler: fristående kodvalv: Tab når det suddade partiet');
+      t.expect(await t.style('.spoiler span', 'filter') === 'blur(0px)', 'textspoiler: fristående kodvalv: fokus avslöjar texten');
+      const expectedBg = await t.page.evaluate(() => {
+        const probe = document.createElement('div');
+        probe.style.background = 'var(--acc-soft)';
+        document.body.append(probe);
+        const value = getComputedStyle(probe).backgroundColor;
+        probe.remove();
+        return value;
+      });
+      t.expect(await t.style('.spoiler', 'background-color') === expectedBg,
+        `textspoiler: fristående kodvalv: fokusbakgrunden är Grundpaketets --acc-soft (${expectedBg})`);
+      t.expect(await t.page.evaluate(() => document.documentElement.outerHTML
+        .includes('Använd aldrig mönstret för hemligheter')),
+        'textspoiler: fristående kodvalv: varningskommentaren följde med i kopian');
+    },
+  },
 };
 
 // Each gradient has a distinct expected standalone declaration. The tests use

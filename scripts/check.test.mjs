@@ -151,10 +151,12 @@ expectCaught(
 
 expectCaught(
   'obalanserade CSS-klammerblock i snippet upptäcks',
-  // </textarea>-suffixet gör att mutationen träffar kodvalvet, inte live-CSS:en
+  // </textarea>-suffixet gör att mutationen träffar kodvalvet, inte live-CSS:en.
+  // Strängen är kodvalvet för textspoiler, som sedan Grupp C-piloten är
+  // ordagrant samma CSS som stilbladet (därav mellanslagen i klammerparen).
   (h) => h.replace(
-    '.spoiler:hover span, .spoiler:focus-visible span {filter: blur(0);}</textarea>',
-    '.spoiler:hover span, .spoiler:focus-visible span filter: blur(0);}</textarea>',
+    '.spoiler:hover span, .spoiler:focus-visible span { filter: blur(0); }</textarea>',
+    '.spoiler:hover span, .spoiler:focus-visible span filter: blur(0); }</textarea>',
     1,
   ),
   checkSnippets,
