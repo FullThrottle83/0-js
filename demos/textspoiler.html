@@ -1,0 +1,21 @@
+<!--
+  demo: textspoiler
+  Kanonisk källa för både live-demot och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+  Grupp C: live-markupen och kodvalvet är nu samma markup. Kommentaren nedan
+  är medvetet filens ANDRA kommentar: den första är den här dokumentationen,
+  och bara den strippas av bygget. Varningen följer därför med både till
+  kortet och till den kopierade koden — kodvalvet är det enda stället en
+  kopierande läsare möter den.
+-->
+<!-- Suddigheten är bara presentation, texten finns kvar i HTML-källan. Använd aldrig mönstret för hemligheter. -->
+<p class="demo-yta" style="font-size:.94rem; color:var(--dim);">Filmslutet: <span class="spoiler" tabindex="0" aria-label="Spoiler, fokusera eller hovra för att avslöja"><span>hunden överlever</span></span></p>
+<style>
+.spoiler {
+  display: inline-block; padding: .05em .4em; border-radius: 4px; background: var(--ink); color: transparent;
+  cursor: pointer; user-select: none; overflow: hidden;
+}
+.spoiler span { display: inline-block; filter: blur(6px); transition: filter .25s ease; }
+.spoiler:hover, .spoiler:focus-visible { background: var(--acc-soft); color: var(--ink); }
+.spoiler:hover span, .spoiler:focus-visible span { filter: blur(0); }
+</style>

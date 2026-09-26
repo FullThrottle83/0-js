@@ -547,6 +547,115 @@ kort för kort:
   lättare, att underhålla. Alternativ: låt live-versionen bli den förenklade
   (det är oftast `media-*`-proven som har extra scenografi).
 
+#### Utredningen (2026-09-26) och beslutet
+
+*Status: piloten avgjord. **En** av de sju är migrerad — `textspoiler`. De
+övriga sex är medvetet kvar och skälen nedan är mätta, inte gissade.*
+
+Varje demo undersöktes maskinellt och i webbläsare **innan** något ändrades:
+
+1. jämfördes kodvalvets HTML-del med live-markupen rad för rad,
+2. jämfördes kodvalvets CSS med stilbladet regel för regel (normaliserat),
+3. räknades vilka klasser som finns i *live*-markupen och vilka som bara finns
+   i stilbladet eller bara i valvet — `.nd-*` är ett valv-namnrum, så lika
+   selektorer bevisar ingenting om lika innehåll,
+4. mättes vilka CSS-regler fler än ett kort använder, eftersom en delad regel
+   inte kan flyttas in i en källa utan att dupliceras i stilbladet (och
+   `scripts/build.test.mjs` §3 faller på exakt det).
+
+Resultatet delar de sju i två grupper.
+
+**A. Valvet är en egen, påhittad variant (`.nd-*`), och dess CSS finns bara i
+valvet.** Fyra demos: `media-color-gamut` (`.nd-gamut`), `round-mod`
+(`.nd-math`), `media-scripting` (`.nd-script`) och `media-hover-pointer`
+(`.nd-pek`). Klassen förekommer **noll** gånger i live-markupen — reglerna
+renderas alltså ingenstans på sidan. Det pedagogiska innehållet är samtidigt
+svagare än live-kortets: valvet visar en enda statisk rad där kortet visar
+frågans alla svar med den aktuella enhetens svar markerat (`.prov-rad` +
+"ditt läge"). För `round-mod` är skillnaden större än så: live-kortet har ett
+reglage (`.labb-steg` med `--lv`) och en auto-kryssruta, valvet två statiska
+staplar — två olika implementationer, inte två varianter av samma.
+
+**B. Valvet återanvänder live-klasser.** Tre demos: `textspoiler`
+(`.spoiler`), `prefers-reduced-motion` och `hover-hover` (båda `.media-list`).
+
+| Demo | Live-markup | Valvets markup | Vad som skiljer | Varför den blev kvar |
+| ---- | ----------- | -------------- | --------------- | -------------------- |
+| `textspoiler` | `.spoiler` i en `<p class="demo-yta">` | **samma markup** | bara varningskommentaren, som bara stod i valvet | — (migrerad, se nedan) |
+| `prefers-reduced-motion` | `.prov.prov-rm` (två rader) + `.rm-prov`/`.rm-snurra` med `@keyframes rm-rot` | `.media-list`-enradare | hela implementationen | Live-kortets poäng är att *hela sidan* lyder flaggan; enradaren tappar snurran. `.media-list` används dessutom av `prefers-color-scheme` och `min-width-640px` (se §6b) — flyttas den hit dupliceras den i stilbladet |
+| `hover-hover` | `.prov.prov-hover` + `.hover-prov` (en yta man känner på) | `.media-list`-enradare | hela implementationen | Samma skäl; `.prov-hover`-raderna används också av `media-hover-pointer` |
+| `media-color-gamut` | `.prov.prov-gamut`, två `.prov-rad` | `.nd-gamut`, två `<span>` | både markup och CSS | Live-varianten är bättre men `.prov`/`.prov-rad` (6 regler) delas av fem kort → ägarlöst delat block, se nedan |
+| `media-scripting` | `.prov.prov-script`, två `.prov-rad` | `.nd-script`, två `<span>` | både markup och CSS | Samma: `.prov`-familjen plus två aktiveringsregler som bara gäller detta kort |
+| `media-hover-pointer` | `.prov.prov-pekare` (tre rader) + `.prov.prov-hover` | `.nd-pek`, två `<span>` | både markup och CSS | Samma blockerare; dessutom två frågor i ett kort |
+
+**Blockeraren för grupp A är inte källformatet utan en ägarfråga.**
+`.prov`-familjen (rad 547–579 i stilbladet: `.prov`, `.prov-rad`,
+`.prov-rad::before`, `.prov-rad.pa`, `.prov-rad b` och sju
+`@media`-aktiveringsregler) används av fem kort. Att migrera till exempel
+`media-color-gamut` kräver att antingen familjen flyttas in i källan — då står
+samma regler två gånger i stilbladet och byggtestet fäller — eller att den
+ligger kvar som sidscenografi i `<style data-live>`, men då får den kopierade
+koden ingen stil alls och slutar vara ett fungerande exempel. Det är samma
+beslut som redan är noterat för `radioflikar` i §6b ("delat labb-block, ingen
+ägare"), nu med mätt konsumentlista. Nästa steg för de demos är alltså ett
+beslut om `.prov`-familjen (sannolikt `<style data-include="prov">`, precis
+som Grupp B gjorde med `swatch`), inte en ändring av källformatet.
+
+**Beslut: PATH A — formatet räcker, och exakt en demo migreras.**
+`textspoiler` var den enda av de sju där live-markupen och valvets markup var
+identisk; den enda skillnaden var en varningskommentar som bara fanns i valvet.
+Källformatet kan uttrycka den utan utbyggnad: `parseSource` strippar bara
+**första** ledande kommentaren, så dokumentationshuvudet försvinner medan en
+kommentar som står efter det följer med i både live-markupen och kopian.
+Kodvalvet har därför blivit ett komplett, fristående exempel vars enda skillnad
+mot förut är att CSS:en står precis som i stilbladet i stället för
+ihopkomprimerad — och varningen står kvar.
+
+Migreringen (filerna: `demos/textspoiler.html`, `scripts/demo-spec.mjs`,
+`tests/demo-scenarios.mjs`, `tests/demo-source.mjs`,
+`scripts/check.test.mjs`, `tests/baseline/demos.json`, `index.html`):
+
+- **Live-ytan är pixelidentisk.** Skärmbilder av `#textspoiler .demo-yta` i
+  vila och i avslöjat läge är **byte-identiska** före och efter
+  (`sha256 be689d98…` respektive `687e101d…`).
+- **Pariteten är exakt.** 534 värden jämförda mot baslinjen, 0 strukturella
+  avvikelser, **0 px** geometriavvikelse. Baslinjeposten fångades med
+  `--capture --merge --demo textspoiler` **före** migreringen ur dokumentet med
+  sha256 `2d2e2a5e…` (Chromium `153.0.8010.0`, samma som baslinjens); de 30
+  historiska posterna och hela `mergeLog` är orörda (diffen är 617 tillagda
+  rader, 0 borttagna).
+- **Inga nya toleranser.** Antalet textmetrikvarningar varierar mellan
+  körningar även för ett och samma dokument (7 i den inledande kontrollkörningen
+  av orörd `main`, 19 i körningarna nedan), så jämförelsen gjordes mellan
+  före- och efterdokumentet i samma körning: **avvikelselistorna är
+  identiska** — samma 19 värden, samma demos, samma tal (störst 21,74 px i
+  `target`). Ingen post lades till i `INTENTIONAL_DIFFS`, ingen tolerans
+  ändrades.
+- **Regressionsskydd.** `textspoiler` har fått ett scenario
+  (`tests/demo-scenarios.mjs`) och 21 påståenden i `tests/demo-source.mjs` som
+  prövar både sidan och den fristående kopian: suddigheten, den genomskinliga
+  texten, `tabindex`/`aria-label`, hover som avslöjar, `:focus-visible` via
+  riktigt tangentbordsfokus, fokusringen, att kopian bär exakt demots fyra
+  regler, att alla `var()` löses upp mot Grundpaketet, att kopians enda
+  tab-stopp är partiet, och att varningskommentaren följer med i kopian.
+  `scripts/check.test.mjs` negativtest för obalanserade klammerblock pekade på
+  valvets gamla ihopkomprimerade text och pekar nu på den nya (samma mutation,
+  samma förväntade fel).
+
+**Varför inte fler.** `prefers-reduced-motion` och `hover-hover` har två
+genuint olika implementationer (interaktiv snurra/yta mot en enradare) och
+deras delade `.media-list` ägs av fyra kort — de hör till gruppmigreringen i
+§6b, inte hit. `round-mod` har samma sak plus ett reglage. De tre kvarvarande
+`.prov`-korten är pedagogiskt bättre live men blockerade av `.prov`-familjens
+ägarlöshet. Att tvinga in någon av dem nu hade antingen duplicerat delade
+regler i stilbladet eller tömt ett fungerande exempel på innehåll — båda
+sämre än att låta dem stå.
+
+**Medvetet inte gjort.** Ingen utbyggnad av källformatet (ingen andra
+markup-variant, inget nytt attribut). Den översta statusraden i det här
+dokumentet och räknarna i §7 är historiska och står kvar oförändrade; det
+aktuella antalet är **31 av 133** migrerade demos.
+
 ### Grupp D — stora, sammansatta demos (≈20: `property-sin-cos` (49 regler), `view-timeline` (39), `tre-i-rad-tic-tac-toe`, `css-arkad`, `4-bitars-binaradderare`, `flerstegs-formular-wizard`, `fore-efter-jamforare`, `dialog-commandfor`, `3d-card-tilt` …)
 
 Formeln gäller, men källfilerna blir 100–400 rader och CSS:en ligger ofta i

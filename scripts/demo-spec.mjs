@@ -15,8 +15,9 @@
  *
  * Fält:
  *   id       demots id i index.html (och filnamnet i demos/)
- *   type     'pilot' (första tre), 'batch-1' (Grupp A), 'batch-2' (Grupp B-pilot)
- *            eller 'batch-3'/'batch-4' (fortsättning av Grupp B)
+ *   type     'pilot' (första tre), 'batch-1' (Grupp A), 'batch-2' (Grupp B-pilot),
+ *            'batch-3'…'batch-5' (fortsättning av Grupp B) eller 'grupp-c'
+ *            (Grupp C-piloten; valvet skiljde sig från live-markupen)
  *   anchors  id:n i demots markup som interna länkar pekar på (dokumenteras
  *            för läsbarhet; byggtestet härleder dem ur källfilen)
  *   liveCss  true om källfilen har <style data-live> (sidans scenografi som
@@ -232,6 +233,11 @@ export const DEMO_SPEC = [
     id: 'filter-drop-shadow', type: 'batch-5', anchors: [], liveCss: true,
     shared: ['swatch', 'swatch-solo', 'filter-motiv'],
     note: 'Grupp B: motivet delas; .f-drop är bara sin egen filter-deklaration (drop-shadow + brightness), labbets --lv-skala är live-only',
+  },
+  {
+    id: 'textspoiler', type: 'grupp-c', anchors: [], liveCss: false,
+    shared: [],
+    note: 'Grupp C: live-markupen och kodvalvet var samma markup; bara demots varningskommentar skiljde. Den ligger i källans markup (filens andra kommentar) och följer därför med till både kortet och kopian. .spoiler-reglerna ägs av demot och används av exakt ett kort',
   },
 ];
 

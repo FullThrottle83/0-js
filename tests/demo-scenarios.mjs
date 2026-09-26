@@ -74,6 +74,9 @@ export const SCENARIOS = {
   attr: [
     { name: 'hover', apply: async ({ root }) => { await root.locator('a').first().hover(); } },
   ],
+  textspoiler: [
+    { name: 'avslojad', apply: async ({ root }) => { await root.locator('.spoiler').focus(); } },
+  ],
   if: [
     { name: 'varning-ja', apply: async ({ root }) => { await root.locator('#nd-varna').check(); } },
   ],
