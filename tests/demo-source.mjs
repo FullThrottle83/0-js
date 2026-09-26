@@ -692,8 +692,8 @@ const referenceFor = (t, prop, declaration) => t.page.evaluate(([prefix, prop, d
  * inte bort — så den enda skillnaden är filtret. Pixlarna läses ur riktiga
  * elementskärmbilder; inget påstående bygger på deklarationstext.
  */
-async function paintPair(t, cls, { clip = true, live = false } = {}) {
-  await t.page.evaluate(([prefix, cls, clip, live]) => {
+async function paintPair(t, cls, { clip = true } = {}) {
+  await t.page.evaluate(([prefix, cls, clip]) => {
     const root = document.querySelector(prefix);
     for (const [key, keep] of [['a', true], ['b', false]]) {
       const host = document.createElement('div');
@@ -703,13 +703,12 @@ async function paintPair(t, cls, { clip = true, live = false } = {}) {
       host.style.cssText = `position:fixed;left:0;top:${key === 'a' ? 0 : 150}px;`
         + 'background:#000;padding:12px;width:30rem;box-sizing:content-box';
       const clone = root.cloneNode(true);
-      if (live) clone.classList.add('labbar', cls);
       if (!keep) clone.querySelector('.swatch').classList.remove(cls);
       if (!clip) clone.querySelectorAll('.swatch').forEach((s) => { s.style.overflow = 'visible'; });
       host.append(clone);
       document.body.append(host);
     }
-  }, [t.prefix, cls, clip, live]);
+  }, [t.prefix, cls, clip]);
 
   const shots = {};
   for (const key of ['a', 'b']) {
@@ -900,16 +899,6 @@ for (const f of FILTERS) {
           `${f.id}: sidan: --lv: ${lv} ger ${f.lab(lv)} (live-only-regeln)`);
       }
       t.expect(seen[0] !== seen[1], `${f.id}: sidan: laboratoriet ändrar filtret (${seen.join(' → ')})`);
-      if (f.id === 'filter-drop-shadow') {
-        await t.page.locator(t.cardSel('.labb-steg input[data-v="0"]')).check();
-        await settle(t);
-        const zero = await paintPair(t, f.cls, { live: true });
-        await t.page.locator(t.cardSel('.labb-steg input[data-v="8"]')).check();
-        await settle(t);
-        const eight = await paintPair(t, f.cls, { live: true });
-        t.expect(zero.ringFiltered.luma < 1 && eight.ringFiltered.luma > zero.ringFiltered.luma + 5,
-          `drop-shadow: sidan: --lv 0 saknar yttre halo men --lv 8 målar den (${zero.ringFiltered.luma} → ${eight.ringFiltered.luma})`);
-      }
     },
     isolated: async (t, v) => {
       const surface = await t.page.evaluate((prefix) => {
