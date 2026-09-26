@@ -733,7 +733,7 @@ Slutsatsen är **migrerbar med befintligt format** — ingen ny generator-API, i
 
 Filer ändrade/nya:
 
-- `demos/_delat/prov.css` — nytt delat fragment, 7 basregler (kort header; de 11 `@media`-blocken ligger kvar i `index.html` – endast 2 för `color-gamut` har flyttats hit, övriga 9 migreras separat)
+- `demos/_delat/prov.css` — nytt delat fragment, endast 7 basregler (kort header; inga `@media`) – de 2 migrerade color-gamut-blocken ägs av `demos/media-color-gamut.html`, övriga 9 ligger kvar i `index.html`
 - `demos/media-color-gamut.html` — ny kanonisk källa: markup är live `prov-gamut`, `data-include="prov"` + 2 `@media`
 - `scripts/demo-spec.mjs` — ny post `media-color-gamut` (`grupp-c`, `shared:['prov']`)
 - `tests/demo-scenarios.mjs` — tom scenario-lista för gamut (default mäts)
