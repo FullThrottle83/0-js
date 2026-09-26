@@ -918,8 +918,14 @@ for (const f of FILTERS) {
       const selectors = await snippetSelectors(t.page);
       t.expect(selectors.includes(`.${f.cls} .swatch-yta`) && selectors.includes('.f-motiv .swatch-yta'),
         `${f.id}: fristående kodvalv: egen filterregel och delat motiv`);
-      t.expect(selectors.filter((s) => /\.f-/.test(s)).length === 2,
-        `${f.id}: fristående kodvalv: bara det egna filtret och den delade motivklassen (${selectors.filter((s) => /\.f-/.test(s)).join(', ')})`);
+      const filterSelectors = selectors.filter((s) => /\.f-/.test(s)).sort();
+      const expectedFilterSelectors = [
+        '.f-motiv .swatch-yta',
+        `.${f.cls} .swatch-yta`,
+        ...(f.id === 'filter-drop-shadow' ? ['.f-drop'] : []),
+      ].sort();
+      t.expect(JSON.stringify(filterSelectors) === JSON.stringify(expectedFilterSelectors),
+        `${f.id}: fristående kodvalv: enbart delat motiv, eget filter${f.id === 'filter-drop-shadow' ? ' och egen overflow-korrigering' : ''} (${filterSelectors.join(', ')})`);
       t.expect(!/\.(labbar|cm-row|rel-|gamut-|grad-|filter-row)/.test(selectors.join(' ')),
         `${f.id}: fristående kodvalv: ingen laboratorie-, blandnings-, relativ-, gamut- eller gradient-CSS`);
       // Det målade beviset: filtret måste synas i pixlarna på motivet.
