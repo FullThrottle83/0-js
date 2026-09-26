@@ -654,9 +654,10 @@ regler i stilbladet eller tömt ett fungerande exempel på innehåll — båda
 sämre än att låta dem stå.
 
 **Medvetet inte gjort.** Ingen utbyggnad av källformatet (ingen andra
-markup-variant, inget nytt attribut). Den översta statusraden i det här
-dokumentet och räknarna i §7 är historiska och står kvar oförändrade; det
-aktuella antalet är **31 av 133** migrerade demos.
+markup-variant, inget nytt attribut). Vid tidpunkten för `textspoiler`-piloten
+ovan var det **31 av 133** migrerade demos (räknarna i §7 avser den tidpunkten);
+efter prov-migreringen nedan är det **32 av 133**. Den översta statusraden
+avser det aktuella läget.
 
 #### Grupp C — prov-familjens ägarskap och media-color-gamut (1 av 7)
 
@@ -732,7 +733,7 @@ Slutsatsen är **migrerbar med befintligt format** — ingen ny generator-API, i
 
 Filer ändrade/nya:
 
-- `demos/_delat/prov.css` — nytt delat fragment, 7 basregler (header beskriver ägarskap, 11 block är INTE här)
+- `demos/_delat/prov.css` — nytt delat fragment, 7 basregler (kort header; de 11 `@media`-blocken ligger kvar i `index.html` – endast 2 för `color-gamut` har flyttats hit, övriga 9 migreras separat)
 - `demos/media-color-gamut.html` — ny kanonisk källa: markup är live `prov-gamut`, `data-include="prov"` + 2 `@media`
 - `scripts/demo-spec.mjs` — ny post `media-color-gamut` (`grupp-c`, `shared:['prov']`)
 - `tests/demo-scenarios.mjs` — tom scenario-lista för gamut (default mäts)
@@ -745,7 +746,7 @@ Verifiering (Chromium `153.0.8010.0`, `LD_LIBRARY_PATH=/tmp/al2023/lib` via `@sp
 - `npm run build` — deterministiskt, idempotent, `index.html` i fas (`32 demos, 4 fragment`)
 - `npm run build:check` — grön
 - `npm run check` — grön: `scripts/build.test.mjs` (32 demos, `prov` publiceras exakt en gång, ingen regel delas), `check.mjs`, `check-snippets.mjs` (alla `var()` lösta)
-- `node tests/demo-parity.mjs --strict --demo media-color-gamut` — **0 strukturella avvikelser, 0 px** geometri (5 element, 534 värden), `INTENTIONAL_DIFFS` orörd
+- `node tests/demo-parity.mjs --strict --demo media-color-gamut` — **0 strukturella avvikelser, 0 px** geometri (5 element, 441 värden), `INTENTIONAL_DIFFS` orörd
 - `node tests/demo-source.mjs` — alla 32 demona gröna, inklusive gamut: sidan visar exakt en aktiv rad (matchMedia), fristående snippet renderar samma med Grundpaketet, inga olösta `var()`, inga orelaterade regler, ingen overflow
 - Horisontell overflow: `scrollWidth <= innerWidth` på sidan och i snippet — grön
 - Visuellt: `#media-color-gamut .demo-yta` byte-identisk före/efter (samma `prov`-rendering, bara källan flyttad)

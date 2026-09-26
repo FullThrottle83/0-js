@@ -1,14 +1,4 @@
-/* DELAT FRAGMENT — prov-familjen (kapitel 09 · responsiv & adaptiv). Ägs av
-   de fem media-proven: media-color-gamut, prefers-reduced-motion,
-   hover-hover, media-scripting och media-hover-pointer. Redigeras bara här.
-   De sju basreglerna (.prov, .prov-rad, .prov-rad::before, .prov-rad.pa,
-   .prov-rad.pa::before, .prov-rad b, .prov-rad.pa b) är gemensam presentation
-   för alla fem kort: rutnät, radlayout, cirkelmarkör och "ditt läge"-brickan.
-   De elva @media-blocken är INTE här — de hör till enskilda demos och ligger
-   i respektive källfils style-element. Att lägga alla elva i ett delat fragment
-   hade gjort varje kopierat exempel onödigt stort och döljt att t.ex.
-   hover-hover och media-hover-pointer delar samma två hover-block medan de
-   övriga nio är unika. Se docs/demo-kalla.md §7 för ägarkartan. */
+/* delat prov: 7 basregler – gemensam presentation för 5 kort */
 .prov { display: grid; gap: .4rem; font-family: var(--mono); font-size: .76rem; }
 .prov-rad {
   display: flex; align-items: center; gap: .6rem; padding: .5rem .75rem;

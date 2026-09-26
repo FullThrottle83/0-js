@@ -545,17 +545,7 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 /* Levande media-prov: en rad per läge, det aktiva tänds. Så ser man både
    vilket svar din maskin ger OCH vilka alternativ frågan har. */
 /* delat:prov:css */
-/* DELAT FRAGMENT — prov-familjen (kapitel 09 · responsiv & adaptiv). Ägs av
-   de fem media-proven: media-color-gamut, prefers-reduced-motion,
-   hover-hover, media-scripting och media-hover-pointer. Redigeras bara här.
-   De sju basreglerna (.prov, .prov-rad, .prov-rad::before, .prov-rad.pa,
-   .prov-rad.pa::before, .prov-rad b, .prov-rad.pa b) är gemensam presentation
-   för alla fem kort: rutnät, radlayout, cirkelmarkör och "ditt läge"-brickan.
-   De elva @media-blocken är INTE här — de hör till enskilda demos och ligger
-   i respektive källfils style-element. Att lägga alla elva i ett delat fragment
-   hade gjort varje kopierat exempel onödigt stort och döljt att t.ex.
-   hover-hover och media-hover-pointer delar samma två hover-block medan de
-   övriga nio är unika. Se docs/demo-kalla.md §7 för ägarkartan. */
+/* delat prov: 7 basregler – gemensam presentation för 5 kort */
 .prov { display: grid; gap: .4rem; font-family: var(--mono); font-size: .76rem; }
 .prov-rad {
   display: flex; align-items: center; gap: .6rem; padding: .5rem .75rem;
@@ -5589,7 +5579,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
       </div>
       <!-- /demo:media-color-gamut:markup -->
       <p class="labb-hint">På en P3-skärm blir den nedre raden aktiv och mättade oklch-färger får mer lyskraft än sRGB kan visa.</p>
-<details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för @media (color-gamut) — fråga skärmen om färgdjup">&lt;!-- HTML --&gt;
+<details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="24" aria-label="Kod för @media (color-gamut) — fråga skärmen om färgdjup">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta prov prov-gamut"&gt;
   &lt;span class="prov-rad r-srgb"&gt;sRGB — standardomfång&lt;b&gt;ditt läge&lt;/b&gt;&lt;/span&gt;
   &lt;span class="prov-rad r-p3"&gt;display-p3 — bred gamut&lt;b&gt;ditt läge&lt;/b&gt;&lt;/span&gt;
@@ -5598,17 +5588,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
-/* DELAT FRAGMENT — prov-familjen (kapitel 09 · responsiv &amp; adaptiv). Ägs av
-   de fem media-proven: media-color-gamut, prefers-reduced-motion,
-   hover-hover, media-scripting och media-hover-pointer. Redigeras bara här.
-   De sju basreglerna (.prov, .prov-rad, .prov-rad::before, .prov-rad.pa,
-   .prov-rad.pa::before, .prov-rad b, .prov-rad.pa b) är gemensam presentation
-   för alla fem kort: rutnät, radlayout, cirkelmarkör och "ditt läge"-brickan.
-   De elva @media-blocken är INTE här — de hör till enskilda demos och ligger
-   i respektive källfils style-element. Att lägga alla elva i ett delat fragment
-   hade gjort varje kopierat exempel onödigt stort och döljt att t.ex.
-   hover-hover och media-hover-pointer delar samma två hover-block medan de
-   övriga nio är unika. Se docs/demo-kalla.md §7 för ägarkartan. */
+/* delat prov: 7 basregler – gemensam presentation för 5 kort */
 .prov { display: grid; gap: .4rem; font-family: var(--mono); font-size: .76rem; }
 .prov-rad {
   display: flex; align-items: center; gap: .6rem; padding: .5rem .75rem;

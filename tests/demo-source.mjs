@@ -1205,6 +1205,78 @@ async function main() {
   assert(prov.cards.length === 5 && prov.cards.includes('media-color-gamut'), `sidan: exakt fem provkort bär prov-klassen (${prov.cards.join(', ')})`);
   assert(prov.mediaGamut === 2, `sidan: media-color-gamut publicerar exakt två @media-block (${prov.mediaGamut})`);
 
+  /* Regression för de fyra återstående prov-korten (ej migrerade).
+     Kontrollerar att delad presentation (7 basregler) fortfarande gäller,
+     att förväntade rader finns kvar och att aktiv markering följer
+     webbläsarens faktiska matchMedia-tillstånd. Endast de tillstånd som
+     stöds i denna Chromium-miljö (153, headless) utvärderas; inga
+     emulerade tillstånd påstås. Jämfört med pre-migrerings-revisionen
+     e606522 (main) är den delade presentationen och radernas antal
+     oförändrade – 5 provkort bar .prov även då. */
+  const unmigratedChecks = [
+    {
+      id: 'prefers-reduced-motion',
+      expectRows: 2,
+      groups: [{ sel: '.prov-rm', rows: [{ cls: '.r-full', mq: '(prefers-reduced-motion: no-preference)' }, { cls: '.r-reduce', mq: '(prefers-reduced-motion: reduce)' }] }],
+    },
+    {
+      id: 'hover-hover',
+      expectRows: 2,
+      groups: [{ sel: '.prov-hover', rows: [{ cls: '.r-ja', mq: '(hover: hover)' }, { cls: '.r-nej', mq: '(hover: none)' }] }],
+    },
+    {
+      id: 'media-scripting',
+      expectRows: 2,
+      groups: [{ sel: '.prov-script', rows: [{ cls: '.r-ingen', mq: '(scripting: none)' }, { cls: '.r-ja', mq: '(scripting: enabled)' }] }],
+    },
+    {
+      id: 'media-hover-pointer',
+      expectRows: 5,
+      groups: [
+        { sel: '.prov-pekare', rows: [{ cls: '.r-fin', mq: '(pointer: fine)' }, { cls: '.r-grov', mq: '(pointer: coarse)' }, { cls: '.r-ingen', mq: '(pointer: none)' }] },
+        { sel: '.prov-hover', rows: [{ cls: '.r-ja', mq: '(hover: hover)' }, { cls: '.r-nej', mq: '(hover: none)' }] },
+      ],
+    },
+  ];
+  for (const { id, expectRows, groups } of unmigratedChecks) {
+    const card = `#${id}`;
+    const count = await page.evaluate((sel) => document.querySelectorAll(`${sel} .prov-rad`).length, card);
+    assert(count === expectRows, `sidan: #${id} har ${expectRows} prov-rader (${count})`);
+    // Delad presentation: .prov är rutnät, .prov-rad är flex med ram
+    const provDisplay = await page.evaluate((sel) => getComputedStyle(document.querySelector(`${sel} .prov`) ?? document.querySelector(`${sel} .demo-yta`)).display, card);
+    assert(provDisplay === 'grid', `sidan: #${id} .prov är rutnät från fragmentet (${provDisplay})`);
+    const radDisplay = await page.evaluate((sel) => getComputedStyle(document.querySelector(`${sel} .prov-rad`)).display, card);
+    assert(radDisplay === 'flex', `sidan: #${id} .prov-rad är flex (${radDisplay})`);
+    for (const g of groups) {
+      const activeCls = await page.evaluate(({ card, rows }) => {
+        for (const r of rows) if (window.matchMedia(r.mq).matches) return r.cls;
+        return null;
+      }, { card, rows: g.rows });
+      // Rapportera vilket tillstånd som faktiskt utvärderades
+      const mqs = g.rows.map((r) => `${r.cls}≙${r.mq}`).join(', ');
+      assert(activeCls !== null, `sidan: #${id} ${g.sel} har ett matchande media-tillstånd (${mqs})`);
+      for (const r of g.rows) {
+        const sel = `${card} ${g.sel} ${r.cls}`;
+        const isActive = r.cls === activeCls;
+        const border = await page.evaluate((s) => getComputedStyle(document.querySelector(s)).borderColor, sel);
+        const before = await page.evaluate((s) => getComputedStyle(document.querySelector(s), '::before').content, sel);
+        const bOpacity = await page.evaluate((s) => getComputedStyle(document.querySelector(`${s} b`)).opacity, sel);
+        const accRgb = `rgb(${hexToRgb(vars.acc).join(', ')})`;
+        const lineRgb = `rgb(${hexToRgb(vars.line).join(', ')})`;
+        if (isActive) {
+          assert(border === accRgb, `sidan: #${id} aktiv rad ${r.cls} har acc-kant (${border} vs ${accRgb}) [tillstånd: ${r.mq}]`);
+          assert(before === '"●"', `sidan: #${id} aktiv rad ${r.cls} visar ● [${r.mq}]`);
+          assert(bOpacity === '1', `sidan: #${id} aktiv rad ${r.cls} visar ”ditt läge” [${r.mq}]`);
+        } else {
+          assert(border === lineRgb, `sidan: #${id} inaktiv rad ${r.cls} har linje-kant (${border})`);
+          assert(before === '"○"', `sidan: #${id} inaktiv rad ${r.cls} visar ○`);
+          assert(bOpacity === '0', `sidan: #${id} inaktiv rad ${r.cls} döljer ”ditt läge”`);
+        }
+      }
+    }
+  }
+  console.log('  (prov-regression: 4 omigrerade kort verifierade mot faktiska matchMedia – se ovan)');
+
   await browser.close();
   console.log('');
   if (failures) {
