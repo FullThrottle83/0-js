@@ -331,6 +331,19 @@ export function diffMeasurements(a, b, pathName = '', { strict = false, geometry
   return { hard, soft, geometry, reported, compared };
 }
 
+/**
+ * Merge new pre-migration measurements without ever replacing historical
+ * entries. A re-capture of an existing id must be an explicit, reviewed
+ * operation, never a side effect of --merge.
+ */
+export function mergeBaselineDemos(existingDemos, measured) {
+  const duplicateIds = Object.keys(measured).filter((id) => Object.hasOwn(existingDemos, id));
+  if (duplicateIds.length) {
+    throw new Error(`--merge får inte skriva över befintlig historisk baslinje: ${duplicateIds.join(', ')}`);
+  }
+  return { ...existingDemos, ...measured };
+}
+
 async function main() {
   const args = process.argv.slice(2);
   const capture = args.includes('--capture');
@@ -344,6 +357,14 @@ async function main() {
   const documentPath = documentIdx === -1 ? join(root, 'index.html') : args[documentIdx + 1];
   const demoIdx = args.includes('--demo') ? args.indexOf('--demo') : -1;
   const only = demoIdx === -1 ? null : args[demoIdx + 1];
+  if (merge && !capture) {
+    console.error('✗ --merge kräver --capture.');
+    process.exit(1);
+  }
+  if (merge && !existsSync(BASELINE)) {
+    console.error('✗ --merge kräver en befintlig baslinje; fånga en separat pre-migrerings-baslinje först.');
+    process.exit(1);
+  }
 
   let chromium;
   try {
@@ -419,8 +440,15 @@ async function main() {
         console.error(`✗ --merge kräver samma Chromium-bygge som baslinjen (${existing.chromium} ≠ ${version}).`);
         process.exit(1);
       }
+      let combined;
+      try {
+        combined = mergeBaselineDemos(existing.demos, measured);
+      } catch (e) {
+        console.error(`✗ ${e.message}`);
+        process.exit(1);
+      }
       const before = Object.keys(existing.demos).sort().join(',');
-      existing.demos = { ...existing.demos, ...measured };
+      existing.demos = combined;
       const after = Object.keys(existing.demos).sort().join(',');
       existing.mergeLog = [...(existing.mergeLog ?? []), {
         capturedAt: payload.capturedAt,
