@@ -589,9 +589,10 @@ staplar — två olika implementationer, inte två varianter av samma.
 | `media-hover-pointer` | `.prov.prov-pekare` (tre rader) + `.prov.prov-hover` | `.nd-pek`, två `<span>` | både markup och CSS | Samma blockerare; dessutom två frågor i ett kort |
 
 **Blockeraren för grupp A är inte källformatet utan en ägarfråga.**
-`.prov`-familjen (rad 547–579 i stilbladet: `.prov`, `.prov-rad`,
-`.prov-rad::before`, `.prov-rad.pa`, `.prov-rad b` och sju
-`@media`-aktiveringsregler) används av fem kort. Att migrera till exempel
+`.prov`-familjen (stilbladets rad 545–579: sju basregler — `.prov`,
+`.prov-rad`, `.prov-rad::before`, `.prov-rad.pa`, `.prov-rad.pa::before`,
+`.prov-rad b`, `.prov-rad.pa b` — och elva `@media`-block med tre regler var,
+ett per svar på frågorna korten ställer) används av fem kort. Att migrera till exempel
 `media-color-gamut` kräver att antingen familjen flyttas in i källan — då står
 samma regler två gånger i stilbladet och byggtestet fäller — eller att den
 ligger kvar som sidscenografi i `<style data-live>`, men då får den kopierade
@@ -643,9 +644,10 @@ Migreringen (filerna: `demos/textspoiler.html`, `scripts/demo-spec.mjs`,
   samma förväntade fel).
 
 **Varför inte fler.** `prefers-reduced-motion` och `hover-hover` har två
-genuint olika implementationer (interaktiv snurra/yta mot en enradare) och
-deras delade `.media-list` ägs av fyra kort — de hör till gruppmigreringen i
-§6b, inte hit. `round-mod` har samma sak plus ett reglage. De tre kvarvarande
+genuint olika implementationer (interaktiv snurra/yta mot en enradare), och
+deras valv använder `.media-list`, som i live-markupen tillhör två andra,
+omigrerade kort (`prefers-color-scheme`, `min-width-640px`) — de hör till
+gruppmigreringen i §6b, inte hit. `round-mod` har samma sak plus ett reglage. De tre kvarvarande
 `.prov`-korten är pedagogiskt bättre live men blockerade av `.prov`-familjens
 ägarlöshet. Att tvinga in någon av dem nu hade antingen duplicerat delade
 regler i stilbladet eller tömt ett fungerande exempel på innehåll — båda
