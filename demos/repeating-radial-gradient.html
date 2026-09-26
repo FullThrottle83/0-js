@@ -1,0 +1,13 @@
+<!--
+  demo: repeating-radial-gradient
+  Kanonisk källa för live-demo och kodvalv. Bygg: npm run build.
+  Delade swatch-fragment; laboratoriets --lv följer inte med kodvalvet.
+-->
+<div class="demo-yta swatch-solo"><span class="swatch grad-5"><span class="swatch-yta"></span><span class="swatch-lbl">rep-radial</span></span></div>
+<style data-include="swatch swatch-solo"></style>
+<style>
+.grad-5 .swatch-yta { background: repeating-radial-gradient(circle at 50% 50%, var(--acc) 0 3px, transparent 3px 9px); }
+</style>
+<style data-live>
+.labbar.grad-5 .swatch-yta { background: repeating-radial-gradient(circle at 50% 50%, var(--acc) 0 calc(1px + var(--lv) * 1px), transparent calc(1px + var(--lv) * 1px) calc(4px + var(--lv) * 2px)); }
+</style>

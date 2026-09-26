@@ -1,0 +1,42 @@
+{
+  "pairs": 72,
+  "byteIdentical": 65,
+  "identicalMeasurementHashes": 72,
+  "differences": [
+    {
+      "sample": "radial-gradient.768.guld.8",
+      "changedPixels": 12,
+      "maxChannelDelta": 1
+    },
+    {
+      "sample": "radial-gradient.1280.guld.0",
+      "changedPixels": 12,
+      "maxChannelDelta": 1
+    },
+    {
+      "sample": "radial-gradient.1280.guld.8",
+      "changedPixels": 13,
+      "maxChannelDelta": 1
+    },
+    {
+      "sample": "radial-gradient.1280.syra.0",
+      "changedPixels": 2,
+      "maxChannelDelta": 1
+    },
+    {
+      "sample": "conic-gradient.768.guld.8",
+      "changedPixels": 14,
+      "maxChannelDelta": 1
+    },
+    {
+      "sample": "conic-gradient.768.syra.8",
+      "changedPixels": 8,
+      "maxChannelDelta": 1
+    },
+    {
+      "sample": "conic-gradient.1280.guld.8",
+      "changedPixels": 11,
+      "maxChannelDelta": 1
+    }
+  ]
+}

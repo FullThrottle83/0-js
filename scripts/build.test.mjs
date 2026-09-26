@@ -360,7 +360,7 @@ const ordered = MIGRATED_IDS.map((id) => [id, sources.get(id)]);
   assert(gen !== html, 'ändrad källa ⇒ genererat dokument skiljer sig från committat');
   assert(staleDemos(html, gen, edited, fragments).join(',') === target,
     `stale-rapporten pekar ut exakt rätt demo (${target})`);
-  for (const id of ['rgb-from', 'oklch-display-p3']) {
+  for (const id of ['rgb-from', 'oklch-display-p3', 'radial-gradient', 'conic-gradient', 'repeating-linear-gradient', 'repeating-radial-gradient']) {
     const src = sources.get(id);
     const changed = new Map(sources).set(id, {
       ...src,
@@ -453,11 +453,12 @@ const ordered = MIGRATED_IDS.map((id) => [id, sources.get(id)]);
   const extra = new Map(fragments).set('overgivet', { name: 'overgivet', css: '.x { color: red; }', includes: [] });
   throwsBuildError(() => build(html, sources, extra), 'fragment som ingen demo begär avvisas');
   // En markör i index.html för ett fragment som inte längre begärs av någon.
-  const soloName = USED.find((n) => [...sources.values()].filter((s) => s.includes.includes(n)).length === 1);
-  const soloId = [...sources].find(([, s]) => s.includes.includes(soloName))[0];
-  const noIncludes = new Map(sources).set(soloId, { ...sources.get(soloId), includes: [] });
+  const soloName = 'swatch-solo';
+  const noIncludes = new Map([...sources].map(([id, src]) => [id, {
+    ...src, includes: src.includes.filter(n => n !== soloName),
+  }]));
   throwsBuildError(() => build(html, noIncludes, fragments),
-    `övergiven fragmentmarkör i index.html avvisas (${soloName} begärs bara av ${soloId})`);
+    `övergiven fragmentmarkör i index.html avvisas (${soloName}: alla konsumenter borttagna)`);
   // Ett fragment får inte innehålla markup.
   throwsBuildError(() => parseFragment('<div>x</div>', 'demos/_delat/x.css'), 'fragment med markup avvisas');
   throwsBuildError(() => parseFragment('<style>a{}</style>', 'demos/_delat/x.css'), 'fragment med <style> avvisas');
@@ -618,13 +619,12 @@ const ordered = MIGRATED_IDS.map((id) => [id, sources.get(id)]);
     'relativfärg- och gamut-kodvalven bär inte varandras CSS');
 }
 
-/* 12. De övriga 12 Grupp B-demona är orörda ------------------------------ */
+/* 12. De övriga 8 Grupp B-demona är orörda ------------------------------ */
 {
-  const GROUP_B_REST = ['radial-gradient', 'conic-gradient',
-    'repeating-linear-gradient', 'repeating-radial-gradient', 'filter-blur', 'filter-contrast',
+  const GROUP_B_REST = ['filter-blur', 'filter-contrast',
     'filter-saturate', 'filter-hue-rotate', 'filter-sepia', 'filter-grayscale', 'filter-invert',
     'filter-drop-shadow'];
-  assert(GROUP_B_REST.length === 12, 'exakt tolv Group B-demos återstår efter migrationen');
+  assert(GROUP_B_REST.length === 8, 'exakt åtta Group B-demos återstår efter migrationen');
   const built = build(html, sources, fragments);
   for (const id of GROUP_B_REST) {
     assert(!MIGRATED_IDS.includes(id), `${id} är fortfarande omigrerat (senare batch)`);
@@ -636,13 +636,32 @@ const ordered = MIGRATED_IDS.map((id) => [id, sources.get(id)]);
   // Live-CSS för de omigrerade finns kvar i stilbladet.
   const sheet = stylesheet(built);
   for (const sel of ['.grad-row', '.filter-row', '.filter-row .swatch-yta',
-    '.grad-2 .swatch-yta', '.f-blur .swatch-yta']) {
-    assert(sheet.includes(sel), `stilbladet behåller ${sel} (används av de 12 omigrerade Group B-demos)`);
+    ...['blur', 'contrast', 'saturate', 'hue', 'sepia', 'gray', 'invert', 'drop'].map(n => `.f-${n} .swatch-yta`)]) {
+    assert(sheet.includes(sel), `stilbladet behåller ${sel} (används av de 8 omigrerade Group B-demos)`);
   }
   const sheetBlocks = topLevelBlocks(sheet);
   assert(sheetBlocks.filter((b) => b.startsWith('.rel-row{')).length === 1
     && sheetBlocks.filter((b) => b.startsWith('.gamut-row{')).length === 1,
   'de unika rgb-from- och gamut-layoutreglerna publiceras exakt en gång ur källorna');
+}
+
+
+/* All five gradient vaults own exactly one gradient, plus existing fragments. */
+{
+  const ids = ['linear-gradient', 'radial-gradient', 'conic-gradient', 'repeating-linear-gradient', 'repeating-radial-gradient'];
+  const blocks = topLevelBlocks(stylesheet(html));
+  ids.forEach((id, i) => {
+    const src = sources.get(id);
+    assert(src.includes.join(' ') === 'swatch swatch-solo', `${id}: both shared fragments`);
+    const css = stripCssComments(splitParts(snippetFor(html, id)).cssPart);
+    const selectors = [...css.matchAll(/([^{}]+)\{/g)].map(m => m[1].trim());
+    const allowed = ['.demo-yta', '.swatch', '.swatch-yta', '.swatch-lbl', '.swatch-solo', '.swatch-solo > .swatch', '.swatch-solo .swatch-yta', `.grad-${i + 1} .swatch-yta`];
+    assert(selectors.length === allowed.length && selectors.every(s => allowed.includes(s)), `${id}: exact snippet selector ownership`);
+    assert(!css.includes('--lv'), `${id}: no laboratory dependency`);
+    for (const prefix of [`.grad-${i + 1}`, `.labbar.grad-${i + 1}`]) {
+      assert(blocks.filter(b => b.startsWith(prefix + ' .swatch-yta{')).length === 1, `${id}: ${prefix} published exactly once`);
+    }
+  });
 }
 
 /* 13. Historiska mätbaslinjer får aldrig skrivas över av --merge -------- */
