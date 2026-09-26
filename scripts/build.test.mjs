@@ -33,6 +33,7 @@ import {
   BuildError, DEMO_DIR, DELAT_DIR, INDEX, MAX_ROWS,
 } from './build.mjs';
 import { DEMO_SPEC, MIGRATED_IDS } from './demo-spec.mjs';
+import { mergeBaselineDemos } from '../tests/demo-parity.mjs';
 import { checkDocument } from './check.mjs';
 import { checkSnippets, extractSnippets, splitParts, declaredVars, usedVars, stripCssComments } from './check-snippets.mjs';
 
@@ -581,6 +582,25 @@ const ordered = MIGRATED_IDS.map((id) => [id, sources.get(id)]);
     '.gamut-a .swatch-yta', '.grad-2 .swatch-yta', '.f-blur .swatch-yta']) {
     assert(sheet.includes(sel), `stilbladet behåller ${sel} (används av omigrerade Grupp B-demos)`);
   }
+}
+
+/* 13. Historiska mätbaslinjer får aldrig skrivas över av --merge -------- */
+{
+  const historical = { target: { default: { provenance: 'PR #4' } } };
+  const incoming = { 'color-mix': { default: { provenance: 'pre-migration' } } };
+  const merged = mergeBaselineDemos(historical, incoming);
+  assert(Object.keys(merged).length === 2 && merged.target === historical.target
+    && merged['color-mix'] === incoming['color-mix'],
+    '--merge lägger till nya demo-id:n utan att ändra historiska poster');
+  assert(Object.keys(historical).length === 1,
+    '--merge muterar inte den inlästa baslinjen');
+  let rejected = false;
+  try {
+    mergeBaselineDemos(historical, { target: { default: { provenance: 'overwritten' } } });
+  } catch (e) {
+    rejected = /target/.test(e.message) && /skriva över/.test(e.message);
+  }
+  assert(rejected, '--merge avvisar försök att skriva över ett befintligt demo-id');
 }
 
 console.log('');
