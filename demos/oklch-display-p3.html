@@ -1,0 +1,20 @@
+<!--
+  demo: oklch-display-p3
+  Kanonisk källa för live-demot och dess kodvalv i index.html.
+  Grupp B: svatchfamiljen delas från demos/_delat/swatch.css; layouten och
+  färgerna i den här fyrradiga gamut-demonstrationen ägs av detta demo.
+-->
+<div class="demo-yta gamut-row">
+  <span class="swatch gamut-a"><span class="swatch-yta"></span><span class="swatch-lbl">oklch låg C</span></span>
+  <span class="swatch gamut-b"><span class="swatch-yta"></span><span class="swatch-lbl">oklch hög C</span></span>
+  <span class="swatch gamut-c"><span class="swatch-yta"></span><span class="swatch-lbl">display-p3</span></span>
+  <span class="swatch gamut-d"><span class="swatch-yta"></span><span class="swatch-lbl">oklch grön</span></span>
+</div>
+<style data-include="swatch"></style>
+<style>
+.gamut-row { display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem; }
+.gamut-a .swatch-yta { background: oklch(72% .12 45); }
+.gamut-b .swatch-yta { background: oklch(72% .30 45); }
+.gamut-c .swatch-yta { background: color(display-p3 1 .55 .1); }
+.gamut-d .swatch-yta { background: oklch(85% .25 145); }
+</style>

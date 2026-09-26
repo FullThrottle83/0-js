@@ -771,24 +771,28 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 }
 @keyframes mix-scrub { to { --mix-r: 100; } }
 
+/* demo:rgb-from:css */
 .rel-row { display:grid; grid-template-columns:repeat(5,1fr); gap:.5rem; }
-/* Reglerbar relativ färg: --lv styr hur långt varje kanalräkning går,
-   så man ser tonen växa fram ur basfärgen i stället för ett fast slutläge. */
-.labbar .rel-b .swatch-yta { background: rgb(from var(--acc) r g b / calc(1 - var(--lv) * .11)); }
-.labbar .rel-c .swatch-yta { background: hsl(from var(--acc) h s calc(l - var(--lv) * 5.5)); }
-.labbar .rel-d .swatch-yta { background: hsl(from var(--acc) h calc(s - var(--lv) * 10) calc(l + var(--lv) * 3.5)); }
-.labbar .rel-e .swatch-yta { background: hsl(from var(--acc) calc(h + var(--lv) * 45) s l); }
 .rel-a .swatch-yta { background: var(--acc); }
 .rel-b .swatch-yta { background: rgb(from var(--acc) r g b / .45); }
 .rel-c .swatch-yta { background: hsl(from var(--acc) h s calc(l - 22)); }
 .rel-d .swatch-yta { background: hsl(from var(--acc) h calc(s - 40) calc(l + 14)); }
 .rel-e .swatch-yta { background: hsl(from var(--acc) calc(h + 150) s l); }
 
+/* Reglerskala för relativa kanaler: endast laboratoriumsreglagen på sidan. */
+.labbar .rel-b .swatch-yta { background: rgb(from var(--acc) r g b / calc(1 - var(--lv) * .11)); }
+.labbar .rel-c .swatch-yta { background: hsl(from var(--acc) h s calc(l - var(--lv) * 5.5)); }
+.labbar .rel-d .swatch-yta { background: hsl(from var(--acc) h calc(s - var(--lv) * 10) calc(l + var(--lv) * 3.5)); }
+.labbar .rel-e .swatch-yta { background: hsl(from var(--acc) calc(h + var(--lv) * 45) s l); }
+/* /demo:rgb-from:css */
+
+/* demo:oklch-display-p3:css */
 .gamut-row { display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem; }
 .gamut-a .swatch-yta { background: oklch(72% .12 45); }
 .gamut-b .swatch-yta { background: oklch(72% .30 45); }
 .gamut-c .swatch-yta { background: color(display-p3 1 .55 .1); }
 .gamut-d .swatch-yta { background: oklch(85% .25 145); }
+/* /demo:oklch-display-p3:css */
 
 /* demo:light-dark:css */
 .ld-row { display:grid; grid-template-columns:1fr 1fr; gap: .8rem; }
@@ -3932,6 +3936,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
         </svg>
         <p class="fig-cap">h/s/l plockas isär, en kanal räknas om — resten följer med oförändrad.</p>
       </div>
+      <!-- demo:rgb-from:markup -->
       <div class="demo-yta rel-row">
         <span class="swatch rel-a"><span class="swatch-yta"></span><span class="swatch-lbl">bas</span></span>
         <span class="swatch rel-b"><span class="swatch-yta"></span><span class="swatch-lbl">alpha .45</span></span>
@@ -3939,6 +3944,7 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
         <span class="swatch rel-d"><span class="swatch-yta"></span><span class="swatch-lbl">avmättad</span></span>
         <span class="swatch rel-e"><span class="swatch-yta"></span><span class="swatch-lbl">+150° nyans</span></span>
       </div>
+      <!-- /demo:rgb-from:markup -->
     
       <div class="labb">
         <div class="labb-rad">
@@ -3962,53 +3968,31 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
       </div>
     <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för rgb(from …) — relativ färgsyntax">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta rel-row"&gt;
-        &lt;span class="swatch rel-a"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;bas&lt;/span&gt;&lt;/span&gt;
-        &lt;span class="swatch rel-b"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;alpha .45&lt;/span&gt;&lt;/span&gt;
-        &lt;span class="swatch rel-c"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;mörkare&lt;/span&gt;&lt;/span&gt;
-        &lt;span class="swatch rel-d"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;avmättad&lt;/span&gt;&lt;/span&gt;
-        &lt;span class="swatch rel-e"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;+150° nyans&lt;/span&gt;&lt;/span&gt;
-      &lt;/div&gt;
+  &lt;span class="swatch rel-a"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;bas&lt;/span&gt;&lt;/span&gt;
+  &lt;span class="swatch rel-b"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;alpha .45&lt;/span&gt;&lt;/span&gt;
+  &lt;span class="swatch rel-c"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;mörkare&lt;/span&gt;&lt;/span&gt;
+  &lt;span class="swatch rel-d"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;avmättad&lt;/span&gt;&lt;/span&gt;
+  &lt;span class="swatch rel-e"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;+150° nyans&lt;/span&gt;&lt;/span&gt;
+&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
-/* ============================================================
-   KAPITEL 01 · FÄRG
-   ============================================================ */
-.swatch {border-radius: 10px; overflow: hidden; border: 1px solid var(--line);}
-.swatch-yta {height: 3.2rem;}
-.swatch-solo &gt; .swatch {display: block;}
-.swatch-solo .swatch-yta {display: block; height: 6rem;}
-.swatch-lbl {display:block; padding:.35rem .55rem; font-family: var(--mono); font-size:.68rem; color: var(--dim); background: var(--bg2);}
-.cm-row span:nth-child(1) .swatch-yta {background: color-mix(in oklch, var(--acc) 0%, var(--bg2));}
-.cm-row span:nth-child(2) .swatch-yta {background: color-mix(in oklch, var(--acc) 25%, var(--bg2));}
-.cm-row span:nth-child(3) .swatch-yta {background: color-mix(in oklch, var(--acc) 50%, var(--bg2));}
-.cm-row span:nth-child(4) .swatch-yta {background: color-mix(in oklch, var(--acc) 75%, var(--bg2));}
-.cm-row span:nth-child(5) .swatch-yta {background: color-mix(in oklch, var(--acc) 100%, var(--bg2));}
-.rel-row {display:grid; grid-template-columns:repeat(5,1fr); gap:.5rem;}
-.rel-a .swatch-yta {background: var(--acc);}
-.rel-b .swatch-yta {background: rgb(from var(--acc) r g b / .45);}
-.rel-c .swatch-yta {background: hsl(from var(--acc) h s calc(l - 22));}
-.rel-d .swatch-yta {background: hsl(from var(--acc) h calc(s - 40) calc(l + 14));}
-.rel-e .swatch-yta {background: hsl(from var(--acc) calc(h + 150) s l);}
-.gamut-a .swatch-yta {background: oklch(72% .12 45);}
-.gamut-b .swatch-yta {background: oklch(72% .30 45);}
-.gamut-c .swatch-yta {background: color(display-p3 1 .55 .1);}
-.gamut-d .swatch-yta {background: oklch(85% .25 145);}
-.grad-1 .swatch-yta {background: linear-gradient(135deg, var(--acc), transparent);}
-.grad-2 .swatch-yta {background: radial-gradient(circle at 30% 30%, var(--acc), var(--bg2) 75%);}
-.grad-3 .swatch-yta {background: conic-gradient(from 90deg, var(--acc), var(--bg2), var(--acc));}
-.grad-4 .swatch-yta {background: repeating-linear-gradient(45deg, var(--acc) 0 6px, transparent 6px 14px);}
-.grad-5 .swatch-yta {background: repeating-radial-gradient(circle at 50% 50%, var(--acc) 0 3px, transparent 3px 9px);}
-.filter-row .swatch-yta {background: linear-gradient(120deg, var(--acc), #6ea8ff 60%, #ff6ab0);}
-.f-blur .swatch-yta {filter: blur(3px);}
-.f-contrast .swatch-yta {filter: contrast(2.1);}
-.f-saturate .swatch-yta {filter: saturate(2.6);}
-.f-hue .swatch-yta {filter: hue-rotate(120deg);}
-.f-sepia .swatch-yta {filter: sepia(.85);}
-.f-gray .swatch-yta {filter: grayscale(1);}
-.f-invert .swatch-yta {filter: invert(1);}
-.f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+/* DELAT FRAGMENT — swatch-familjen (kapitel 01 · färg). Ägs av alla 16
+   labbdemos i Grupp B: color-mix, rgb(from …), oklch/display-p3, de fem
+   gradient-demona och de åtta filter-demona. Redigeras bara här.
+   BUGGFIX 2026-08-30 — .swatch-yta är ett span och alltså inline; height
+   biter inte på inline-element, så display:block krävs. Utan den kollapsar
+   rutorna till 0 px höjd och bara etiketterna syns. */
+.swatch { display: block; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+.swatch-yta { display: block; height: 3.2rem; }
+.swatch-lbl { display:block; padding:.35rem .55rem; font-family: var(--mono); font-size:.68rem; color: var(--dim); background: var(--bg2); }
+.rel-row { display:grid; grid-template-columns:repeat(5,1fr); gap:.5rem; }
+.rel-a .swatch-yta { background: var(--acc); }
+.rel-b .swatch-yta { background: rgb(from var(--acc) r g b / .45); }
+.rel-c .swatch-yta { background: hsl(from var(--acc) h s calc(l - 22)); }
+.rel-d .swatch-yta { background: hsl(from var(--acc) h calc(s - 40) calc(l + 14)); }
+.rel-e .swatch-yta { background: hsl(from var(--acc) calc(h + 150) s l); }</textarea></details>
         <!-- demo-ctx:rgb-from --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-r">I registret: R</a></p><!-- /demo-ctx:rgb-from -->
     </article>
 
@@ -4028,60 +4012,39 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
         </svg>
         <p class="fig-cap">Punkter utanför den inre triangeln klipps till närmaste sRGB-ton — om du inte ber om mer.</p>
       </div>
+      <!-- demo:oklch-display-p3:markup -->
       <div class="demo-yta gamut-row">
         <span class="swatch gamut-a"><span class="swatch-yta"></span><span class="swatch-lbl">oklch låg C</span></span>
         <span class="swatch gamut-b"><span class="swatch-yta"></span><span class="swatch-lbl">oklch hög C</span></span>
         <span class="swatch gamut-c"><span class="swatch-yta"></span><span class="swatch-lbl">display-p3</span></span>
         <span class="swatch gamut-d"><span class="swatch-yta"></span><span class="swatch-lbl">oklch grön</span></span>
       </div>
-    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för oklch() / display-p3 — bred färgrymd">&lt;!-- HTML --&gt;
+      <!-- /demo:oklch-display-p3:markup -->
+    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="25" aria-label="Kod för oklch() / display-p3 — bred färgrymd">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta gamut-row"&gt;
-        &lt;span class="swatch gamut-a"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;oklch låg C&lt;/span&gt;&lt;/span&gt;
-        &lt;span class="swatch gamut-b"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;oklch hög C&lt;/span&gt;&lt;/span&gt;
-        &lt;span class="swatch gamut-c"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;display-p3&lt;/span&gt;&lt;/span&gt;
-        &lt;span class="swatch gamut-d"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;oklch grön&lt;/span&gt;&lt;/span&gt;
-      &lt;/div&gt;
+  &lt;span class="swatch gamut-a"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;oklch låg C&lt;/span&gt;&lt;/span&gt;
+  &lt;span class="swatch gamut-b"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;oklch hög C&lt;/span&gt;&lt;/span&gt;
+  &lt;span class="swatch gamut-c"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;display-p3&lt;/span&gt;&lt;/span&gt;
+  &lt;span class="swatch gamut-d"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;oklch grön&lt;/span&gt;&lt;/span&gt;
+&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
-/* ============================================================
-   KAPITEL 01 · FÄRG
-   ============================================================ */
-.swatch {border-radius: 10px; overflow: hidden; border: 1px solid var(--line);}
-.swatch-yta {height: 3.2rem;}
-.swatch-solo &gt; .swatch {display: block;}
-.swatch-solo .swatch-yta {display: block; height: 6rem;}
-.swatch-lbl {display:block; padding:.35rem .55rem; font-family: var(--mono); font-size:.68rem; color: var(--dim); background: var(--bg2);}
-.cm-row span:nth-child(1) .swatch-yta {background: color-mix(in oklch, var(--acc) 0%, var(--bg2));}
-.cm-row span:nth-child(2) .swatch-yta {background: color-mix(in oklch, var(--acc) 25%, var(--bg2));}
-.cm-row span:nth-child(3) .swatch-yta {background: color-mix(in oklch, var(--acc) 50%, var(--bg2));}
-.cm-row span:nth-child(4) .swatch-yta {background: color-mix(in oklch, var(--acc) 75%, var(--bg2));}
-.cm-row span:nth-child(5) .swatch-yta {background: color-mix(in oklch, var(--acc) 100%, var(--bg2));}
-.rel-a .swatch-yta {background: var(--acc);}
-.rel-b .swatch-yta {background: rgb(from var(--acc) r g b / .45);}
-.rel-c .swatch-yta {background: hsl(from var(--acc) h s calc(l - 22));}
-.rel-d .swatch-yta {background: hsl(from var(--acc) h calc(s - 40) calc(l + 14));}
-.rel-e .swatch-yta {background: hsl(from var(--acc) calc(h + 150) s l);}
-.gamut-row {display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem;}
-.gamut-a .swatch-yta {background: oklch(72% .12 45);}
-.gamut-b .swatch-yta {background: oklch(72% .30 45);}
-.gamut-c .swatch-yta {background: color(display-p3 1 .55 .1);}
-.gamut-d .swatch-yta {background: oklch(85% .25 145);}
-.grad-1 .swatch-yta {background: linear-gradient(135deg, var(--acc), transparent);}
-.grad-2 .swatch-yta {background: radial-gradient(circle at 30% 30%, var(--acc), var(--bg2) 75%);}
-.grad-3 .swatch-yta {background: conic-gradient(from 90deg, var(--acc), var(--bg2), var(--acc));}
-.grad-4 .swatch-yta {background: repeating-linear-gradient(45deg, var(--acc) 0 6px, transparent 6px 14px);}
-.grad-5 .swatch-yta {background: repeating-radial-gradient(circle at 50% 50%, var(--acc) 0 3px, transparent 3px 9px);}
-.filter-row .swatch-yta {background: linear-gradient(120deg, var(--acc), #6ea8ff 60%, #ff6ab0);}
-.f-blur .swatch-yta {filter: blur(3px);}
-.f-contrast .swatch-yta {filter: contrast(2.1);}
-.f-saturate .swatch-yta {filter: saturate(2.6);}
-.f-hue .swatch-yta {filter: hue-rotate(120deg);}
-.f-sepia .swatch-yta {filter: sepia(.85);}
-.f-gray .swatch-yta {filter: grayscale(1);}
-.f-invert .swatch-yta {filter: invert(1);}
-.f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+/* DELAT FRAGMENT — swatch-familjen (kapitel 01 · färg). Ägs av alla 16
+   labbdemos i Grupp B: color-mix, rgb(from …), oklch/display-p3, de fem
+   gradient-demona och de åtta filter-demona. Redigeras bara här.
+   BUGGFIX 2026-08-30 — .swatch-yta är ett span och alltså inline; height
+   biter inte på inline-element, så display:block krävs. Utan den kollapsar
+   rutorna till 0 px höjd och bara etiketterna syns. */
+.swatch { display: block; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+.swatch-yta { display: block; height: 3.2rem; }
+.swatch-lbl { display:block; padding:.35rem .55rem; font-family: var(--mono); font-size:.68rem; color: var(--dim); background: var(--bg2); }
+.gamut-row { display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem; }
+.gamut-a .swatch-yta { background: oklch(72% .12 45); }
+.gamut-b .swatch-yta { background: oklch(72% .30 45); }
+.gamut-c .swatch-yta { background: color(display-p3 1 .55 .1); }
+.gamut-d .swatch-yta { background: oklch(85% .25 145); }</textarea></details>
         <!-- demo-ctx:oklch-display-p3 --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-o">I registret: O</a></p><!-- /demo-ctx:oklch-display-p3 -->
     </article>
 

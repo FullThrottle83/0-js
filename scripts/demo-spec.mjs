@@ -15,7 +15,8 @@
  *
  * Fält:
  *   id       demots id i index.html (och filnamnet i demos/)
- *   type     'pilot' (första tre, PR #4) eller 'batch-1' (denna migration)
+ *   type     'pilot' (första tre), 'batch-1' (Grupp A), 'batch-2' (Grupp B-pilot)
+ *            eller 'batch-3' (fortsättning av Grupp B)
  *   anchors  id:n i demots markup som interna länkar pekar på (dokumenteras
  *            för läsbarhet; byggtestet härleder dem ur källfilen)
  *   liveCss  true om källfilen har <style data-live> (sidans scenografi som
@@ -155,6 +156,22 @@ export const DEMO_SPEC = [
     liveCss: true,
     shared: ['swatch', 'swatch-solo'],
     note: 'Grupp B: samma swatch-familie plus .swatch-solo (delat med tolv gradient-/filterkort); .grad-1 är demots egen regel, .labbar.grad-1 är live-only',
+  },
+  {
+    id: 'rgb-from',
+    type: 'batch-3',
+    anchors: [],
+    liveCss: true,
+    shared: ['swatch'],
+    note: 'Grupp B: relativa RGB/HSL-färger ägs av demot; labbets --lv-överstyrningar är live-only',
+  },
+  {
+    id: 'oklch-display-p3',
+    type: 'batch-3',
+    anchors: [],
+    liveCss: false,
+    shared: ['swatch'],
+    note: 'Grupp B: oklch/display-p3-fyllningar och fyrkolumnslayout ägs av demot; swatch-reglerna delas',
   },
 ];
 

@@ -480,6 +480,104 @@ const CHECKS = {
       t.expect(sel.includes('.grad-1'), 'linear-gradient: fristående kodvalv: demots egen .grad-1-regel finns kvar');
     },
   },
+  'rgb-from': {
+    page: async (t, v) => {
+      const row = await t.page.evaluate((p) => {
+        const root = document.querySelector(p);
+        const colors = [...root.querySelectorAll('.swatch-yta')].map((e) => getComputedStyle(e).backgroundColor);
+        const rects = [...root.querySelectorAll('.swatch-yta')].map((e) => {
+          const r = e.getBoundingClientRect(); return [r.width, r.height];
+        });
+        return { colors, rects, supportsRgb: CSS.supports('color', 'rgb(from rgb(10 20 30) r g b / .45)'),
+          supportsHsl: CSS.supports('color', 'hsl(from red h s calc(l - 22))') };
+      }, t.prefix);
+      t.expect(await t.count('.swatch') === 5, 'rgb-from: sidan: fem relativa färgsvatchar finns');
+      t.expect(row.supportsRgb && row.supportsHsl, 'rgb-from: Chromium stöder de använda rgb(from …) och hsl(from …)-uttrycken');
+      t.expect(row.colors[0] === `rgb(${hexToRgb(v.acc).join(', ')})`,
+        `rgb-from: sidan: bassteget följer --acc (${row.colors[0]})`);
+      t.expect(row.colors.length === 5 && new Set(row.colors).size === 5,
+        `rgb-from: sidan: relativa färger ger fem färgvariationer (${row.colors.join(' | ')})`);
+      t.expect(row.rects.every(([w, h]) => w > 0 && h > 0),
+        `rgb-from: sidan: alla ytor har mått större än noll (${JSON.stringify(row.rects)})`);
+      await t.page.locator(t.cardSel('.labb-steg input[data-v="0"]')).check();
+      await settle(t);
+      const flat = await t.page.evaluate((p) => {
+        const normalize = (color) => {
+          const rgb = color.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)/);
+          if (rgb) return rgb.slice(1, 4).map(Number).join(',');
+          const srgb = color.match(/^color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)/);
+          return srgb ? srgb.slice(1, 4).map((c) => Math.round(Number(c) * 255)).join(',') : color;
+        };
+        return [...document.querySelectorAll(`${p} .swatch-yta`)].map((e) => normalize(getComputedStyle(e).backgroundColor));
+      }, t.prefix);
+      t.expect(await t.rootStyle('--lv') === '0' && new Set(flat).size === 1,
+        `rgb-from: sidan: laboratoriets lv-0 visar samma basfärg i alla kanaler (${flat.join(' | ')})`);
+      await t.page.locator(t.cardSel('.labb-steg input[data-v="8"]')).check();
+      await settle(t);
+      const expanded = await t.page.evaluate((p) => [...document.querySelectorAll(`${p} .swatch-yta`)].map((e) => getComputedStyle(e).backgroundColor), t.prefix);
+      t.expect(await t.rootStyle('--lv') === '8' && new Set(expanded).size === 5,
+        'rgb-from: sidan: laboratoriets lv-8 visar fem beräknade variationer');
+    },
+    isolated: async (t, v) => {
+      const colors = await t.page.evaluate(() => [...document.querySelectorAll('.swatch-yta')].map((e) => getComputedStyle(e).backgroundColor));
+      t.expect(await t.count('.swatch') === 5, 'rgb-from: fristående: fem svatchar finns från källmarkupen');
+      t.expect(await t.rootStyle('display') === 'grid' && (await t.rootStyle('grid-template-columns')).split(' ').length === 5,
+        'rgb-from: fristående: eget rutnät i fem kolumner');
+      t.expect(colors[0] === `rgb(${hexToRgb(v.acc).join(', ')})` && new Set(colors).size === 5,
+        `rgb-from: fristående: Grundpaketets accent och relativa uttryck ger fem färger (${colors.join(' | ')})`);
+      t.expect(await t.rootStyle('--lv') === '', 'rgb-from: fristående: ingen laboratorievariabel --lv krävs');
+      t.expect((await unresolvedVars(t.page)).length === 0,
+        `rgb-from: fristående: alla CSS-variabler löses upp (${(await unresolvedVars(t.page)).join(', ') || 'inga olösta'})`);
+      const selectors = (await snippetSelectors(t.page)).join(' ');
+      t.expect(!/\.labbar|\.gamut-|\.cm-row|\.grad-|\.filter-row|\.f-(blur|contrast|saturate|hue|sepia|gray|invert|drop)|\.swatch-solo/.test(selectors),
+        'rgb-from: fristående: inga labb-, gamut-, blandnings-, solo-, gradient- eller filterregler följer med');
+    },
+  },
+  'oklch-display-p3': {
+    page: async (t) => {
+      const result = await t.page.evaluate((p) => {
+        const swatches = [...document.querySelectorAll(`${p} .swatch-yta`)];
+        return {
+          colors: swatches.map((e) => getComputedStyle(e).backgroundColor),
+          rects: swatches.map((e) => { const r = e.getBoundingClientRect(); return [r.width, r.height]; }),
+          oklch: CSS.supports('color', 'oklch(72% .30 45)'),
+          p3: CSS.supports('color', 'color(display-p3 1 .55 .1)'),
+        };
+      }, t.prefix);
+      t.expect(await t.count('.swatch') === 4, 'oklch/display-p3: sidan: fyra färgprover finns');
+      t.expect(result.oklch && result.p3, 'oklch/display-p3: Chromium stöder båda direkta färgsyntaxyperna');
+      const expected = ['oklch(0.72 0.12 45)', 'oklch(0.72 0.3 45)',
+        'color(display-p3 1 0.55 0.1)', 'oklch(0.85 0.25 145)'];
+      t.expect(JSON.stringify(result.colors) === JSON.stringify(expected),
+        `oklch/display-p3: exakta oklch/P3-färger vinner utan fallback (${result.colors.join(' | ')})`);
+      t.expect(result.rects.every(([w, h]) => w > 0 && h > 0),
+        `oklch/display-p3: alla ytor har mått större än noll (${JSON.stringify(result.rects)})`);
+      t.expect(await t.rootStyle('display') === 'grid' && (await t.rootStyle('grid-template-columns')).split(' ').length === 4,
+        'oklch/display-p3: sidan använder ett fyrkolumnsrutnät');
+    },
+    isolated: async (t) => {
+      const result = await t.page.evaluate(() => ({
+        colors: [...document.querySelectorAll('.swatch-yta')].map((e) => getComputedStyle(e).backgroundColor),
+        rects: [...document.querySelectorAll('.swatch-yta')].map((e) => { const r = e.getBoundingClientRect(); return [r.width, r.height]; }),
+        oklch: CSS.supports('color', 'oklch(72% .30 45)'),
+        p3: CSS.supports('color', 'color(display-p3 1 .55 .1)'),
+      }));
+      const expected = ['oklch(0.72 0.12 45)', 'oklch(0.72 0.3 45)',
+        'color(display-p3 1 0.55 0.1)', 'oklch(0.85 0.25 145)'];
+      t.expect(result.oklch && result.p3 && JSON.stringify(result.colors) === JSON.stringify(expected),
+        `oklch/display-p3: fristående: Grundpaketet + kodvalvet ger exakta oklch/P3-färger (${result.colors.join(' | ')})`);
+      t.expect(await t.count('.swatch') === 4 && result.rects.every(([w, h]) => w > 0 && h > 0),
+        `oklch/display-p3: fristående: fyra svatchar med icke-noll mått (${JSON.stringify(result.rects)})`);
+      t.expect(await t.rootStyle('display') === 'grid' && (await t.rootStyle('grid-template-columns')).split(' ').length === 4,
+        'oklch/display-p3: fristående: layouten fungerar i fyra kolumner');
+      t.expect(await t.rootStyle('--lv') === '', 'oklch/display-p3: fristående: ingen laboratorievariabel krävs');
+      t.expect((await unresolvedVars(t.page)).length === 0,
+        `oklch/display-p3: fristående: alla CSS-variabler löses upp (${(await unresolvedVars(t.page)).join(', ') || 'inga olösta'})`);
+      const selectors = (await snippetSelectors(t.page)).join(' ');
+      t.expect(!/\.labbar|\.rel-|\.cm-row|\.grad-|\.filter-row|\.f-(blur|contrast|saturate|hue|sepia|gray|invert|drop)|\.swatch-solo/.test(selectors),
+        'oklch/display-p3: fristående: inga scenografi-, relativa, blandnings-, solo-, gradient- eller filterregler följer med');
+    },
+  },
   donutdiagram: {
     page: async (t) => {
       t.expect((await t.style('.donut', 'mask-image')).startsWith('radial-gradient(closest-side'), 'donut: sidan: masken skär ut ringen');
