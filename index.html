@@ -817,17 +817,27 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
    hör inte hemma i det kopierbara exemplet. */
 .labbar.grad-1 .swatch-yta { background: linear-gradient(calc(var(--lv) * 45deg), var(--acc), transparent); }
 /* /demo:linear-gradient:css */
+/* demo:radial-gradient:css */
 .grad-2 .swatch-yta { background: radial-gradient(circle at 30% 30%, var(--acc), var(--bg2) 75%); }
+
+.labbar.grad-2 .swatch-yta { background: radial-gradient(circle at calc(var(--lv) * 12.5%) 40%, var(--acc), var(--bg2) 75%); }
+/* /demo:radial-gradient:css */
+/* demo:conic-gradient:css */
 .grad-3 .swatch-yta { background: conic-gradient(from 90deg, var(--acc), var(--bg2), var(--acc)); }
+
+.labbar.grad-3 .swatch-yta { background: conic-gradient(from calc(var(--lv) * 45deg), var(--acc), var(--bg2), var(--acc)); }
+/* /demo:conic-gradient:css */
+/* demo:repeating-linear-gradient:css */
 .grad-4 .swatch-yta { background: repeating-linear-gradient(45deg, var(--acc) 0 6px, transparent 6px 14px); }
+
+.labbar.grad-4 .swatch-yta { background: repeating-linear-gradient(45deg, var(--acc) 0 calc(2px + var(--lv) * 2px), transparent calc(2px + var(--lv) * 2px) calc(6px + var(--lv) * 4px)); }
+/* /demo:repeating-linear-gradient:css */
+/* demo:repeating-radial-gradient:css */
 .grad-5 .swatch-yta { background: repeating-radial-gradient(circle at 50% 50%, var(--acc) 0 3px, transparent 3px 9px); }
 
-/* Reglerbara gradienter: --lv styr den parameter som är intressant för
-   just den gradienttypen — vinkel, mittpunkt, startvinkel eller periodlängd. */
-.labbar.grad-2 .swatch-yta { background: radial-gradient(circle at calc(var(--lv) * 12.5%) 40%, var(--acc), var(--bg2) 75%); }
-.labbar.grad-3 .swatch-yta { background: conic-gradient(from calc(var(--lv) * 45deg), var(--acc), var(--bg2), var(--acc)); }
-.labbar.grad-4 .swatch-yta { background: repeating-linear-gradient(45deg, var(--acc) 0 calc(2px + var(--lv) * 2px), transparent calc(2px + var(--lv) * 2px) calc(6px + var(--lv) * 4px)); }
 .labbar.grad-5 .swatch-yta { background: repeating-radial-gradient(circle at 50% 50%, var(--acc) 0 calc(1px + var(--lv) * 1px), transparent calc(1px + var(--lv) * 1px) calc(4px + var(--lv) * 2px)); }
+/* /demo:repeating-radial-gradient:css */
+
 .enh-band .labb-varde::after { content: counter(band) "px band"; }
 .enh-mitt .labb-varde::after { content: counter(pct125) "% mittpunkt"; }
 
@@ -4167,7 +4177,9 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
         </svg>
         <p class="fig-cap">radial-gradient(circle at 30% 30%, …)</p>
       </div>
+      <!-- demo:radial-gradient:markup -->
       <div class="demo-yta swatch-solo"><span class="swatch grad-2"><span class="swatch-yta"></span><span class="swatch-lbl">radial</span></span></div>
+      <!-- /demo:radial-gradient:markup -->
     
       <div class="labb">
         <div class="labb-rad">
@@ -4189,49 +4201,30 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
           <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
         </div>
       </div>
-    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för radial-gradient() — färg ut från en punkt">&lt;!-- HTML --&gt;
+    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="24" aria-label="Kod för radial-gradient() — färg ut från en punkt">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta swatch-solo"&gt;&lt;span class="swatch grad-2"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;radial&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
-/* ============================================================
-   KAPITEL 01 · FÄRG
-   ============================================================ */
-.swatch {border-radius: 10px; overflow: hidden; border: 1px solid var(--line);}
-.swatch-yta {height: 3.2rem;}
-.swatch-solo {max-width: 22rem;}
-.swatch-solo &gt; .swatch {display: block;}
-.swatch-solo .swatch-yta {display: block; height: 6rem;}
-.swatch-lbl {display:block; padding:.35rem .55rem; font-family: var(--mono); font-size:.68rem; color: var(--dim); background: var(--bg2);}
-.cm-row span:nth-child(1) .swatch-yta {background: color-mix(in oklch, var(--acc) 0%, var(--bg2));}
-.cm-row span:nth-child(2) .swatch-yta {background: color-mix(in oklch, var(--acc) 25%, var(--bg2));}
-.cm-row span:nth-child(3) .swatch-yta {background: color-mix(in oklch, var(--acc) 50%, var(--bg2));}
-.cm-row span:nth-child(4) .swatch-yta {background: color-mix(in oklch, var(--acc) 75%, var(--bg2));}
-.cm-row span:nth-child(5) .swatch-yta {background: color-mix(in oklch, var(--acc) 100%, var(--bg2));}
-.rel-a .swatch-yta {background: var(--acc);}
-.rel-b .swatch-yta {background: rgb(from var(--acc) r g b / .45);}
-.rel-c .swatch-yta {background: hsl(from var(--acc) h s calc(l - 22));}
-.rel-d .swatch-yta {background: hsl(from var(--acc) h calc(s - 40) calc(l + 14));}
-.rel-e .swatch-yta {background: hsl(from var(--acc) calc(h + 150) s l);}
-.gamut-a .swatch-yta {background: oklch(72% .12 45);}
-.gamut-b .swatch-yta {background: oklch(72% .30 45);}
-.gamut-c .swatch-yta {background: color(display-p3 1 .55 .1);}
-.gamut-d .swatch-yta {background: oklch(85% .25 145);}
-.grad-1 .swatch-yta {background: linear-gradient(135deg, var(--acc), transparent);}
-.grad-2 .swatch-yta {background: radial-gradient(circle at 30% 30%, var(--acc), var(--bg2) 75%);}
-.grad-3 .swatch-yta {background: conic-gradient(from 90deg, var(--acc), var(--bg2), var(--acc));}
-.grad-4 .swatch-yta {background: repeating-linear-gradient(45deg, var(--acc) 0 6px, transparent 6px 14px);}
-.grad-5 .swatch-yta {background: repeating-radial-gradient(circle at 50% 50%, var(--acc) 0 3px, transparent 3px 9px);}
-.filter-row .swatch-yta {background: linear-gradient(120deg, var(--acc), #6ea8ff 60%, #ff6ab0);}
-.f-blur .swatch-yta {filter: blur(3px);}
-.f-contrast .swatch-yta {filter: contrast(2.1);}
-.f-saturate .swatch-yta {filter: saturate(2.6);}
-.f-hue .swatch-yta {filter: hue-rotate(120deg);}
-.f-sepia .swatch-yta {filter: sepia(.85);}
-.f-gray .swatch-yta {filter: grayscale(1);}
-.f-invert .swatch-yta {filter: invert(1);}
-.f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+/* DELAT FRAGMENT — swatch-familjen (kapitel 01 · färg). Ägs av alla 16
+   labbdemos i Grupp B: color-mix, rgb(from …), oklch/display-p3, de fem
+   gradient-demona och de åtta filter-demona. Redigeras bara här.
+   BUGGFIX 2026-08-30 — .swatch-yta är ett span och alltså inline; height
+   biter inte på inline-element, så display:block krävs. Utan den kollapsar
+   rutorna till 0 px höjd och bara etiketterna syns. */
+.swatch { display: block; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+.swatch-yta { display: block; height: 3.2rem; }
+.swatch-lbl { display:block; padding:.35rem .55rem; font-family: var(--mono); font-size:.68rem; color: var(--dim); background: var(--bg2); }
+/* DELAT FRAGMENT — den ensamma svatchen (.swatch-solo), kapitel 01 · färg.
+   Ägs av de fem gradient-demona och de åtta filter-demona, dvs. allt som
+   visar EN färgruta med etikett under. Demoerna med en rad av svatchar
+   (color-mix, rgb(from …), oklch/display-p3) behöver den inte och begär den
+   inte — deras kodvalv ska inte bära regler de inte använder. */
+.swatch-solo { max-width: 22rem; }
+.swatch-solo &gt; .swatch { display: block; }
+.swatch-solo .swatch-yta { display: block; height: 6rem; }
+.grad-2 .swatch-yta { background: radial-gradient(circle at 30% 30%, var(--acc), var(--bg2) 75%); }</textarea></details>
         <!-- demo-ctx:radial-gradient --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-r">I registret: R</a></p><!-- /demo-ctx:radial-gradient -->
     </article>
 
@@ -4246,7 +4239,9 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
         </svg>
         <p class="fig-cap">conic-gradient(from 90deg, …)</p>
       </div>
+      <!-- demo:conic-gradient:markup -->
       <div class="demo-yta swatch-solo"><span class="swatch grad-3"><span class="swatch-yta"></span><span class="swatch-lbl">conic</span></span></div>
+      <!-- /demo:conic-gradient:markup -->
     
       <div class="labb">
         <div class="labb-rad">
@@ -4268,49 +4263,30 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
           <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
         </div>
       </div>
-    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för conic-gradient() — färg runt ett varv">&lt;!-- HTML --&gt;
+    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="24" aria-label="Kod för conic-gradient() — färg runt ett varv">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta swatch-solo"&gt;&lt;span class="swatch grad-3"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;conic&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
-/* ============================================================
-   KAPITEL 01 · FÄRG
-   ============================================================ */
-.swatch {border-radius: 10px; overflow: hidden; border: 1px solid var(--line);}
-.swatch-yta {height: 3.2rem;}
-.swatch-solo {max-width: 22rem;}
-.swatch-solo &gt; .swatch {display: block;}
-.swatch-solo .swatch-yta {display: block; height: 6rem;}
-.swatch-lbl {display:block; padding:.35rem .55rem; font-family: var(--mono); font-size:.68rem; color: var(--dim); background: var(--bg2);}
-.cm-row span:nth-child(1) .swatch-yta {background: color-mix(in oklch, var(--acc) 0%, var(--bg2));}
-.cm-row span:nth-child(2) .swatch-yta {background: color-mix(in oklch, var(--acc) 25%, var(--bg2));}
-.cm-row span:nth-child(3) .swatch-yta {background: color-mix(in oklch, var(--acc) 50%, var(--bg2));}
-.cm-row span:nth-child(4) .swatch-yta {background: color-mix(in oklch, var(--acc) 75%, var(--bg2));}
-.cm-row span:nth-child(5) .swatch-yta {background: color-mix(in oklch, var(--acc) 100%, var(--bg2));}
-.rel-a .swatch-yta {background: var(--acc);}
-.rel-b .swatch-yta {background: rgb(from var(--acc) r g b / .45);}
-.rel-c .swatch-yta {background: hsl(from var(--acc) h s calc(l - 22));}
-.rel-d .swatch-yta {background: hsl(from var(--acc) h calc(s - 40) calc(l + 14));}
-.rel-e .swatch-yta {background: hsl(from var(--acc) calc(h + 150) s l);}
-.gamut-a .swatch-yta {background: oklch(72% .12 45);}
-.gamut-b .swatch-yta {background: oklch(72% .30 45);}
-.gamut-c .swatch-yta {background: color(display-p3 1 .55 .1);}
-.gamut-d .swatch-yta {background: oklch(85% .25 145);}
-.grad-1 .swatch-yta {background: linear-gradient(135deg, var(--acc), transparent);}
-.grad-2 .swatch-yta {background: radial-gradient(circle at 30% 30%, var(--acc), var(--bg2) 75%);}
-.grad-3 .swatch-yta {background: conic-gradient(from 90deg, var(--acc), var(--bg2), var(--acc));}
-.grad-4 .swatch-yta {background: repeating-linear-gradient(45deg, var(--acc) 0 6px, transparent 6px 14px);}
-.grad-5 .swatch-yta {background: repeating-radial-gradient(circle at 50% 50%, var(--acc) 0 3px, transparent 3px 9px);}
-.filter-row .swatch-yta {background: linear-gradient(120deg, var(--acc), #6ea8ff 60%, #ff6ab0);}
-.f-blur .swatch-yta {filter: blur(3px);}
-.f-contrast .swatch-yta {filter: contrast(2.1);}
-.f-saturate .swatch-yta {filter: saturate(2.6);}
-.f-hue .swatch-yta {filter: hue-rotate(120deg);}
-.f-sepia .swatch-yta {filter: sepia(.85);}
-.f-gray .swatch-yta {filter: grayscale(1);}
-.f-invert .swatch-yta {filter: invert(1);}
-.f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+/* DELAT FRAGMENT — swatch-familjen (kapitel 01 · färg). Ägs av alla 16
+   labbdemos i Grupp B: color-mix, rgb(from …), oklch/display-p3, de fem
+   gradient-demona och de åtta filter-demona. Redigeras bara här.
+   BUGGFIX 2026-08-30 — .swatch-yta är ett span och alltså inline; height
+   biter inte på inline-element, så display:block krävs. Utan den kollapsar
+   rutorna till 0 px höjd och bara etiketterna syns. */
+.swatch { display: block; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+.swatch-yta { display: block; height: 3.2rem; }
+.swatch-lbl { display:block; padding:.35rem .55rem; font-family: var(--mono); font-size:.68rem; color: var(--dim); background: var(--bg2); }
+/* DELAT FRAGMENT — den ensamma svatchen (.swatch-solo), kapitel 01 · färg.
+   Ägs av de fem gradient-demona och de åtta filter-demona, dvs. allt som
+   visar EN färgruta med etikett under. Demoerna med en rad av svatchar
+   (color-mix, rgb(from …), oklch/display-p3) behöver den inte och begär den
+   inte — deras kodvalv ska inte bära regler de inte använder. */
+.swatch-solo { max-width: 22rem; }
+.swatch-solo &gt; .swatch { display: block; }
+.swatch-solo .swatch-yta { display: block; height: 6rem; }
+.grad-3 .swatch-yta { background: conic-gradient(from 90deg, var(--acc), var(--bg2), var(--acc)); }</textarea></details>
         <!-- demo-ctx:conic-gradient --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-c">I registret: C</a></p><!-- /demo-ctx:conic-gradient -->
     </article>
 
@@ -4326,7 +4302,9 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
         </svg>
         <p class="fig-cap">repeating-linear-gradient(45deg, … 0 6px, transparent 6px 14px)</p>
       </div>
+      <!-- demo:repeating-linear-gradient:markup -->
       <div class="demo-yta swatch-solo"><span class="swatch grad-4"><span class="swatch-yta"></span><span class="swatch-lbl">rep-linear</span></span></div>
+      <!-- /demo:repeating-linear-gradient:markup -->
     
       <div class="labb">
         <div class="labb-rad">
@@ -4348,49 +4326,30 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
           <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
         </div>
       </div>
-    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för repeating-linear-gradient() — ett mönster som upprepas">&lt;!-- HTML --&gt;
+    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="24" aria-label="Kod för repeating-linear-gradient() — ett mönster som upprepas">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta swatch-solo"&gt;&lt;span class="swatch grad-4"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;rep-linear&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
-/* ============================================================
-   KAPITEL 01 · FÄRG
-   ============================================================ */
-.swatch {border-radius: 10px; overflow: hidden; border: 1px solid var(--line);}
-.swatch-yta {height: 3.2rem;}
-.swatch-solo {max-width: 22rem;}
-.swatch-solo &gt; .swatch {display: block;}
-.swatch-solo .swatch-yta {display: block; height: 6rem;}
-.swatch-lbl {display:block; padding:.35rem .55rem; font-family: var(--mono); font-size:.68rem; color: var(--dim); background: var(--bg2);}
-.cm-row span:nth-child(1) .swatch-yta {background: color-mix(in oklch, var(--acc) 0%, var(--bg2));}
-.cm-row span:nth-child(2) .swatch-yta {background: color-mix(in oklch, var(--acc) 25%, var(--bg2));}
-.cm-row span:nth-child(3) .swatch-yta {background: color-mix(in oklch, var(--acc) 50%, var(--bg2));}
-.cm-row span:nth-child(4) .swatch-yta {background: color-mix(in oklch, var(--acc) 75%, var(--bg2));}
-.cm-row span:nth-child(5) .swatch-yta {background: color-mix(in oklch, var(--acc) 100%, var(--bg2));}
-.rel-a .swatch-yta {background: var(--acc);}
-.rel-b .swatch-yta {background: rgb(from var(--acc) r g b / .45);}
-.rel-c .swatch-yta {background: hsl(from var(--acc) h s calc(l - 22));}
-.rel-d .swatch-yta {background: hsl(from var(--acc) h calc(s - 40) calc(l + 14));}
-.rel-e .swatch-yta {background: hsl(from var(--acc) calc(h + 150) s l);}
-.gamut-a .swatch-yta {background: oklch(72% .12 45);}
-.gamut-b .swatch-yta {background: oklch(72% .30 45);}
-.gamut-c .swatch-yta {background: color(display-p3 1 .55 .1);}
-.gamut-d .swatch-yta {background: oklch(85% .25 145);}
-.grad-1 .swatch-yta {background: linear-gradient(135deg, var(--acc), transparent);}
-.grad-2 .swatch-yta {background: radial-gradient(circle at 30% 30%, var(--acc), var(--bg2) 75%);}
-.grad-3 .swatch-yta {background: conic-gradient(from 90deg, var(--acc), var(--bg2), var(--acc));}
-.grad-4 .swatch-yta {background: repeating-linear-gradient(45deg, var(--acc) 0 6px, transparent 6px 14px);}
-.grad-5 .swatch-yta {background: repeating-radial-gradient(circle at 50% 50%, var(--acc) 0 3px, transparent 3px 9px);}
-.filter-row .swatch-yta {background: linear-gradient(120deg, var(--acc), #6ea8ff 60%, #ff6ab0);}
-.f-blur .swatch-yta {filter: blur(3px);}
-.f-contrast .swatch-yta {filter: contrast(2.1);}
-.f-saturate .swatch-yta {filter: saturate(2.6);}
-.f-hue .swatch-yta {filter: hue-rotate(120deg);}
-.f-sepia .swatch-yta {filter: sepia(.85);}
-.f-gray .swatch-yta {filter: grayscale(1);}
-.f-invert .swatch-yta {filter: invert(1);}
-.f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+/* DELAT FRAGMENT — swatch-familjen (kapitel 01 · färg). Ägs av alla 16
+   labbdemos i Grupp B: color-mix, rgb(from …), oklch/display-p3, de fem
+   gradient-demona och de åtta filter-demona. Redigeras bara här.
+   BUGGFIX 2026-08-30 — .swatch-yta är ett span och alltså inline; height
+   biter inte på inline-element, så display:block krävs. Utan den kollapsar
+   rutorna till 0 px höjd och bara etiketterna syns. */
+.swatch { display: block; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+.swatch-yta { display: block; height: 3.2rem; }
+.swatch-lbl { display:block; padding:.35rem .55rem; font-family: var(--mono); font-size:.68rem; color: var(--dim); background: var(--bg2); }
+/* DELAT FRAGMENT — den ensamma svatchen (.swatch-solo), kapitel 01 · färg.
+   Ägs av de fem gradient-demona och de åtta filter-demona, dvs. allt som
+   visar EN färgruta med etikett under. Demoerna med en rad av svatchar
+   (color-mix, rgb(from …), oklch/display-p3) behöver den inte och begär den
+   inte — deras kodvalv ska inte bära regler de inte använder. */
+.swatch-solo { max-width: 22rem; }
+.swatch-solo &gt; .swatch { display: block; }
+.swatch-solo .swatch-yta { display: block; height: 6rem; }
+.grad-4 .swatch-yta { background: repeating-linear-gradient(45deg, var(--acc) 0 6px, transparent 6px 14px); }</textarea></details>
         <!-- demo-ctx:repeating-linear-gradient --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-r">I registret: R</a></p><!-- /demo-ctx:repeating-linear-gradient -->
     </article>
 
@@ -4403,7 +4362,9 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
         </svg>
         <p class="fig-cap">repeating-radial-gradient(circle at 50% 50%, … 0 3px, transparent 3px 9px)</p>
       </div>
+      <!-- demo:repeating-radial-gradient:markup -->
       <div class="demo-yta swatch-solo"><span class="swatch grad-5"><span class="swatch-yta"></span><span class="swatch-lbl">rep-radial</span></span></div>
+      <!-- /demo:repeating-radial-gradient:markup -->
     
       <div class="labb">
         <div class="labb-rad">
@@ -4425,49 +4386,30 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
           <label class="labb-auto"><input type="checkbox"><span class="spar"></span>auto</label>
         </div>
       </div>
-    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="26" aria-label="Kod för repeating-radial-gradient() — ringar i oändlighet">&lt;!-- HTML --&gt;
+    <details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="24" aria-label="Kod för repeating-radial-gradient() — ringar i oändlighet">&lt;!-- HTML --&gt;
 &lt;div class="demo-yta swatch-solo"&gt;&lt;span class="swatch grad-5"&gt;&lt;span class="swatch-yta"&gt;&lt;/span&gt;&lt;span class="swatch-lbl"&gt;rep-radial&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
-/* ============================================================
-   KAPITEL 01 · FÄRG
-   ============================================================ */
-.swatch {border-radius: 10px; overflow: hidden; border: 1px solid var(--line);}
-.swatch-yta {height: 3.2rem;}
-.swatch-solo {max-width: 22rem;}
-.swatch-solo &gt; .swatch {display: block;}
-.swatch-solo .swatch-yta {display: block; height: 6rem;}
-.swatch-lbl {display:block; padding:.35rem .55rem; font-family: var(--mono); font-size:.68rem; color: var(--dim); background: var(--bg2);}
-.cm-row span:nth-child(1) .swatch-yta {background: color-mix(in oklch, var(--acc) 0%, var(--bg2));}
-.cm-row span:nth-child(2) .swatch-yta {background: color-mix(in oklch, var(--acc) 25%, var(--bg2));}
-.cm-row span:nth-child(3) .swatch-yta {background: color-mix(in oklch, var(--acc) 50%, var(--bg2));}
-.cm-row span:nth-child(4) .swatch-yta {background: color-mix(in oklch, var(--acc) 75%, var(--bg2));}
-.cm-row span:nth-child(5) .swatch-yta {background: color-mix(in oklch, var(--acc) 100%, var(--bg2));}
-.rel-a .swatch-yta {background: var(--acc);}
-.rel-b .swatch-yta {background: rgb(from var(--acc) r g b / .45);}
-.rel-c .swatch-yta {background: hsl(from var(--acc) h s calc(l - 22));}
-.rel-d .swatch-yta {background: hsl(from var(--acc) h calc(s - 40) calc(l + 14));}
-.rel-e .swatch-yta {background: hsl(from var(--acc) calc(h + 150) s l);}
-.gamut-a .swatch-yta {background: oklch(72% .12 45);}
-.gamut-b .swatch-yta {background: oklch(72% .30 45);}
-.gamut-c .swatch-yta {background: color(display-p3 1 .55 .1);}
-.gamut-d .swatch-yta {background: oklch(85% .25 145);}
-.grad-1 .swatch-yta {background: linear-gradient(135deg, var(--acc), transparent);}
-.grad-2 .swatch-yta {background: radial-gradient(circle at 30% 30%, var(--acc), var(--bg2) 75%);}
-.grad-3 .swatch-yta {background: conic-gradient(from 90deg, var(--acc), var(--bg2), var(--acc));}
-.grad-4 .swatch-yta {background: repeating-linear-gradient(45deg, var(--acc) 0 6px, transparent 6px 14px);}
-.grad-5 .swatch-yta {background: repeating-radial-gradient(circle at 50% 50%, var(--acc) 0 3px, transparent 3px 9px);}
-.filter-row .swatch-yta {background: linear-gradient(120deg, var(--acc), #6ea8ff 60%, #ff6ab0);}
-.f-blur .swatch-yta {filter: blur(3px);}
-.f-contrast .swatch-yta {filter: contrast(2.1);}
-.f-saturate .swatch-yta {filter: saturate(2.6);}
-.f-hue .swatch-yta {filter: hue-rotate(120deg);}
-.f-sepia .swatch-yta {filter: sepia(.85);}
-.f-gray .swatch-yta {filter: grayscale(1);}
-.f-invert .swatch-yta {filter: invert(1);}
-.f-drop .swatch-yta {filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);}</textarea></details>
+/* DELAT FRAGMENT — swatch-familjen (kapitel 01 · färg). Ägs av alla 16
+   labbdemos i Grupp B: color-mix, rgb(from …), oklch/display-p3, de fem
+   gradient-demona och de åtta filter-demona. Redigeras bara här.
+   BUGGFIX 2026-08-30 — .swatch-yta är ett span och alltså inline; height
+   biter inte på inline-element, så display:block krävs. Utan den kollapsar
+   rutorna till 0 px höjd och bara etiketterna syns. */
+.swatch { display: block; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+.swatch-yta { display: block; height: 3.2rem; }
+.swatch-lbl { display:block; padding:.35rem .55rem; font-family: var(--mono); font-size:.68rem; color: var(--dim); background: var(--bg2); }
+/* DELAT FRAGMENT — den ensamma svatchen (.swatch-solo), kapitel 01 · färg.
+   Ägs av de fem gradient-demona och de åtta filter-demona, dvs. allt som
+   visar EN färgruta med etikett under. Demoerna med en rad av svatchar
+   (color-mix, rgb(from …), oklch/display-p3) behöver den inte och begär den
+   inte — deras kodvalv ska inte bära regler de inte använder. */
+.swatch-solo { max-width: 22rem; }
+.swatch-solo &gt; .swatch { display: block; }
+.swatch-solo .swatch-yta { display: block; height: 6rem; }
+.grad-5 .swatch-yta { background: repeating-radial-gradient(circle at 50% 50%, var(--acc) 0 3px, transparent 3px 9px); }</textarea></details>
         <!-- demo-ctx:repeating-radial-gradient --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-r">I registret: R</a></p><!-- /demo-ctx:repeating-radial-gradient -->
     </article>
 

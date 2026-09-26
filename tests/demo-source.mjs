@@ -595,6 +595,70 @@ const CHECKS = {
   },
 };
 
+// Each gradient has a distinct expected standalone declaration. The tests use
+// the actual generated textarea (main()), never the canonical source file.
+const GRADIENTS = [
+  ['radial-gradient', 2, 'radial-gradient(circle at 30% 30%, var(--acc), var(--bg2) 75%)'],
+  ['conic-gradient', 3, 'conic-gradient(from 90deg, var(--acc), var(--bg2), var(--acc))'],
+  ['repeating-linear-gradient', 4, 'repeating-linear-gradient(45deg, var(--acc) 0 6px, transparent 6px 14px)'],
+  ['repeating-radial-gradient', 5, 'repeating-radial-gradient(circle at 50% 50%, var(--acc) 0 3px, transparent 3px 9px)'],
+];
+for (const [id, n, declaration] of GRADIENTS) {
+  CHECKS[id] = {
+    page: async t => {
+      t.expect(await t.count('.swatch') === 1, `${id}: one live swatch`);
+      t.expect(await t.style('.swatch-yta', 'height') === '96px', `${id}: shared live geometry`);
+      const values = [];
+      for (const lv of [0, 8]) {
+        await t.page.locator(t.cardSel(`.labb-steg input[data-v="${lv}"]`)).check();
+        await settle(t);
+        t.expect(await t.rootStyle('--lv') === String(lv), `${id}: control sets --lv=${lv}`);
+        values.push(await t.style('.swatch-yta', 'background-image'));
+      }
+      t.expect(values.every(v => v.startsWith(id + '(')) && values[0] !== values[1], `${id}: laboratory changes the rendered gradient declaration`);
+    },
+    isolated: async t => {
+      const result = await t.page.evaluate(([prefix, expected]) => {
+        const root = document.querySelector(prefix);
+        const surface = root.querySelector('.swatch-yta');
+        const probe = document.createElement('span');
+        probe.style.backgroundImage = expected;
+        root.append(probe);
+        const reference = getComputedStyle(probe).backgroundImage;
+        probe.remove();
+        const r = surface.getBoundingClientRect();
+        return { actual: getComputedStyle(surface).backgroundImage, reference, width: r.width, height: r.height };
+      }, [t.prefix, declaration]);
+      t.expect(result.actual.startsWith(id + '(') && result.actual === result.reference,
+        `${id}: standalone rendered gradient has expected type, colors, position/angle and stops (${result.actual})`);
+      // Inspect the actual painted interior, not just CSS syntax/computed text.
+      const png = await t.page.locator(`${t.prefix} .swatch-yta`).screenshot();
+      const paintedColors = await t.page.evaluate(async data => {
+        const image = new Image();
+        image.src = 'data:image/png;base64,' + data;
+        await image.decode();
+        const canvas = document.createElement('canvas');
+        canvas.width = image.width; canvas.height = image.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(image, 0, 0);
+        const pixels = ctx.getImageData(10, 10, image.width - 20, image.height - 20).data;
+        const colors = new Set();
+        for (let i = 0; i < pixels.length; i += 4) colors.add(`${pixels[i]},${pixels[i + 1]},${pixels[i + 2]}`);
+        return colors.size;
+      }, png.toString('base64'));
+      t.expect(paintedColors > 1, `${id}: standalone gradient actually paints a nonuniform interior (${paintedColors} colors)`);
+      t.expect(result.width > 0 && result.height === 96, `${id}: standalone swatch has nonzero width and 6rem height`);
+      t.expect(await t.rootStyle('max-width') === '352px' && await t.style('.swatch', 'border-top-width') === '1px', `${id}: both shared fragments apply`);
+      t.expect(await t.rootStyle('--lv') === '', `${id}: no --lv dependency`);
+      t.expect((await unresolvedVars(t.page)).length === 0, `${id}: every custom property resolves`);
+      const selectors = await snippetSelectors(t.page);
+      t.expect(selectors.includes(`.grad-${n} .swatch-yta`), `${id}: own selector present`);
+      t.expect(!/\.(labbar|cm-row|rel-|gamut-|filter-row|f-)/.test(selectors.join(' '))
+        && selectors.filter(s => /\.grad-/.test(s)).length === 1, `${id}: no unrelated chapter or filter rules`);
+    },
+  };
+}
+
 /** #rrggbb → [r, g, b] (Grundpaketets variabler är hex). */
 function hexToRgb(hex) {
   const m = hex.trim().match(/^#([0-9a-f]{6})$/i);
@@ -666,6 +730,16 @@ async function main() {
       + (html.match(/<!-- \/demo:[a-z0-9-]+:markup -->/g)?.length ?? 0);
   })) === MIGRATED_IDS.length * 2,
   `sidan: ${MIGRATED_IDS.length} migrerade kort har markup-markörer i DOM:en`);
+
+  for (const id of ['filter-blur', 'filter-contrast', 'filter-saturate', 'filter-hue-rotate', 'filter-sepia', 'filter-grayscale', 'filter-invert', 'filter-drop-shadow']) {
+    await open(id);
+    const filter = await page.locator(`#${id} .swatch-yta`).evaluate(e => {
+      const s = getComputedStyle(e), r = e.getBoundingClientRect();
+      return { background: s.backgroundImage, filter: s.filter, width: r.width, height: r.height };
+    });
+    assert(filter.background.includes('repeating-linear-gradient') && filter.background.includes('radial-gradient') && filter.filter !== 'none' && filter.width > 0 && filter.height === 96,
+      `${id}: unmigrated filter retains layered motif, active filter and shared geometry`);
+  }
 
   await browser.close();
   console.log('');

@@ -1,6 +1,6 @@
 # En källa per demo — beslut, arbetsflöde och migreringsplan
 
-*Status: 18 av 133 demos migrerade (3 pilot + 11 Grupp A + 4 Grupp B); 115 återstår. Uppdaterad 2026-09-26 efter Grupp B:s andra migration.*
+*Status: 22 av 133 demos migrerade (3 pilot + 11 Grupp A + 8 Grupp B); 111 återstår. Uppdaterad 2026-09-26 efter gradientfamiljen.*
 
 ## 1. Problemet, mätt i det faktiska dokumentet
 
@@ -303,11 +303,11 @@ textbreddsberoende).
 | `grundpaketet` | Valvet *är* källan för `:root`-variablerna som `check-snippets.mjs` läser; kräver tom markup-del. | Egen liten utbyggnad av källformatet. |
 | Grupp B (16 labb-demos), Grupp C (7 avvikande valv) | Delad kapitel-CSS respektive valv som skiljer sig från live-markupen. | Enligt planen i §7 — beslut först, migrering sedan. |
 
-## 7. Migreringsplan för återstående 115 demos
+## 7. Migreringsplan för återstående 111 demos
 
 Grupperat efter vad analysen faktiskt visade, inte efter kapitel.
-Läget efter Grupp B:s andra batch: **18 av 133** kort är källgenererade
-(3 pilot + 11 Grupp A + 4 Grupp B), **115** återstår. Nästa batch kan börja
+Läget efter gradientbatchen: **22 av 133** kort är källgenererade
+(3 pilot + 11 Grupp A + 8 Grupp B), **111** återstår. Nästa batch kan börja
 med `container-type-size-behallarenheter-cqi` och de övriga rena kandidaterna
 i Grupp A; besluten i §6b avgör när `dvh-svh-lvh` och de fyra media-demon kan
 följa.
@@ -429,9 +429,8 @@ select och calc-size) mellan den historiska Linux-fontmiljön och denna körning
 dessa finns inte i de två nya demonas strikta jämförelser. Alla 24 skärmbildspar
 för de nya demona är däremot byte-identiska.
 
-Kvar att migrera i Grupp B (12): de fyra gradientdemona (`radial-gradient`,
-`conic-gradient`, `repeating-linear-gradient`, `repeating-radial-gradient`)
-och de åtta filterdemona. Filterdemona är den enda besvärliga resten: det
+Efter PR #9 återstod tolv Group B-demos. Gradientbatchen nedan lämnar
+**åtta kvar, samtliga filter**. Filterdemona är den enda besvärliga resten: det
 fyrskiktade `background`-motivet sitter i en nio-väljarlista som spänner över
 alla åtta ids, så det måste antingen bli ett tredje fragment
 (`_delat/filter-motiv.css`) som alla åtta begär, eller flyttas till varje
@@ -448,6 +447,39 @@ Bevis för piloten:
 | Den kopierade koden fungerar fristående | `tests/demo-source.mjs` laddar det faktiska kodvalvet i ett eget dokument med Grundpaketet och mäter `.swatch`/`.swatch-yta`/`.swatch-solo`/`.cm-row`/`.grad-1`, alla `var()` och att inga orelaterade labbregler finns med |
 | Delning kan inte drifta igen | Ändras `demos/_delat/swatch.css` utan ombyggnad fäller `npm run build:check`; 17 påståenden i `scripts/build.test.mjs` går röda om `display: block` på `.swatch-yta` stryks ur fragmentet |
 | Ingen regel publiceras två gånger | `scripts/build.test.mjs` §3b(e) skannar hela stilbladet efter upprepade regler |
+
+### Grupp B — gradientfamiljen klar (fyra nya källor)
+
+Utgångspunkt: squash-merge av PR #9, `61aee01f1fcae8a9364ad2201e7f14cf79ecc966`.
+De fyra källorna `radial-gradient`, `conic-gradient`,
+`repeating-linear-gradient` och `repeating-radial-gradient` följer exakt
+`linear-gradient`-modellen: `data-include="swatch swatch-solo"`, en egen
+`.grad-N`-regel och en separat `.labbar.grad-N`-regel i `data-live`.
+
+Detta ger **22 källor**, **fem kanoniska gradientdemos**, oförändrat **133
+kort / 134 registerposter**, **åtta återstående Group B-kort (alla filter)**
+och noll runtime-JavaScript. Inga nya fragment, beroenden eller byggsteg.
+Ägandekarta, snippet-drift, exakta resultat och reproduktion finns i
+[migrationsbeviset](migrering/grupp-b-gradients/README.md).
+
+De historiska 18 baselineposterna och tidigare proveniens är oförändrade.
+Fyra nya poster fångades med `--capture --merge` från den orörda startsidan
+före migreringen, med verifierad Chromium `153.0.8010.0`. Strikt jämförelse
+per demo: **1 412 värden, 0 stil-/DOM-avvikelser, 0 px geometriavvikelse**.
+De verkliga textarea-snippets testas separat med Grundpaketet, inklusive
+pixelprov av den målade gradientytan (inte bara giltig CSS).
+
+Bildmatrisen omfattar 72 par: fyra demos × tre bredder × två teman × tre
+lägen. **65/72 PNG-par är byte-identiska**; sju har 2–14 pixlar som avviker
+med högst 1/255 per kanal vid rundade kanter. Alla 72 DOM-/stil-/geometri-
+hashar är identiska. En kontrollomtagning av den orörda före-sidan
+reproducerade variationen i fem av dessa sju fall. Därför görs inget
+påstående om full pixelidentitet. De äldre miljöberoende geometrivarningarna
+ovan är kvar; den fulla körningen här rapporterade sju (target och
+appearance-base-select, max 22,09 px), inga strukturella avvikelser.
+
+Nästa steg är de åtta filterdemona, med separat ägaranalys av bakgrundsmotivet.
+Deras befintliga CSS, kodvalv och markup ändras inte av denna batch.
 
 ### Grupp C — snippet som avviker från live-markupen (7 demos: `media-color-gamut`, `round-mod`, `textspoiler`, `prefers-reduced-motion`, `hover-hover`, `media-scripting`, `media-hover-pointer`)
 

@@ -1,0 +1,34 @@
+{
+  "chromium": "153.0.8010.0",
+  "documentSha256": "8b1d567a0f54df0ff3261edddcd32f416efb92f9f5d0d30a203905f31756ded9",
+  "samples": {
+    "radial-gradient.768.guld.8": {
+      "pngSha256": "78dd8bfb1b45a4242da722db1b3c93921a725c17a7c5a86b64c3fe9c08f23529",
+      "measurementSha256": "7ef3d015dac413cf6543e6f81db649a898908ce00523335d44f536ec533bf0c5"
+    },
+    "radial-gradient.1280.guld.0": {
+      "pngSha256": "26b43349979ae62db6a5701b1363cd1a9c5fc82526d820a5283b184b8f9d91d0",
+      "measurementSha256": "19e5566a8a44d457f8935d70739d600da87108668a7ec7e710f70a43dc77497e"
+    },
+    "radial-gradient.1280.guld.8": {
+      "pngSha256": "d15ea53e47fa684a82b133c739f59e28b7fd37200bb1dde628711b26abd1cc91",
+      "measurementSha256": "86a80bb36fbcd11fdb926157b07919b000a018b7425f080ffa7cce708ef5cb75"
+    },
+    "radial-gradient.1280.syra.0": {
+      "pngSha256": "9845e6bda937471c948af88da2b0ccd2ab3471b74d2f6f296ac358797eb73538",
+      "measurementSha256": "7c223bbc9e0181050046adfb91b585082725418e500e698d827de62e4dcf9c41"
+    },
+    "conic-gradient.768.guld.8": {
+      "pngSha256": "082f283b8937215882511193cb691ff2b3d2170d3a4f463e214463e95a78d1fc",
+      "measurementSha256": "da19007c0ad5588e4e9cccd87b4a1ecfe27a971c04db0a8b3b41593c4a00fc42"
+    },
+    "conic-gradient.768.syra.8": {
+      "pngSha256": "924a2d7485245980a90b2816bcb901a58a6fe3d7818f1d0ce707ac9727ab77ba",
+      "measurementSha256": "1b055e746ea4a16f23c2cc323a2da81eee7bb073a00ba62cbd2a8a9b8a1b986a"
+    },
+    "conic-gradient.1280.guld.8": {
+      "pngSha256": "5ced5234cfc8652140d5e8e84610fdae563371bdf8545da663a709883b0c29ab",
+      "measurementSha256": "88d389f83ef0fa73fef6e3086ad4053e9963b86a0689cb16bd457e4cb2f5d18d"
+    }
+  }
+}

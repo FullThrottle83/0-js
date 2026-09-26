@@ -1,0 +1,13 @@
+<!--
+  demo: repeating-linear-gradient
+  Kanonisk källa för live-demo och kodvalv. Bygg: npm run build.
+  Delade swatch-fragment; laboratoriets --lv följer inte med kodvalvet.
+-->
+<div class="demo-yta swatch-solo"><span class="swatch grad-4"><span class="swatch-yta"></span><span class="swatch-lbl">rep-linear</span></span></div>
+<style data-include="swatch swatch-solo"></style>
+<style>
+.grad-4 .swatch-yta { background: repeating-linear-gradient(45deg, var(--acc) 0 6px, transparent 6px 14px); }
+</style>
+<style data-live>
+.labbar.grad-4 .swatch-yta { background: repeating-linear-gradient(45deg, var(--acc) 0 calc(2px + var(--lv) * 2px), transparent calc(2px + var(--lv) * 2px) calc(6px + var(--lv) * 4px)); }
+</style>

@@ -16,7 +16,7 @@
  * Fält:
  *   id       demots id i index.html (och filnamnet i demos/)
  *   type     'pilot' (första tre), 'batch-1' (Grupp A), 'batch-2' (Grupp B-pilot)
- *            eller 'batch-3' (fortsättning av Grupp B)
+ *            eller 'batch-3'/'batch-4' (fortsättning av Grupp B)
  *   anchors  id:n i demots markup som interna länkar pekar på (dokumenteras
  *            för läsbarhet; byggtestet härleder dem ur källfilen)
  *   liveCss  true om källfilen har <style data-live> (sidans scenografi som
@@ -172,6 +172,26 @@ export const DEMO_SPEC = [
     liveCss: false,
     shared: ['swatch'],
     note: 'Grupp B: oklch/display-p3-fyllningar och fyrkolumnslayout ägs av demot; swatch-reglerna delas',
+  },
+  {
+    id: 'radial-gradient', type: 'batch-4', anchors: [], liveCss: true,
+    shared: ['swatch', 'swatch-solo'],
+    note: 'Grupp B: egen gradientregel; --lv är endast laboratoriets scenografi',
+  },
+  {
+    id: 'conic-gradient', type: 'batch-4', anchors: [], liveCss: true,
+    shared: ['swatch', 'swatch-solo'],
+    note: 'Grupp B: egen gradientregel; --lv är endast laboratoriets scenografi',
+  },
+  {
+    id: 'repeating-linear-gradient', type: 'batch-4', anchors: [], liveCss: true,
+    shared: ['swatch', 'swatch-solo'],
+    note: 'Grupp B: egen gradientregel; --lv är endast laboratoriets scenografi',
+  },
+  {
+    id: 'repeating-radial-gradient', type: 'batch-4', anchors: [], liveCss: true,
+    shared: ['swatch', 'swatch-solo'],
+    note: 'Grupp B: egen gradientregel; --lv är endast laboratoriets scenografi',
   },
 ];
 
