@@ -1,0 +1,18 @@
+<!--
+  demo: filter-invert
+  Kanonisk källa för både live-demon och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+  Grupp B: swatch-familjen, .swatch-solo och det fyrskiktade filtermotivet är
+  delade (demos/_delat/) och begärs med data-include. .f-invert är demots enda
+  egen regel; labbets --lv-skala är sidans scenografi och ligger i data-live.
+-->
+<div class="demo-yta swatch-solo"><span class="swatch f-invert f-motiv"><span class="swatch-yta"></span><span class="swatch-lbl">invert</span></span></div>
+<style data-include="swatch swatch-solo filter-motiv"></style>
+<style>
+.f-invert .swatch-yta { filter: invert(1); }
+</style>
+<style data-live>
+/* Reglerbart filter: --lv (0–8) blir 0–100 % invertering. Labbet är sidans
+   scenografi och kopieras inte. */
+.labbar.f-invert .swatch-yta { filter: invert(calc(var(--lv) * 12.5%)); }
+</style>

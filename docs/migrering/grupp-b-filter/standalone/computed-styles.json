@@ -1,0 +1,446 @@
+{
+  "chromium": "153.0.8010.0",
+  "documentSha256": "122082d423a36a4d9c6de936f3a27b904df7c92dd58ac91b36c199ff1ee445ee",
+  "samples": {
+    "filter-blur": {
+      "width": 350,
+      "height": 96,
+      "filter": "blur(3px)",
+      "backgroundLayers": [
+        "radial-gradient",
+        "radial-gradient",
+        "repeating-linear-gradient",
+        "linear-gradient"
+      ],
+      "resolved": [
+        [
+          "--acc",
+          "#ffc25e"
+        ],
+        [
+          "--line",
+          "#2b2833"
+        ],
+        [
+          "--dim",
+          "#9a938a"
+        ],
+        [
+          "--bg2",
+          "#121016"
+        ],
+        [
+          "--mono",
+          "\"IBM Plex Mono\", ui-monospace, monospace"
+        ]
+      ],
+      "lv": "",
+      "selectors": [
+        ":root",
+        "*, ::before, ::after",
+        "body",
+        ".demo-yta",
+        ".swatch",
+        ".swatch-yta",
+        ".swatch-lbl",
+        ".swatch-solo",
+        ".swatch-solo > .swatch",
+        ".swatch-solo .swatch-yta",
+        ".f-motiv .swatch-yta",
+        ".f-blur .swatch-yta"
+      ],
+      "swatchClass": "swatch f-blur f-motiv",
+      "unfilteredProbe": "none",
+      "otherFilters": [
+        ".f-motiv .swatch-yta",
+        ".f-blur .swatch-yta"
+      ],
+      "pngSha256": "c70cc4d1d1a766a7a078ff188455f3572d507225be5851cff32fe057ecb026a5"
+    },
+    "filter-contrast": {
+      "width": 350,
+      "height": 96,
+      "filter": "contrast(2.1)",
+      "backgroundLayers": [
+        "radial-gradient",
+        "radial-gradient",
+        "repeating-linear-gradient",
+        "linear-gradient"
+      ],
+      "resolved": [
+        [
+          "--acc",
+          "#ffc25e"
+        ],
+        [
+          "--line",
+          "#2b2833"
+        ],
+        [
+          "--dim",
+          "#9a938a"
+        ],
+        [
+          "--bg2",
+          "#121016"
+        ],
+        [
+          "--mono",
+          "\"IBM Plex Mono\", ui-monospace, monospace"
+        ]
+      ],
+      "lv": "",
+      "selectors": [
+        ":root",
+        "*, ::before, ::after",
+        "body",
+        ".demo-yta",
+        ".swatch",
+        ".swatch-yta",
+        ".swatch-lbl",
+        ".swatch-solo",
+        ".swatch-solo > .swatch",
+        ".swatch-solo .swatch-yta",
+        ".f-motiv .swatch-yta",
+        ".f-contrast .swatch-yta"
+      ],
+      "swatchClass": "swatch f-contrast f-motiv",
+      "unfilteredProbe": "none",
+      "otherFilters": [
+        ".f-motiv .swatch-yta",
+        ".f-contrast .swatch-yta"
+      ],
+      "pngSha256": "a459605f34fd248fd0c5832eff38b7e61e3ecd2e8e0c905148a43d0f812a0c9f"
+    },
+    "filter-saturate": {
+      "width": 350,
+      "height": 96,
+      "filter": "saturate(2.6)",
+      "backgroundLayers": [
+        "radial-gradient",
+        "radial-gradient",
+        "repeating-linear-gradient",
+        "linear-gradient"
+      ],
+      "resolved": [
+        [
+          "--acc",
+          "#ffc25e"
+        ],
+        [
+          "--line",
+          "#2b2833"
+        ],
+        [
+          "--dim",
+          "#9a938a"
+        ],
+        [
+          "--bg2",
+          "#121016"
+        ],
+        [
+          "--mono",
+          "\"IBM Plex Mono\", ui-monospace, monospace"
+        ]
+      ],
+      "lv": "",
+      "selectors": [
+        ":root",
+        "*, ::before, ::after",
+        "body",
+        ".demo-yta",
+        ".swatch",
+        ".swatch-yta",
+        ".swatch-lbl",
+        ".swatch-solo",
+        ".swatch-solo > .swatch",
+        ".swatch-solo .swatch-yta",
+        ".f-motiv .swatch-yta",
+        ".f-saturate .swatch-yta"
+      ],
+      "swatchClass": "swatch f-saturate f-motiv",
+      "unfilteredProbe": "none",
+      "otherFilters": [
+        ".f-motiv .swatch-yta",
+        ".f-saturate .swatch-yta"
+      ],
+      "pngSha256": "244afd435245dc5adc4e41a4c8140a6dcbbfbf355d6aa58395ed702a291986ae"
+    },
+    "filter-hue-rotate": {
+      "width": 350,
+      "height": 96,
+      "filter": "hue-rotate(120deg)",
+      "backgroundLayers": [
+        "radial-gradient",
+        "radial-gradient",
+        "repeating-linear-gradient",
+        "linear-gradient"
+      ],
+      "resolved": [
+        [
+          "--acc",
+          "#ffc25e"
+        ],
+        [
+          "--line",
+          "#2b2833"
+        ],
+        [
+          "--dim",
+          "#9a938a"
+        ],
+        [
+          "--bg2",
+          "#121016"
+        ],
+        [
+          "--mono",
+          "\"IBM Plex Mono\", ui-monospace, monospace"
+        ]
+      ],
+      "lv": "",
+      "selectors": [
+        ":root",
+        "*, ::before, ::after",
+        "body",
+        ".demo-yta",
+        ".swatch",
+        ".swatch-yta",
+        ".swatch-lbl",
+        ".swatch-solo",
+        ".swatch-solo > .swatch",
+        ".swatch-solo .swatch-yta",
+        ".f-motiv .swatch-yta",
+        ".f-hue .swatch-yta"
+      ],
+      "swatchClass": "swatch f-hue f-motiv",
+      "unfilteredProbe": "none",
+      "otherFilters": [
+        ".f-motiv .swatch-yta",
+        ".f-hue .swatch-yta"
+      ],
+      "pngSha256": "d09b924af8449e63a38bc586b89f41a6ef4f6d48d538f2df1ce48f29d819f3f7"
+    },
+    "filter-sepia": {
+      "width": 350,
+      "height": 96,
+      "filter": "sepia(0.85)",
+      "backgroundLayers": [
+        "radial-gradient",
+        "radial-gradient",
+        "repeating-linear-gradient",
+        "linear-gradient"
+      ],
+      "resolved": [
+        [
+          "--acc",
+          "#ffc25e"
+        ],
+        [
+          "--line",
+          "#2b2833"
+        ],
+        [
+          "--dim",
+          "#9a938a"
+        ],
+        [
+          "--bg2",
+          "#121016"
+        ],
+        [
+          "--mono",
+          "\"IBM Plex Mono\", ui-monospace, monospace"
+        ]
+      ],
+      "lv": "",
+      "selectors": [
+        ":root",
+        "*, ::before, ::after",
+        "body",
+        ".demo-yta",
+        ".swatch",
+        ".swatch-yta",
+        ".swatch-lbl",
+        ".swatch-solo",
+        ".swatch-solo > .swatch",
+        ".swatch-solo .swatch-yta",
+        ".f-motiv .swatch-yta",
+        ".f-sepia .swatch-yta"
+      ],
+      "swatchClass": "swatch f-sepia f-motiv",
+      "unfilteredProbe": "none",
+      "otherFilters": [
+        ".f-motiv .swatch-yta",
+        ".f-sepia .swatch-yta"
+      ],
+      "pngSha256": "2d59f12629b4f1cf12aaed1e76ca2517632c3ab9795dabb983d53e53cc21f0fe"
+    },
+    "filter-grayscale": {
+      "width": 350,
+      "height": 96,
+      "filter": "grayscale(1)",
+      "backgroundLayers": [
+        "radial-gradient",
+        "radial-gradient",
+        "repeating-linear-gradient",
+        "linear-gradient"
+      ],
+      "resolved": [
+        [
+          "--acc",
+          "#ffc25e"
+        ],
+        [
+          "--line",
+          "#2b2833"
+        ],
+        [
+          "--dim",
+          "#9a938a"
+        ],
+        [
+          "--bg2",
+          "#121016"
+        ],
+        [
+          "--mono",
+          "\"IBM Plex Mono\", ui-monospace, monospace"
+        ]
+      ],
+      "lv": "",
+      "selectors": [
+        ":root",
+        "*, ::before, ::after",
+        "body",
+        ".demo-yta",
+        ".swatch",
+        ".swatch-yta",
+        ".swatch-lbl",
+        ".swatch-solo",
+        ".swatch-solo > .swatch",
+        ".swatch-solo .swatch-yta",
+        ".f-motiv .swatch-yta",
+        ".f-gray .swatch-yta"
+      ],
+      "swatchClass": "swatch f-gray f-motiv",
+      "unfilteredProbe": "none",
+      "otherFilters": [
+        ".f-motiv .swatch-yta",
+        ".f-gray .swatch-yta"
+      ],
+      "pngSha256": "6ac767d751a3eda8a72ceab989574bd25948e8e43b37a032606d32749366bbbb"
+    },
+    "filter-invert": {
+      "width": 350,
+      "height": 96,
+      "filter": "invert(1)",
+      "backgroundLayers": [
+        "radial-gradient",
+        "radial-gradient",
+        "repeating-linear-gradient",
+        "linear-gradient"
+      ],
+      "resolved": [
+        [
+          "--acc",
+          "#ffc25e"
+        ],
+        [
+          "--line",
+          "#2b2833"
+        ],
+        [
+          "--dim",
+          "#9a938a"
+        ],
+        [
+          "--bg2",
+          "#121016"
+        ],
+        [
+          "--mono",
+          "\"IBM Plex Mono\", ui-monospace, monospace"
+        ]
+      ],
+      "lv": "",
+      "selectors": [
+        ":root",
+        "*, ::before, ::after",
+        "body",
+        ".demo-yta",
+        ".swatch",
+        ".swatch-yta",
+        ".swatch-lbl",
+        ".swatch-solo",
+        ".swatch-solo > .swatch",
+        ".swatch-solo .swatch-yta",
+        ".f-motiv .swatch-yta",
+        ".f-invert .swatch-yta"
+      ],
+      "swatchClass": "swatch f-invert f-motiv",
+      "unfilteredProbe": "none",
+      "otherFilters": [
+        ".f-motiv .swatch-yta",
+        ".f-invert .swatch-yta"
+      ],
+      "pngSha256": "35cf787f7e9f54a2c9d3167e83ead1b2668d7bc82f9f8a278de4e59e0b12d336"
+    },
+    "filter-drop-shadow": {
+      "width": 350,
+      "height": 96,
+      "filter": "drop-shadow(rgb(255, 194, 94) 0px 0px 8px) brightness(0.9)",
+      "backgroundLayers": [
+        "radial-gradient",
+        "radial-gradient",
+        "repeating-linear-gradient",
+        "linear-gradient"
+      ],
+      "resolved": [
+        [
+          "--acc",
+          "#ffc25e"
+        ],
+        [
+          "--line",
+          "#2b2833"
+        ],
+        [
+          "--dim",
+          "#9a938a"
+        ],
+        [
+          "--bg2",
+          "#121016"
+        ],
+        [
+          "--mono",
+          "\"IBM Plex Mono\", ui-monospace, monospace"
+        ]
+      ],
+      "lv": "",
+      "selectors": [
+        ":root",
+        "*, ::before, ::after",
+        "body",
+        ".demo-yta",
+        ".swatch",
+        ".swatch-yta",
+        ".swatch-lbl",
+        ".swatch-solo",
+        ".swatch-solo > .swatch",
+        ".swatch-solo .swatch-yta",
+        ".f-motiv .swatch-yta",
+        ".f-drop .swatch-yta"
+      ],
+      "swatchClass": "swatch f-drop f-motiv",
+      "unfilteredProbe": "none",
+      "otherFilters": [
+        ".f-motiv .swatch-yta",
+        ".f-drop .swatch-yta"
+      ],
+      "pngSha256": "995daf8e7f2cf70bb22a911cc134078489ecd4c87a03c1798c03f5a5d46e2dc4"
+    }
+  }
+}

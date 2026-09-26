@@ -1,6 +1,6 @@
 # En källa per demo — beslut, arbetsflöde och migreringsplan
 
-*Status: 22 av 133 demos migrerade (3 pilot + 11 Grupp A + 8 Grupp B); 111 återstår. Uppdaterad 2026-09-26 efter gradientfamiljen.*
+*Status: 30 av 133 demos migrerade (3 pilot + 11 Grupp A + 16 Grupp B); 103 återstår. Uppdaterad 2026-09-26 efter filterfamiljen.*
 
 ## 1. Problemet, mätt i det faktiska dokumentet
 
@@ -336,11 +336,12 @@ Kodvalven innehåller i dag hela kapitel 01-blocket (`.swatch*`, alla `.rel-*`,
 migrering:
 
 1. **Delade fragment.** `.swatch`, `.swatch-yta`, `.swatch-lbl` används av alla
-   16. Förslag: `demos/_delat/swatch.css` som källfilen refererar med
+   16. Lösning: `demos/_delat/swatch.css` som källfilen refererar med
    `<style data-include="swatch">` (bygget infogar fragmentet i kodvalvet,
-   och skriver det *en* gång i stilbladet). Det är den enda utbyggnaden av
-   byggskriptet som planen kräver — ~20 rader — och den bör göras när första
-   labb-demot migreras, inte i förväg.
+   och skriver det *en* gång i stilbladet). Utbyggnaden av byggskriptet blev
+   ~20 rader, och den gjordes när första labb-demot migrerades. Tre fragment
+   används i dag: `swatch`, `swatch-solo` och — efter filterbatchen —
+   `filter-motiv` (det fyrskiktade bakgrundsmotivet, se nedan).
 2. **Labb-överstyrningarna** (`.labbar .cm-row … calc(var(--lv) …)`,
    `.enh-*`) är sidans scenografi → `<style data-live>`. Kodvalvet visar den
    statiska tekniken, precis som i dag.
@@ -478,8 +479,60 @@ påstående om full pixelidentitet. De äldre miljöberoende geometrivarningarna
 ovan är kvar; den fulla körningen här rapporterade sju (target och
 appearance-base-select, max 22,09 px), inga strukturella avvikelser.
 
-Nästa steg är de åtta filterdemona, med separat ägaranalys av bakgrundsmotivet.
-Deras befintliga CSS, kodvalv och markup ändras inte av denna batch.
+### Grupp B — filterfamiljen klar (åtta nya källor, ett tredje fragment)
+
+Utgångspunkt: squash-merge av PR #10, `c27b31092cfc275c40dd07f8eeeac5cd5323e3f9`.
+De åtta källorna `filter-blur`, `filter-contrast`, `filter-saturate`,
+`filter-hue-rotate`, `filter-sepia`, `filter-grayscale`, `filter-invert` och
+`filter-drop-shadow` begär `data-include="swatch swatch-solo filter-motiv"` och
+äger i övrigt exakt en regel var: sin egen `filter:`-deklaration.
+
+Motivet — fyra lager: två prickar, ett rändermönster och en diagonal gradient
+som läser `--acc` — låg tidigare i en **nioväljarlista** (`.filter-row` plus
+alla åtta `.f-*`). Alternativen var (a) låta varje demo äga sin kopia av
+motivet — åtta kopior att hålla i synk, (b) behålla väljarlistan i fragmentet
+— då bär varje kopierat exempel de sju andra filterdemona med sig, eller
+(c) en gemensam klass. **Valt: (c)**, klassen `f-motiv` på varje filter-swatch
+(`<span class="swatch f-blur f-motiv">`). Den har ingen egen regel; den enda
+regel den väljer är `.f-motiv .swatch-yta` i `demos/_delat/filter-motiv.css`.
+
+Det är en avsiktlig markup-skillnad — den enda i batchen — och den är inte
+gömd: `tests/demo-parity.mjs` deklarerar de åtta posterna i
+`INTENTIONAL_DIFFS` (demo-id, nodens relativa sökväg, klassen före och
+klassen efter). Jämförelsen normaliserar **bara** den klassen och kastar fel
+om någon av de båda sidorna inte stämmer; en omfångad baslinje faller i stället
+för att dölja skillnaden. Allt annat — övriga attribut, struktur, text,
+beräknade stilar, geometri — jämförs exakt, och inget annat demo får ett
+undantag.
+
+Detta ger **30 källor**, **16 av 16 Group B-demos**, oförändrat **133 kort /
+134 registerposter**, tre delade fragment och noll runtime-JavaScript. Inga
+nya beroenden, inget nytt byggsteg, ingen ändring av CI-arbetsflödet.
+Ägandekarta, snippet-drift, exakta resultat och reproduktion finns i
+[migrationsbeviset](migrering/grupp-b-filter/README.md).
+
+Åtta nya baselineposter fångades med `--capture --merge --demo` från den
+orörda startsidan före migreringen (Chromium `153.0.8010.0`, dokument-hash
+`7cd4d27d…`); de 22 historiska posterna och hela `mergeLog` är oförändrade.
+Strikt jämförelse per demo: **1 412 värden, 0 stil-/DOM-avvikelser, 0 px
+geometriavvikelse**, med den dokumenterade klasskillnaden undantagen. Varje
+kopierat exempel testas fristående med Grundpaketet: fyra motivlager i rätt
+ordning, egen filterdeklaration, alla `var()` lösta, inget `--lv`, inga andra
+demons regler — och **målade pixelbevis** per filter (sudd mäts som minskad
+skärpa, kontrast som spridning, mättnad som färgskillnad, nyansrotation som
+vinkelförskjutning, sepia som ökad röd–blå, gråskala som noll mättnad vid
+oförändrad ljushet, invert som per-pixel `255 − original`, drop-shadow som
+dämpad yta plus en gloria när klippningen lyfts).
+
+Bildmatrisen omfattar **144 par**: åtta demos × 375/768/1280 px × guld/syra ×
+default/lv-0/lv-8. **Alla 144 PNG-par är byte-identiska**, och alla 144
+DOM-/stil-/geometri-hashar är identiska efter att den enda avsiktliga klasstoken
+normaliserats bort. Varje prov lagrar dessutom en råhash, så skillnaden syns i
+stället för att normaliseras bort. `docs/migrering/grupp-b-filter/standalone.mjs`
+renderar varje kodvalv för sig med Grundpaketet (bild + beräknade stilar).
+Inga toleranser eller masker används.
+
+Kvar i Grupp B: ingenting. Nästa steg är Grupp C och D enligt planen nedan.
 
 ### Grupp C — snippet som avviker från live-markupen (7 demos: `media-color-gamut`, `round-mod`, `textspoiler`, `prefers-reduced-motion`, `hover-hover`, `media-scripting`, `media-hover-pointer`)
 

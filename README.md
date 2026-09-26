@@ -193,18 +193,22 @@ bokstavsrad bort i stället för 3 000 px ned.
 
 ---
 
-## En källa per demo (22 av 133 migrerade)
+## En källa per demo (30 av 133 migrerade)
 
 Ett demo-kort bär sin implementation tre gånger: live-markup, CSS i
 stilbladet och det escapade kodvalvet. Det har redan gett drift (kodvalv med
-föråldrad eller trasig CSS). Därför genereras nu **22 av de 133** demona ur
+föråldrad eller trasig CSS). Därför genereras nu **30 av de 133** demona ur
 **en** källfil var i [`demos/`](demos/) — pilotens tre
 (`shape-outside`, `target`, `property-border-angle`), elva ur Grupp A
 (`accent-color`, `caret-shape-caret-color`, `open`, `appearance-base-select`,
 `losenordsmatare`, `dubbeltumme-slider`, `calc-size`, `attr`, `if`,
-`light-dark`, `donutdiagram`) och åtta i Grupp B (`color-mix`,
+`light-dark`, `donutdiagram`) och sexton i Grupp B (`color-mix`,
 `linear-gradient`, `rgb-from`, `oklch-display-p3`, `radial-gradient`,
-`conic-gradient`, `repeating-linear-gradient`, `repeating-radial-gradient`):
+`conic-gradient`, `repeating-linear-gradient`, `repeating-radial-gradient`
+samt de åtta filtren `filter-blur`, `filter-contrast`, `filter-saturate`,
+`filter-hue-rotate`, `filter-sepia`, `filter-grayscale`, `filter-invert` och
+`filter-drop-shadow`, som delar bakgrundsmotivet via
+`demos/_delat/filter-motiv.css`):
 
 ```sh
 # redigera demos/<id>.html (markup + <style>, valfri <style data-live>)
@@ -342,11 +346,11 @@ senaste GitHub Actions-körningen innan PR:en merge:as.
 - **Nivå 3 — webbläsarmatris:** verifiera utvalda demos i Chromium, Firefox och
   WebKit, med dokumenterad fallback per experimentell funktion.
 - **Nivå 4b — isolerad snippet-rendering:** bygg en testsida av varje exempel
-  och verifiera den i en riktig webbläsare. Gjort för de 22 källgenererade
-  demona i `tests/demo-source.mjs`; återstår för övriga 115.
+  och verifiera den i en riktig webbläsare. Gjort för de 30 källgenererade
+  demona i `tests/demo-source.mjs`; återstår för övriga 103.
 - **Nivå 4c — mätt ekvivalens mot baslinje:** `tests/demo-parity.mjs` jämför
   renderingen med `tests/baseline/demos.json` (fångad före migreringen).
-  Gjort för de 22 migrerade demona; växer automatiskt med manifestet.
+  Gjort för de 30 migrerade demona; växer automatiskt med manifestet.
 - **Prestanda:** mät överförd storlek, DOM-storlek, LCP och scroll-respons på
   mobil innan en eventuell uppdelning i flera sidor övervägs.
 
@@ -453,11 +457,12 @@ konkret behov finns. Licenser och upphov: [THIRD-PARTY.md](THIRD-PARTY.md).
 ```
 0-js/
 ├── index.html              # hela referensen — publicerad artefakt; källa utom mellan demo-markörerna
-├── demos/                  # KÄLLA: en fil per källgenererad demo (22 av 133)
+├── demos/                  # KÄLLA: en fil per källgenererad demo (30 av 133)
+│   ├── _delat/             # delade fragment: swatch.css, swatch-solo.css, filter-motiv.css
 │   ├── shape-outside.html
 │   ├── target.html
 │   ├── property-border-angle.html
-│   └── … (elva ur batch 1)
+│   └── … (elva ur batch 1, sexton ur Grupp B)
 ├── docs/
 │   └── demo-kalla.md       # beslut, källformat, verifiering, migreringsplan (inkl. §9 A–Ö-registret)
 ├── doc/                    # före/efter-bilder (dokumentation, inte testgrind)

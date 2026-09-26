@@ -1,0 +1,18 @@
+<!--
+  demo: filter-saturate
+  Kanonisk källa för både live-demon och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+  Grupp B: swatch-familjen, .swatch-solo och det fyrskiktade filtermotivet är
+  delade (demos/_delat/) och begärs med data-include. .f-saturate är demots enda
+  egen regel; labbets --lv-skala är sidans scenografi och ligger i data-live.
+-->
+<div class="demo-yta swatch-solo"><span class="swatch f-saturate f-motiv"><span class="swatch-yta"></span><span class="swatch-lbl">saturate</span></span></div>
+<style data-include="swatch swatch-solo filter-motiv"></style>
+<style>
+.f-saturate .swatch-yta { filter: saturate(2.6); }
+</style>
+<style data-live>
+/* Reglerbart filter: --lv (0–8) blir 0–400 % mättnad. Labbet är sidans
+   scenografi och kopieras inte. */
+.labbar.f-saturate .swatch-yta { filter: saturate(calc(var(--lv) * 50%)); }
+</style>

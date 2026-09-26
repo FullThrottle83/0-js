@@ -1,0 +1,21 @@
+/* DELAT FRAGMENT — det fyrskiktade filtermotivet (kapitel 01 · färg). Ägs av
+   de åtta filterdemona: blur, contrast, saturate, hue-rotate, sepia,
+   grayscale, invert och drop-shadow. Redigeras bara här.
+   BUGGFIX 2026-08-30: motivet låg först bara på .filter-row, men varje
+   filterdemo använder .swatch-solo. Ytan var alltså genomskinlig — filtren
+   filtrerade ingenting alls. Motivet hör till svatschen, inte till
+   radlayouten.
+   Fyra lager, i denna ordning (överst först): två prickar, ett rändermönster
+   och en diagonal gradient. Gradienten läser --acc, så motivet följer temat.
+   .f-motiv är den enda gemensamma klass de åtta svatcharna har: var och en
+   bär sin egen .f-*-klass, och .swatch-solo delas med de fem
+   gradientdemona. Utan en gemensam klass måste fragmentet räkna upp alla
+   åtta filter — och varje kopia av exemplet bär då med sig de sju andras
+   selektorer. Klassen har ingen egen regel; den väljer bara denna. */
+.f-motiv .swatch-yta {
+  background:
+    radial-gradient(circle at 22% 28%, #fff 0 7%, transparent 8%),
+    radial-gradient(circle at 74% 68%, rgb(255 255 255 / .55) 0 5%, transparent 6%),
+    repeating-linear-gradient(90deg, rgb(0 0 0 / .22) 0 6px, transparent 6px 18px),
+    linear-gradient(120deg, var(--acc), #6ea8ff 60%, #ff6ab0);
+}

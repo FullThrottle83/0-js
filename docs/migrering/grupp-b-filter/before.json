@@ -1,0 +1,1735 @@
+{
+  "chromium": "153.0.8010.0",
+  "documentSha256": "7cd4d27dbe56d0a5e4e381b340fbcfac673b37b7090d6f62db13c8ca5e3214f8",
+  "viewportHeights": 900,
+  "samples": {
+    "filter-blur.375.guld.default": {
+      "pngSha256": "a7d0dc0ce4299a3a68aacef4305678fa9f72ba1acb181980d24fd0dc7a0e7526",
+      "measurementSha256": "04e28f5dec7f5cca41855da9fc176e4bcf8e6e95567333f9724c2b864376634b",
+      "rawMeasurementSha256": "04e28f5dec7f5cca41855da9fc176e4bcf8e6e95567333f9724c2b864376634b",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-blur",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-blur.375.guld.0": {
+      "pngSha256": "df8cff5860e0038fb4835cc32a02bfe59ed02899450b01033e046356edffc54e",
+      "measurementSha256": "074154d8a754c9802f470b23d758b078bb4cace5658ea56440e9101dde2abb69",
+      "rawMeasurementSha256": "074154d8a754c9802f470b23d758b078bb4cace5658ea56440e9101dde2abb69",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-blur",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-blur.375.guld.8": {
+      "pngSha256": "48597273a3900074677c4e96dbccacb7a7173299171ec23bf233a0076352f6e8",
+      "measurementSha256": "6cbbabc92feecd0d8ce321eec5137a01084edf32685aaca7ebb4931c6fc2ba24",
+      "rawMeasurementSha256": "6cbbabc92feecd0d8ce321eec5137a01084edf32685aaca7ebb4931c6fc2ba24",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-blur",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-blur.375.syra.default": {
+      "pngSha256": "95659aec6688c26c52583c342b84fd70b91ca41eaa7ee699cec8be40925c850c",
+      "measurementSha256": "8ead84b6a67ff40d04ae1f5528818b290c874d2730217cfccbdd28702f2cbc79",
+      "rawMeasurementSha256": "8ead84b6a67ff40d04ae1f5528818b290c874d2730217cfccbdd28702f2cbc79",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-blur",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-blur.375.syra.0": {
+      "pngSha256": "d0e4161b16790b73e75d5fd30d09ac71430209cecb61c2c795d66f18bb07a230",
+      "measurementSha256": "c046cadef193c8151dd3ddeff31a80c22f1efde6f3aebfd259314561a14c9c8a",
+      "rawMeasurementSha256": "c046cadef193c8151dd3ddeff31a80c22f1efde6f3aebfd259314561a14c9c8a",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-blur",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-blur.375.syra.8": {
+      "pngSha256": "491e7b1515af4dcb00e3f7801dcb178e0aa8956b3085fed67f7577ebc09826e7",
+      "measurementSha256": "00da4d2c5e050ea55dcdb12b852413ab83daa7c9d2f1ec17d66ee410b17637bc",
+      "rawMeasurementSha256": "00da4d2c5e050ea55dcdb12b852413ab83daa7c9d2f1ec17d66ee410b17637bc",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-blur",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-blur.768.guld.default": {
+      "pngSha256": "2a17704f6589dfafea546550239e9d0712f4c947dcd7847223f57794efaefa60",
+      "measurementSha256": "b8c3a25ec66c4d366e3d968e3c4f0db783004029add1e548c34ec6409449cb38",
+      "rawMeasurementSha256": "b8c3a25ec66c4d366e3d968e3c4f0db783004029add1e548c34ec6409449cb38",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-blur",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-blur.768.guld.0": {
+      "pngSha256": "bf41e7eca336441f3c8e41e29dd5c28daf6eb7161ddfa4cb5681f2dbbce4f8d8",
+      "measurementSha256": "1d7a8ff5f0a6a791322f5bf99fc6d4b0925b2c42652261a2cae0dace8a785d74",
+      "rawMeasurementSha256": "1d7a8ff5f0a6a791322f5bf99fc6d4b0925b2c42652261a2cae0dace8a785d74",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-blur",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-blur.768.guld.8": {
+      "pngSha256": "4d326ca3b435844d3a7a51d020b66101d7f6efc68496dfb9aa5353f4e1f0add1",
+      "measurementSha256": "2b452b70de34edc2733033752ecb31b5c033f3916bb1303f20e793b704f63893",
+      "rawMeasurementSha256": "2b452b70de34edc2733033752ecb31b5c033f3916bb1303f20e793b704f63893",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-blur",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-blur.768.syra.default": {
+      "pngSha256": "9d4e340b3cf3e661efef5487221c1feb5b55b7fbaed1410761521f566d9ba36f",
+      "measurementSha256": "132a157d9c1c35d23074dc5c9aad628a0db0b218a144b7b9b007be657d82db83",
+      "rawMeasurementSha256": "132a157d9c1c35d23074dc5c9aad628a0db0b218a144b7b9b007be657d82db83",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-blur",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-blur.768.syra.0": {
+      "pngSha256": "d8acfb56c4f5bdde6080d43d01c4c0e5a054af7b159f2e59dc36eb1fb4fa28f3",
+      "measurementSha256": "bd8bc998edc990199b59c98e78ad382aa8d583744d5e7c673a2aa90c6edca3ae",
+      "rawMeasurementSha256": "bd8bc998edc990199b59c98e78ad382aa8d583744d5e7c673a2aa90c6edca3ae",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-blur",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-blur.768.syra.8": {
+      "pngSha256": "9bbd369d5db582f6b0d895741899fccbdac9b14379aae68e7a763bbc862b1246",
+      "measurementSha256": "88daa695e8eeda32f7c848d5c0cfba31ec293204b773bb101598cf9e75c5ed8b",
+      "rawMeasurementSha256": "88daa695e8eeda32f7c848d5c0cfba31ec293204b773bb101598cf9e75c5ed8b",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-blur",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-blur.1280.guld.default": {
+      "pngSha256": "c915ec9a85c64f12af67ae60f13b96e54ff6083bb0bdf22d3670e07aa3b23a93",
+      "measurementSha256": "b36891292f4145ebe5ebd9fde84480b2d1c2702cca6af7d3fc7b5c803c5c5469",
+      "rawMeasurementSha256": "b36891292f4145ebe5ebd9fde84480b2d1c2702cca6af7d3fc7b5c803c5c5469",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-blur",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-blur.1280.guld.0": {
+      "pngSha256": "f1416f53e993a6393aa0fa43c76ba1be6bf1c6403daa3d1c2fcbf37241992f60",
+      "measurementSha256": "e3add04350a32fe540cd8290c8d8319be3b05185361ac863f845a7260d0e6a5e",
+      "rawMeasurementSha256": "e3add04350a32fe540cd8290c8d8319be3b05185361ac863f845a7260d0e6a5e",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-blur",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-blur.1280.guld.8": {
+      "pngSha256": "6578ba40ad92d3ddfcc5a88dab84ec0ca9f82cfe3c42ef2c229f36c3a8a9c456",
+      "measurementSha256": "dfed2145ac01dfb19ccc566ad1bebf069e4ae0bee9c2595f49c4248ecc26d05f",
+      "rawMeasurementSha256": "dfed2145ac01dfb19ccc566ad1bebf069e4ae0bee9c2595f49c4248ecc26d05f",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-blur",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-blur.1280.syra.default": {
+      "pngSha256": "76034d155cda7ee109ed8c42c8e09c96ca0b411214115d919bf0d0d102fcb5d2",
+      "measurementSha256": "705a2e3b16887720ede6e2c0b2a2a615f497d87c24d65045d2d684219dccd0a8",
+      "rawMeasurementSha256": "705a2e3b16887720ede6e2c0b2a2a615f497d87c24d65045d2d684219dccd0a8",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-blur",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-blur.1280.syra.0": {
+      "pngSha256": "3a43f938fce77dacf8a5691d0feb14b303e0a8bc4095b24f50f6bfb09a06077a",
+      "measurementSha256": "d2dba5081a14ea55e5e3ae4bc5859bac4318157589ce9c53f584637a51ce22e1",
+      "rawMeasurementSha256": "d2dba5081a14ea55e5e3ae4bc5859bac4318157589ce9c53f584637a51ce22e1",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-blur",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-blur.1280.syra.8": {
+      "pngSha256": "faf8e6a83877fafed685f5752c28e04e21e6299b04be160409825df6ec3263c4",
+      "measurementSha256": "a2ebfb83a401db2efca4afe95c439dece71c278f5cc4cb99c6ae7296c3d767b2",
+      "rawMeasurementSha256": "a2ebfb83a401db2efca4afe95c439dece71c278f5cc4cb99c6ae7296c3d767b2",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-blur",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-contrast.375.guld.default": {
+      "pngSha256": "67fe7d2c87bfa2e495ea293668db27049fae35ae5c12e2bc016ff47a717d1810",
+      "measurementSha256": "110cd349347b846b297d3f7682825f96b788bdde3a4c3508bb88cc25d5161e15",
+      "rawMeasurementSha256": "110cd349347b846b297d3f7682825f96b788bdde3a4c3508bb88cc25d5161e15",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-contrast",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-contrast.375.guld.0": {
+      "pngSha256": "fd4aa32152ecdc2dc4b43e4c2e2308f1330ef356562ffa31f83dc760b5072b64",
+      "measurementSha256": "92e476a4bbf285ea255611f15900fa4c85dc1da26c4e9abeb2d4cd8334d1aeec",
+      "rawMeasurementSha256": "92e476a4bbf285ea255611f15900fa4c85dc1da26c4e9abeb2d4cd8334d1aeec",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-contrast",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-contrast.375.guld.8": {
+      "pngSha256": "1af0e258fbb621cfd3beedde0535239e3d5ff434ada606af71746ec3ea7373f8",
+      "measurementSha256": "4759a5b93cbce5c1666142b97eb62e57b78452bb320c69c18ced5ecaf8ae9fc4",
+      "rawMeasurementSha256": "4759a5b93cbce5c1666142b97eb62e57b78452bb320c69c18ced5ecaf8ae9fc4",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-contrast",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-contrast.375.syra.default": {
+      "pngSha256": "c54896ca3caa28045d76afefd52fe8a12cb36dad8a063bd1a5a28267b479be29",
+      "measurementSha256": "3c9f2ee75aa417ccf8630adbc705419cbbdccacb2809c1d77d6178498fca852c",
+      "rawMeasurementSha256": "3c9f2ee75aa417ccf8630adbc705419cbbdccacb2809c1d77d6178498fca852c",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-contrast",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-contrast.375.syra.0": {
+      "pngSha256": "d01a22e97820cd5d77b0df43cc9bfa8bad88cb727dc5064f187a788470d63663",
+      "measurementSha256": "e8bf8cbfbb280c50e6d32e4d5c6fb4a349da1d24ed557c8542703ddeae21cb7f",
+      "rawMeasurementSha256": "e8bf8cbfbb280c50e6d32e4d5c6fb4a349da1d24ed557c8542703ddeae21cb7f",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-contrast",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-contrast.375.syra.8": {
+      "pngSha256": "519b2a9312c22b05390c991320217a0bb184473bbad322ef9e30985183237e54",
+      "measurementSha256": "788c141b192595d36808750e919127bb43d3c15544204ca1d0ecd7ec419b0b2d",
+      "rawMeasurementSha256": "788c141b192595d36808750e919127bb43d3c15544204ca1d0ecd7ec419b0b2d",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-contrast",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-contrast.768.guld.default": {
+      "pngSha256": "796f730cfa8088c8bb1d5c78449edc8b0ed373f025a8091de91315427046dc88",
+      "measurementSha256": "b00791e6a2e9a845fd1ebeabcb932ceae463cf9288f87100beb5a2aaa89f144a",
+      "rawMeasurementSha256": "b00791e6a2e9a845fd1ebeabcb932ceae463cf9288f87100beb5a2aaa89f144a",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-contrast",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-contrast.768.guld.0": {
+      "pngSha256": "dc555d1baf99b4d15985374a8e65283abca2e7c9ede17d1a2bd277392c77ea47",
+      "measurementSha256": "3a15cfc82e5e1b4e25d9a20a29352a5cf6889ddc9d2edd8da91ca61a44f0705b",
+      "rawMeasurementSha256": "3a15cfc82e5e1b4e25d9a20a29352a5cf6889ddc9d2edd8da91ca61a44f0705b",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-contrast",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-contrast.768.guld.8": {
+      "pngSha256": "28f958b2180b851a1f69f87ddddbbf6b0d3a3858bcbe15031c61097dbade3927",
+      "measurementSha256": "d4441e8d34fd8239d80bf5dcc8d5c422a4123d2de88c4dcf73e9bdfef739cfb7",
+      "rawMeasurementSha256": "d4441e8d34fd8239d80bf5dcc8d5c422a4123d2de88c4dcf73e9bdfef739cfb7",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-contrast",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-contrast.768.syra.default": {
+      "pngSha256": "3ebac5a356f22b32f9dcd9378fd2f37d8ca7ce81496c1501121cfc4cb4ec9e16",
+      "measurementSha256": "cb67d6b78d515b88877c7aa074eae152d5a84bb512f0a80c7118579fde65a856",
+      "rawMeasurementSha256": "cb67d6b78d515b88877c7aa074eae152d5a84bb512f0a80c7118579fde65a856",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-contrast",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-contrast.768.syra.0": {
+      "pngSha256": "33714225b386188e9e968a81a0aecbe0a7f4f86759d82147663fe8e8044839c7",
+      "measurementSha256": "8b7be09dbb4eba6b525ec71a2a4dcfe7d8c498d9daea82c536f9ff4bf6af7e63",
+      "rawMeasurementSha256": "8b7be09dbb4eba6b525ec71a2a4dcfe7d8c498d9daea82c536f9ff4bf6af7e63",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-contrast",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-contrast.768.syra.8": {
+      "pngSha256": "234e01e13d371178dfcd318af207d1c1549145bc6e222ac6c5979862686ce080",
+      "measurementSha256": "c8c9318e7cdcc15ecda0ca68342df3bf55f7c752d46f3fbe53a38cc08717f0cc",
+      "rawMeasurementSha256": "c8c9318e7cdcc15ecda0ca68342df3bf55f7c752d46f3fbe53a38cc08717f0cc",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-contrast",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-contrast.1280.guld.default": {
+      "pngSha256": "e446c5eef6a583c5dd294d96e4eb1a276aa2ac80b7bc7fa5b9cb3e717b567500",
+      "measurementSha256": "b7fdc10001ba65f291a9233d11447995db5863c3bb980daa0a8570167e3aa558",
+      "rawMeasurementSha256": "b7fdc10001ba65f291a9233d11447995db5863c3bb980daa0a8570167e3aa558",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-contrast",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-contrast.1280.guld.0": {
+      "pngSha256": "5c3b06154edfe6f156ea59d5959d79b6a3c5dc8df3d01e12ee2e3202f4936583",
+      "measurementSha256": "9773039507b7c01f2f5ad5700b6831979dd148de211f6e08788bbdb3ff835b15",
+      "rawMeasurementSha256": "9773039507b7c01f2f5ad5700b6831979dd148de211f6e08788bbdb3ff835b15",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-contrast",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-contrast.1280.guld.8": {
+      "pngSha256": "a55fff5932beb1fadf233fd3c12d7ae35f9317a1abbce77c6fcfca0f11339648",
+      "measurementSha256": "fe0718d6974fc8c2724347a2ac688f8c96c2ec02b7d04091c44486484b36163c",
+      "rawMeasurementSha256": "fe0718d6974fc8c2724347a2ac688f8c96c2ec02b7d04091c44486484b36163c",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-contrast",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-contrast.1280.syra.default": {
+      "pngSha256": "4e733be47a4e64a607fcbf413e83302d09409a1fc97d7aac9595cf8be8c9097f",
+      "measurementSha256": "064dd41107782940708af33f4bdc9f6660a5bcb930348149eeef557cf5fcdb65",
+      "rawMeasurementSha256": "064dd41107782940708af33f4bdc9f6660a5bcb930348149eeef557cf5fcdb65",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-contrast",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-contrast.1280.syra.0": {
+      "pngSha256": "b91af2910b8a36aa0dfc5f9745e082625275344908da6e2c13cb87b12ecdfb0a",
+      "measurementSha256": "2e614b775bddda11bc7a40429729b1a346da9bea42be10c42373dd35b0f61b91",
+      "rawMeasurementSha256": "2e614b775bddda11bc7a40429729b1a346da9bea42be10c42373dd35b0f61b91",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-contrast",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-contrast.1280.syra.8": {
+      "pngSha256": "fb627ea041dbb6c5cbe424a1af93842ddfefd953e1253cbccae30fec6fe9a8a5",
+      "measurementSha256": "aa9722454bf9767d8416fc02d2e4f080081f7298cd8165b2fe4e239c3e32b3e2",
+      "rawMeasurementSha256": "aa9722454bf9767d8416fc02d2e4f080081f7298cd8165b2fe4e239c3e32b3e2",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-contrast",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-saturate.375.guld.default": {
+      "pngSha256": "dfdba6aa972826b4f641ff756c0edce3014cc1474ab03ae4e8f79ecfe36cce94",
+      "measurementSha256": "7737b8f4948eee671543b42720c958e0da25cea1a5759697db32d9d1d17cf712",
+      "rawMeasurementSha256": "7737b8f4948eee671543b42720c958e0da25cea1a5759697db32d9d1d17cf712",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-saturate",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-saturate.375.guld.0": {
+      "pngSha256": "3653effa13b6b22b84c138810d5cf866aef1e5481a673e11e034035f5e59a63c",
+      "measurementSha256": "68926dc1b5f57f04170ad65f47b1c9d92f63aa17cb1da85adefa6292d35486a0",
+      "rawMeasurementSha256": "68926dc1b5f57f04170ad65f47b1c9d92f63aa17cb1da85adefa6292d35486a0",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-saturate",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-saturate.375.guld.8": {
+      "pngSha256": "533b05fa957da682aa448de9d86c4423fc1ead0003c2d8d128d3307243bbc303",
+      "measurementSha256": "560ea16f96f0e0c714c8064b417b6ec159a0cfb11c6ca6e3e957061d1a114cc1",
+      "rawMeasurementSha256": "560ea16f96f0e0c714c8064b417b6ec159a0cfb11c6ca6e3e957061d1a114cc1",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-saturate",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-saturate.375.syra.default": {
+      "pngSha256": "6655a1bb89f4f93f447e081e0fe470e417d57e37aaeeb316f848f915856b9ac9",
+      "measurementSha256": "60c76e95c058e35f7eb4e2379bba0c99a63c39feb6dc1514a69876b038a5bba5",
+      "rawMeasurementSha256": "60c76e95c058e35f7eb4e2379bba0c99a63c39feb6dc1514a69876b038a5bba5",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-saturate",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-saturate.375.syra.0": {
+      "pngSha256": "c1d51b3198dc2379116b1c78929da6c06ea1f381a5afdc0469c96428dcb2f22e",
+      "measurementSha256": "c24236df5f64039135aa786c13520cb7fda9d4d3fc130dd6f2a30010c40ca66b",
+      "rawMeasurementSha256": "c24236df5f64039135aa786c13520cb7fda9d4d3fc130dd6f2a30010c40ca66b",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-saturate",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-saturate.375.syra.8": {
+      "pngSha256": "24c5e0659fbf7b5de88beaeb81fc493444fbe85254d7bf0d2cf69a8bfd8b24a3",
+      "measurementSha256": "d63e50e90bce9ebbc7c602ced5657e04cfa405362106325f53240c31325bfefa",
+      "rawMeasurementSha256": "d63e50e90bce9ebbc7c602ced5657e04cfa405362106325f53240c31325bfefa",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-saturate",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-saturate.768.guld.default": {
+      "pngSha256": "4f2601b323b2cde26397b0cd01ede1d096cb1762e0215f1c26bf6bd1a5df875a",
+      "measurementSha256": "10e796612652f6e5b4aebc91c594f2594d2c3e3e71eda4370e1177b3698830a9",
+      "rawMeasurementSha256": "10e796612652f6e5b4aebc91c594f2594d2c3e3e71eda4370e1177b3698830a9",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-saturate",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-saturate.768.guld.0": {
+      "pngSha256": "a239ff88abe75cff1bb459ef2c635b11f59682884e31e9f1efa6c6e8a1c5280b",
+      "measurementSha256": "1583617f33f56f4be9dea4403e9bed4d001dc6a34adad23e621ede0432c5bc63",
+      "rawMeasurementSha256": "1583617f33f56f4be9dea4403e9bed4d001dc6a34adad23e621ede0432c5bc63",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-saturate",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-saturate.768.guld.8": {
+      "pngSha256": "7278042b450eb6c330d98c1c3763b5f087f57e54d49a267fbdd2d45c7a191a03",
+      "measurementSha256": "24c0eff9eb205adabd77f818839f1f37e58424c6f1a747f52e0689ec7f626950",
+      "rawMeasurementSha256": "24c0eff9eb205adabd77f818839f1f37e58424c6f1a747f52e0689ec7f626950",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-saturate",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-saturate.768.syra.default": {
+      "pngSha256": "48367f70c431d144f18c20f2419e56d2a999e36cae87e27e898812ddd507234a",
+      "measurementSha256": "1ffeaad25ea31cc6a53c073071962f58a825070222ef026bae973878776dfa2b",
+      "rawMeasurementSha256": "1ffeaad25ea31cc6a53c073071962f58a825070222ef026bae973878776dfa2b",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-saturate",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-saturate.768.syra.0": {
+      "pngSha256": "1c98fddb58334c45203970ed3a96a83f7944c6e6adf71b3f8fd356a988f24042",
+      "measurementSha256": "d78d1bd743f5029b22d05456bf421e00314f6a67c47971dedd1a6fe7f2b17420",
+      "rawMeasurementSha256": "d78d1bd743f5029b22d05456bf421e00314f6a67c47971dedd1a6fe7f2b17420",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-saturate",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-saturate.768.syra.8": {
+      "pngSha256": "d960db4940b0dda520a8110da120c532e4571aeff24553cc8ea3d42cb9804802",
+      "measurementSha256": "819739cfa787a13bd9fc34f4cc45ae9f6ac08643bb901fb9a2243a8de2efcd04",
+      "rawMeasurementSha256": "819739cfa787a13bd9fc34f4cc45ae9f6ac08643bb901fb9a2243a8de2efcd04",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-saturate",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-saturate.1280.guld.default": {
+      "pngSha256": "26d2aa9ce4ed85b5479d0c3a74d9afffbf5a6181bce1be2f8d2c9e1ed87f6972",
+      "measurementSha256": "b93cb4e555acf9af788bee8159201a821e9d200842862e3c4cf17294b87d9e24",
+      "rawMeasurementSha256": "b93cb4e555acf9af788bee8159201a821e9d200842862e3c4cf17294b87d9e24",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-saturate",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-saturate.1280.guld.0": {
+      "pngSha256": "4b8b7540bde5d8e21a232e7b2d1efb8f316f4b71e5fdf1c62dcac5aee351a3bf",
+      "measurementSha256": "4cb889452e130acf767ed8239bffffd3d2846ed4336367687230e16e639b773c",
+      "rawMeasurementSha256": "4cb889452e130acf767ed8239bffffd3d2846ed4336367687230e16e639b773c",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-saturate",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-saturate.1280.guld.8": {
+      "pngSha256": "1e749ae7a96b6e31ec405084116aaa771cc7f7a45531eb5c2e87467f3e85cf4f",
+      "measurementSha256": "f26e35b9443e791601158ed8b64cf8aa8104b0ae79654be06750ebd62f17e87f",
+      "rawMeasurementSha256": "f26e35b9443e791601158ed8b64cf8aa8104b0ae79654be06750ebd62f17e87f",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-saturate",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-saturate.1280.syra.default": {
+      "pngSha256": "2fd504c8ee1634f61349eb9e92e5749983548257e26af715627c0f6655ce76bb",
+      "measurementSha256": "d4c83151a529a5a2b0d3b746eb1eac491b0d7f399eda85f100de05b10be075b6",
+      "rawMeasurementSha256": "d4c83151a529a5a2b0d3b746eb1eac491b0d7f399eda85f100de05b10be075b6",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-saturate",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-saturate.1280.syra.0": {
+      "pngSha256": "d145a742d88cac33e82cee800f55b52aa9ba9383d72ca9e123fba7b8d2f48f8f",
+      "measurementSha256": "13bef420bbd9dd418086728bb4e5366d00619e696a6941fb3eb1af035f3655bf",
+      "rawMeasurementSha256": "13bef420bbd9dd418086728bb4e5366d00619e696a6941fb3eb1af035f3655bf",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-saturate",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-saturate.1280.syra.8": {
+      "pngSha256": "a5cceb5ff91037853a77255fb66c49f2b4103ea3c6df84cefd4782f58253007d",
+      "measurementSha256": "4e67f8685162ceac6686411c23706ae68362effeb3c807463ad0120676847984",
+      "rawMeasurementSha256": "4e67f8685162ceac6686411c23706ae68362effeb3c807463ad0120676847984",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-saturate",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-hue-rotate.375.guld.default": {
+      "pngSha256": "a436101f8e31edd8f0f366af592cfc0580d2ffaca2784c3fa737cf701dd7344a",
+      "measurementSha256": "f3569f09832808d6554e390e4a1a0a73946cb695193e9cca4d09fe4c1ee995f8",
+      "rawMeasurementSha256": "f3569f09832808d6554e390e4a1a0a73946cb695193e9cca4d09fe4c1ee995f8",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-hue",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-hue-rotate.375.guld.0": {
+      "pngSha256": "aa21aa2e476f2a1eac22d6de705fa9367eaaa246d86150363c1c270287fa2b31",
+      "measurementSha256": "6922b6dc8d9fac5ca35f554bb2d0eacc283e81f57d5b7848b0f6e71a28a95dc9",
+      "rawMeasurementSha256": "6922b6dc8d9fac5ca35f554bb2d0eacc283e81f57d5b7848b0f6e71a28a95dc9",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-hue",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-hue-rotate.375.guld.8": {
+      "pngSha256": "aa21aa2e476f2a1eac22d6de705fa9367eaaa246d86150363c1c270287fa2b31",
+      "measurementSha256": "39a13cea90265af5d0f1f9029d875b35ffe91fc6d30c8f316a1ddde8203a8baf",
+      "rawMeasurementSha256": "39a13cea90265af5d0f1f9029d875b35ffe91fc6d30c8f316a1ddde8203a8baf",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-hue",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-hue-rotate.375.syra.default": {
+      "pngSha256": "3aff17b7a23873242b72b9683921fc6dc74a83fb616fd7ff3b62579837abacae",
+      "measurementSha256": "be9d4ca22e41f01c6012baa272e3e2efe596f64d136872e50df0ebf8bd04dd13",
+      "rawMeasurementSha256": "be9d4ca22e41f01c6012baa272e3e2efe596f64d136872e50df0ebf8bd04dd13",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-hue",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-hue-rotate.375.syra.0": {
+      "pngSha256": "7fbc555bac67bd2e48840409e1ec6b3ad8b21fbe9a86a5b7c31f395b564ca4d5",
+      "measurementSha256": "219423dd68dddf2c10b89a75ea447ab0d6e8f49d37cd3e7372324f2c99cf7e0e",
+      "rawMeasurementSha256": "219423dd68dddf2c10b89a75ea447ab0d6e8f49d37cd3e7372324f2c99cf7e0e",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-hue",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-hue-rotate.375.syra.8": {
+      "pngSha256": "7fbc555bac67bd2e48840409e1ec6b3ad8b21fbe9a86a5b7c31f395b564ca4d5",
+      "measurementSha256": "050478c9b62ce82364f7905bd1f2b75accfd3ab91540d79507b51e3cb6619d10",
+      "rawMeasurementSha256": "050478c9b62ce82364f7905bd1f2b75accfd3ab91540d79507b51e3cb6619d10",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-hue",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-hue-rotate.768.guld.default": {
+      "pngSha256": "20295759781bd1abed698d36f23fce34885b2141720fc9764769626602c2cd91",
+      "measurementSha256": "a058626be252c0ff3c2f42d6af760af778ed00618958c6da5c88a63a30e9a4c1",
+      "rawMeasurementSha256": "a058626be252c0ff3c2f42d6af760af778ed00618958c6da5c88a63a30e9a4c1",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-hue",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-hue-rotate.768.guld.0": {
+      "pngSha256": "aa86df463818d909607f7bca8c7635b1ea44110f08c1c5b20fa0f4fab02a5272",
+      "measurementSha256": "573a0b42826c6fbed6063da25c3ef69ed0342bac2e9d293d725b5fd56afafa8f",
+      "rawMeasurementSha256": "573a0b42826c6fbed6063da25c3ef69ed0342bac2e9d293d725b5fd56afafa8f",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-hue",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-hue-rotate.768.guld.8": {
+      "pngSha256": "aa86df463818d909607f7bca8c7635b1ea44110f08c1c5b20fa0f4fab02a5272",
+      "measurementSha256": "6fa0c2e3d427eb2c837ecd3b1560e23bbd5f65253a5e1e707e485af00148ddae",
+      "rawMeasurementSha256": "6fa0c2e3d427eb2c837ecd3b1560e23bbd5f65253a5e1e707e485af00148ddae",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-hue",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-hue-rotate.768.syra.default": {
+      "pngSha256": "912f623b32b5118381650f99d3d8cc0a3f1cd604fb1b9716c8d0394c677000c8",
+      "measurementSha256": "d6115fd05cf91e14107a42611795282564dca22345fe09b7f7b12d1566e6a44f",
+      "rawMeasurementSha256": "d6115fd05cf91e14107a42611795282564dca22345fe09b7f7b12d1566e6a44f",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-hue",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-hue-rotate.768.syra.0": {
+      "pngSha256": "b4c26da63aebb0362703117b0c9681bc4eb548894790dfc826d1b7690eeddce9",
+      "measurementSha256": "3b06cd4ba2fa5b911ef73794838550cd1265d499e0e9e015bb63831083149a7b",
+      "rawMeasurementSha256": "3b06cd4ba2fa5b911ef73794838550cd1265d499e0e9e015bb63831083149a7b",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-hue",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-hue-rotate.768.syra.8": {
+      "pngSha256": "b4c26da63aebb0362703117b0c9681bc4eb548894790dfc826d1b7690eeddce9",
+      "measurementSha256": "408b2f8fe95a43a49921772efd7120f50591efea2cced72fa58e7bfa191d41b4",
+      "rawMeasurementSha256": "408b2f8fe95a43a49921772efd7120f50591efea2cced72fa58e7bfa191d41b4",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-hue",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-hue-rotate.1280.guld.default": {
+      "pngSha256": "2b6af10a8b1bb21871091d4e26cf2a6177cf5b797d87ad39a89090f23128190a",
+      "measurementSha256": "62ee24437dd77529d5775749ccff96269b98d184a72cf04b19a614114fd753f9",
+      "rawMeasurementSha256": "62ee24437dd77529d5775749ccff96269b98d184a72cf04b19a614114fd753f9",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-hue",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-hue-rotate.1280.guld.0": {
+      "pngSha256": "71958439293959f9c3b5694defe39adcbaea0ee0254a526b4f75d6d54386edd3",
+      "measurementSha256": "1ada68d4b6fbda4797ec83ba1cd7f88c5275ad3bb69ec0755ecb24e04c3ac82b",
+      "rawMeasurementSha256": "1ada68d4b6fbda4797ec83ba1cd7f88c5275ad3bb69ec0755ecb24e04c3ac82b",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-hue",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-hue-rotate.1280.guld.8": {
+      "pngSha256": "71958439293959f9c3b5694defe39adcbaea0ee0254a526b4f75d6d54386edd3",
+      "measurementSha256": "6137caafe09ea3d38345006793471769c3650de5ccaaa9d1b800694aaecc32c9",
+      "rawMeasurementSha256": "6137caafe09ea3d38345006793471769c3650de5ccaaa9d1b800694aaecc32c9",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-hue",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-hue-rotate.1280.syra.default": {
+      "pngSha256": "93472c5960e404305c3f844b9d0ca0f172fea436c033f3b69428f51e123e2b0f",
+      "measurementSha256": "94b0141bfefc2864094190eae484bcf83b5497d4ffa15339a217b70a13895c5f",
+      "rawMeasurementSha256": "94b0141bfefc2864094190eae484bcf83b5497d4ffa15339a217b70a13895c5f",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-hue",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-hue-rotate.1280.syra.0": {
+      "pngSha256": "7eba60277199e2b684503531adae8f738c9cc0d77f3e0292e3e919beefb95728",
+      "measurementSha256": "7cbe26ace940decd19ce168a433671651e2a3f2e6441e584a6eeaa8f8c08fa45",
+      "rawMeasurementSha256": "7cbe26ace940decd19ce168a433671651e2a3f2e6441e584a6eeaa8f8c08fa45",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-hue",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-hue-rotate.1280.syra.8": {
+      "pngSha256": "7eba60277199e2b684503531adae8f738c9cc0d77f3e0292e3e919beefb95728",
+      "measurementSha256": "3c6a58aec6cbf0b1c292f09cb0aa10d59d5b4e7c767be385826dda1aa3849b6d",
+      "rawMeasurementSha256": "3c6a58aec6cbf0b1c292f09cb0aa10d59d5b4e7c767be385826dda1aa3849b6d",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-hue",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-sepia.375.guld.default": {
+      "pngSha256": "8c425e15290cf9e567966e709035e3653127f7bc55606efc50ac586ddcf6246b",
+      "measurementSha256": "9b3c9e6b47b1e598ae50dd3a8d993f238030b1e033a0b0dd0dd3dd6ea5fbdc8f",
+      "rawMeasurementSha256": "9b3c9e6b47b1e598ae50dd3a8d993f238030b1e033a0b0dd0dd3dd6ea5fbdc8f",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-sepia",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-sepia.375.guld.0": {
+      "pngSha256": "b266395fbb668f29e90cdd0889508f031e8a253c844f4d3c7889fa0ce15180ac",
+      "measurementSha256": "25552e0fa7898d979141c7753e2139866118079b25307c1e848efb765228b7d8",
+      "rawMeasurementSha256": "25552e0fa7898d979141c7753e2139866118079b25307c1e848efb765228b7d8",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-sepia",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-sepia.375.guld.8": {
+      "pngSha256": "4506fa080f03a42235f855648b29c4c991f86f6b503ad000d7250afd51682f14",
+      "measurementSha256": "a8eec5296ffac23e6fa5d229474b7410f8573c4c0cbfdab86249c5d56fdb4b02",
+      "rawMeasurementSha256": "a8eec5296ffac23e6fa5d229474b7410f8573c4c0cbfdab86249c5d56fdb4b02",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-sepia",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-sepia.375.syra.default": {
+      "pngSha256": "6b9b67dfb410fe301eef3aa1634adcf5391a909d7270c56c5b2eab1986401dc4",
+      "measurementSha256": "1b7bcb679fcc73e2e8286838cf1a226d3878c88f82ae0318187d0ac00aacf62d",
+      "rawMeasurementSha256": "1b7bcb679fcc73e2e8286838cf1a226d3878c88f82ae0318187d0ac00aacf62d",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-sepia",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-sepia.375.syra.0": {
+      "pngSha256": "014013244f6890f3b65eb0b9384268a83d84a46050311ecce4b39645d1a2f761",
+      "measurementSha256": "db2db3ff03e6eac625577a94e41f41b1615ea95e9a5719b23e02f8fc60d72108",
+      "rawMeasurementSha256": "db2db3ff03e6eac625577a94e41f41b1615ea95e9a5719b23e02f8fc60d72108",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-sepia",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-sepia.375.syra.8": {
+      "pngSha256": "1953484e9b99d30d066ade9f28287ce19484a646da8162f6f406a314931aa28a",
+      "measurementSha256": "10870f545e6c0349ec5f895d2218c49c3609e165b2214a0306dd22473327923d",
+      "rawMeasurementSha256": "10870f545e6c0349ec5f895d2218c49c3609e165b2214a0306dd22473327923d",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-sepia",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-sepia.768.guld.default": {
+      "pngSha256": "eabdbead0ea1338b69d99d9f41657f6a74c2fbbe4d62ff2c64312b65aba22b58",
+      "measurementSha256": "2e688bd797c280220059dcc7df323e12fd08f48eb413e54363eee5f3a0de2a65",
+      "rawMeasurementSha256": "2e688bd797c280220059dcc7df323e12fd08f48eb413e54363eee5f3a0de2a65",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-sepia",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-sepia.768.guld.0": {
+      "pngSha256": "e71b715b180119bb2d0e7f798771aed2940532803768d328d12cac6afb4ad924",
+      "measurementSha256": "2539147a890e5894a208856c5c76afde70cf8bbe5247175a59c6186a9d3342e0",
+      "rawMeasurementSha256": "2539147a890e5894a208856c5c76afde70cf8bbe5247175a59c6186a9d3342e0",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-sepia",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-sepia.768.guld.8": {
+      "pngSha256": "0d60571b444d31730c6d0b7ad89628faaa1f26829d0e0dc44bd8be13bdc36fc7",
+      "measurementSha256": "cef52f76e321ba001029c5af14cb42c24fd22db14082b02c30a11272b843c336",
+      "rawMeasurementSha256": "cef52f76e321ba001029c5af14cb42c24fd22db14082b02c30a11272b843c336",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-sepia",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-sepia.768.syra.default": {
+      "pngSha256": "0f06adfd636585b35badbbfe67afb58f740070564066a6df4db7ed8fd442bb98",
+      "measurementSha256": "3107d330a447121ff907524be44798dd31707b5b1d4a0c5f8e427bf9a2cd856c",
+      "rawMeasurementSha256": "3107d330a447121ff907524be44798dd31707b5b1d4a0c5f8e427bf9a2cd856c",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-sepia",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-sepia.768.syra.0": {
+      "pngSha256": "945783994e53f21afef131c54d186cc80ecb8dd3de7c0138b71e845a613c50bd",
+      "measurementSha256": "1bb51aae0ef1a05ac9a7d3f359797ceb0949c13cd64c95f281149942158a6497",
+      "rawMeasurementSha256": "1bb51aae0ef1a05ac9a7d3f359797ceb0949c13cd64c95f281149942158a6497",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-sepia",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-sepia.768.syra.8": {
+      "pngSha256": "9d1e3b21368d1445ee420808ff6bfd6dd6e46ecc383fd7074a4971ef111ffd90",
+      "measurementSha256": "7b4cdc324c9c7c1ddaa8745be13e4a90b783c10cc1133004988e8454113f6b6b",
+      "rawMeasurementSha256": "7b4cdc324c9c7c1ddaa8745be13e4a90b783c10cc1133004988e8454113f6b6b",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-sepia",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-sepia.1280.guld.default": {
+      "pngSha256": "92e037c81a5f47e62f8803395aaad96f555f6d6585e6f5135598358aa7eb7fdf",
+      "measurementSha256": "a363a8c30e25fa71f6af0e7b7320bca85fa2741f007f9ac795bea8726e7bbbf4",
+      "rawMeasurementSha256": "a363a8c30e25fa71f6af0e7b7320bca85fa2741f007f9ac795bea8726e7bbbf4",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-sepia",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-sepia.1280.guld.0": {
+      "pngSha256": "7964944ba76b7ee4f72643789abd2e2466b81b8d99e8a4ade4fcc0cae17c2b8c",
+      "measurementSha256": "14248ff32a0f5d5e06bcc7b7a44d42d343a5a86c5c6686df871d7d50f21ea5c1",
+      "rawMeasurementSha256": "14248ff32a0f5d5e06bcc7b7a44d42d343a5a86c5c6686df871d7d50f21ea5c1",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-sepia",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-sepia.1280.guld.8": {
+      "pngSha256": "cb4db505bb6cdb20b85fcc4ff0c4ae9703e1ab4c6051d859d31c830b549b1a0b",
+      "measurementSha256": "e00d2553b0125de5aa28188b4de5cfb6bb8ce9969339f0139107f6d46dd3fbaf",
+      "rawMeasurementSha256": "e00d2553b0125de5aa28188b4de5cfb6bb8ce9969339f0139107f6d46dd3fbaf",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-sepia",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-sepia.1280.syra.default": {
+      "pngSha256": "5e58b2c813831cd50e6db84703a0299a3b3048819dbc8705b34a301ceb4f524c",
+      "measurementSha256": "4b52d848eef726dbdbdbccded2a0a1f496fba5c568bc8eccd1b47680d65c49ec",
+      "rawMeasurementSha256": "4b52d848eef726dbdbdbccded2a0a1f496fba5c568bc8eccd1b47680d65c49ec",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-sepia",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-sepia.1280.syra.0": {
+      "pngSha256": "0f1b5b91811205f69cc3b0e3c9279b0b9d4e17ed874c5453ce256f07241ca0e8",
+      "measurementSha256": "ded5ae0cfc17b0171890a0855e2c388e0348463eacb4a4e3b0dc0eacbb24750a",
+      "rawMeasurementSha256": "ded5ae0cfc17b0171890a0855e2c388e0348463eacb4a4e3b0dc0eacbb24750a",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-sepia",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-sepia.1280.syra.8": {
+      "pngSha256": "0eb7e90820390379a942d7ce561d3a6d10fbdb57cca53d2e1f099c53b69f1a62",
+      "measurementSha256": "2dca332be26fdba1d71a9c11447d89092760a8b16d14733d1063057829f559a0",
+      "rawMeasurementSha256": "2dca332be26fdba1d71a9c11447d89092760a8b16d14733d1063057829f559a0",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-sepia",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-grayscale.375.guld.default": {
+      "pngSha256": "f3db34e32e854ee30ff3b11a72122ec8b8ae4c86d6ba7f8fd63bb51d216caafc",
+      "measurementSha256": "1e912cdac13d0445536a7a0c668e023deefdabaafc601df7efc6df5ae9c87cdd",
+      "rawMeasurementSha256": "1e912cdac13d0445536a7a0c668e023deefdabaafc601df7efc6df5ae9c87cdd",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-gray",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-grayscale.375.guld.0": {
+      "pngSha256": "e617bfe6cf8fcb1f146976460185c303628ff7c5bbc312a3aeda146ff49bfc49",
+      "measurementSha256": "10d5ca319ac63f1f2d5236d19b96ca7dbdaab1fd186df01b514ae795755c6e7c",
+      "rawMeasurementSha256": "10d5ca319ac63f1f2d5236d19b96ca7dbdaab1fd186df01b514ae795755c6e7c",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-gray",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-grayscale.375.guld.8": {
+      "pngSha256": "f3db34e32e854ee30ff3b11a72122ec8b8ae4c86d6ba7f8fd63bb51d216caafc",
+      "measurementSha256": "1e912cdac13d0445536a7a0c668e023deefdabaafc601df7efc6df5ae9c87cdd",
+      "rawMeasurementSha256": "1e912cdac13d0445536a7a0c668e023deefdabaafc601df7efc6df5ae9c87cdd",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-gray",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-grayscale.375.syra.default": {
+      "pngSha256": "e8f7174e7692d7d1ebbae3e67b65b5cd0a1a34cb480bca46646dd66d27d22e66",
+      "measurementSha256": "737779d8651e99bedd00316ae8ca9780ef8ddbe0f971e0eb0ec81b266ca9a264",
+      "rawMeasurementSha256": "737779d8651e99bedd00316ae8ca9780ef8ddbe0f971e0eb0ec81b266ca9a264",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-gray",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-grayscale.375.syra.0": {
+      "pngSha256": "030177c244a60e51d445eefcb33e202b2fb65edd3f7301c644034a0f69790ca5",
+      "measurementSha256": "0b88858f3cb2d01f1b88a12d7d2af8f037bdb167f7f0806539675d5aa39b0e77",
+      "rawMeasurementSha256": "0b88858f3cb2d01f1b88a12d7d2af8f037bdb167f7f0806539675d5aa39b0e77",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-gray",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-grayscale.375.syra.8": {
+      "pngSha256": "e8f7174e7692d7d1ebbae3e67b65b5cd0a1a34cb480bca46646dd66d27d22e66",
+      "measurementSha256": "737779d8651e99bedd00316ae8ca9780ef8ddbe0f971e0eb0ec81b266ca9a264",
+      "rawMeasurementSha256": "737779d8651e99bedd00316ae8ca9780ef8ddbe0f971e0eb0ec81b266ca9a264",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-gray",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-grayscale.768.guld.default": {
+      "pngSha256": "1e9b99c5ee902299edaaff93467dfa05ebd0b086aa6375503486a4c5e304e9d5",
+      "measurementSha256": "823e0066ecd07c9e919bf7c26383443eb13d2121e7df1e30557bafdf17367ca6",
+      "rawMeasurementSha256": "823e0066ecd07c9e919bf7c26383443eb13d2121e7df1e30557bafdf17367ca6",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-gray",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-grayscale.768.guld.0": {
+      "pngSha256": "376b25a7b0bbf0395ef30bc420bf4a4667dcfebf0cd2752213a270deda1d82ff",
+      "measurementSha256": "d5c339adacc623c05578768568d8b35b2f30106c89c8acaf32f9b43b8a5593ee",
+      "rawMeasurementSha256": "d5c339adacc623c05578768568d8b35b2f30106c89c8acaf32f9b43b8a5593ee",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-gray",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-grayscale.768.guld.8": {
+      "pngSha256": "1e9b99c5ee902299edaaff93467dfa05ebd0b086aa6375503486a4c5e304e9d5",
+      "measurementSha256": "823e0066ecd07c9e919bf7c26383443eb13d2121e7df1e30557bafdf17367ca6",
+      "rawMeasurementSha256": "823e0066ecd07c9e919bf7c26383443eb13d2121e7df1e30557bafdf17367ca6",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-gray",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-grayscale.768.syra.default": {
+      "pngSha256": "e14de25a120c50d24a278bef541497ee42533166328d1aa8c6b492dd3ca726c4",
+      "measurementSha256": "9c1809b57d2de19fe54a17c21d3a10b5b9a5b2b3c649a24f9723c6b4cc85496c",
+      "rawMeasurementSha256": "9c1809b57d2de19fe54a17c21d3a10b5b9a5b2b3c649a24f9723c6b4cc85496c",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-gray",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-grayscale.768.syra.0": {
+      "pngSha256": "6b983fa9dd2d403380848af3736cf0ecd0b274a555433f585d50983b7253c232",
+      "measurementSha256": "5fea1ca4904ca98205016bf1bd52f62dc2065cd6dca02cd857d760255ebb6476",
+      "rawMeasurementSha256": "5fea1ca4904ca98205016bf1bd52f62dc2065cd6dca02cd857d760255ebb6476",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-gray",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-grayscale.768.syra.8": {
+      "pngSha256": "e14de25a120c50d24a278bef541497ee42533166328d1aa8c6b492dd3ca726c4",
+      "measurementSha256": "9c1809b57d2de19fe54a17c21d3a10b5b9a5b2b3c649a24f9723c6b4cc85496c",
+      "rawMeasurementSha256": "9c1809b57d2de19fe54a17c21d3a10b5b9a5b2b3c649a24f9723c6b4cc85496c",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-gray",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-grayscale.1280.guld.default": {
+      "pngSha256": "e1578763646095363a5b9e2b8aee522b36281dfa869f6af87e6236a382811e0e",
+      "measurementSha256": "0ba655c382119eee90373b020cef3b338aec8b820385de57bbe69043a0dfd475",
+      "rawMeasurementSha256": "0ba655c382119eee90373b020cef3b338aec8b820385de57bbe69043a0dfd475",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-gray",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-grayscale.1280.guld.0": {
+      "pngSha256": "291557736f156bd9fbe2d8b1f9dad512b404bf6c0ef3c3872b552b719818c475",
+      "measurementSha256": "14af7c2037397b58c3146ddba0ac870c025c0b430bf746c8f089adf92a4c5878",
+      "rawMeasurementSha256": "14af7c2037397b58c3146ddba0ac870c025c0b430bf746c8f089adf92a4c5878",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-gray",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-grayscale.1280.guld.8": {
+      "pngSha256": "e1578763646095363a5b9e2b8aee522b36281dfa869f6af87e6236a382811e0e",
+      "measurementSha256": "0ba655c382119eee90373b020cef3b338aec8b820385de57bbe69043a0dfd475",
+      "rawMeasurementSha256": "0ba655c382119eee90373b020cef3b338aec8b820385de57bbe69043a0dfd475",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-gray",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-grayscale.1280.syra.default": {
+      "pngSha256": "6baa1c4dd3f9231f6a336b88f22e6c0264aca58ed85908813e293cec57085fc4",
+      "measurementSha256": "09f13ddf8664d4b93f59465dd498d40bda1059aafdafddee6124b131c765ebac",
+      "rawMeasurementSha256": "09f13ddf8664d4b93f59465dd498d40bda1059aafdafddee6124b131c765ebac",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-gray",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-grayscale.1280.syra.0": {
+      "pngSha256": "b843b106d10ca82b1e31d3aefcbff055a2f4de0085a38eea763e4e5a5a36255b",
+      "measurementSha256": "5b8bfa3d4a9217eb5942be20c9a21232573f5bba9f717e2cbbf89686e2f57dca",
+      "rawMeasurementSha256": "5b8bfa3d4a9217eb5942be20c9a21232573f5bba9f717e2cbbf89686e2f57dca",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-gray",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-grayscale.1280.syra.8": {
+      "pngSha256": "6baa1c4dd3f9231f6a336b88f22e6c0264aca58ed85908813e293cec57085fc4",
+      "measurementSha256": "09f13ddf8664d4b93f59465dd498d40bda1059aafdafddee6124b131c765ebac",
+      "rawMeasurementSha256": "09f13ddf8664d4b93f59465dd498d40bda1059aafdafddee6124b131c765ebac",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-gray",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-invert.375.guld.default": {
+      "pngSha256": "3bf6361a983f81d4eb526ab9d6ed21d847db73a3e64f8dc63b344018035e308b",
+      "measurementSha256": "93bbd627b4cad75156f0e76458982d593b85aef1a4d1e26b94948a71b36bc795",
+      "rawMeasurementSha256": "93bbd627b4cad75156f0e76458982d593b85aef1a4d1e26b94948a71b36bc795",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-invert",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-invert.375.guld.0": {
+      "pngSha256": "5c50a3ad766bea9eb88cf7d450a11e8681092871350cdec91bf9e42e0ef6c84e",
+      "measurementSha256": "3f5990217cab8e6b3cbc7fa0f4a762f789fb64b61f101a04cc66f4e7d0f15333",
+      "rawMeasurementSha256": "3f5990217cab8e6b3cbc7fa0f4a762f789fb64b61f101a04cc66f4e7d0f15333",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-invert",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-invert.375.guld.8": {
+      "pngSha256": "3bf6361a983f81d4eb526ab9d6ed21d847db73a3e64f8dc63b344018035e308b",
+      "measurementSha256": "93bbd627b4cad75156f0e76458982d593b85aef1a4d1e26b94948a71b36bc795",
+      "rawMeasurementSha256": "93bbd627b4cad75156f0e76458982d593b85aef1a4d1e26b94948a71b36bc795",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-invert",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-invert.375.syra.default": {
+      "pngSha256": "62c2f39a90b1940da265f8298408463fa70aa886cd55153e337df004df695ddc",
+      "measurementSha256": "f0f6f72820415a82329c3916b57579f2d75de567dbf3b1cef497d7d1ab96b715",
+      "rawMeasurementSha256": "f0f6f72820415a82329c3916b57579f2d75de567dbf3b1cef497d7d1ab96b715",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-invert",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-invert.375.syra.0": {
+      "pngSha256": "1ed023ce96ef4669eeee16bc5932dff68e5b92a8ed89c09bf5a10a24587461ab",
+      "measurementSha256": "179e9ca108cf892e2abd21bc45bffac28c0d819aa008d9f34b10e0035fafa33c",
+      "rawMeasurementSha256": "179e9ca108cf892e2abd21bc45bffac28c0d819aa008d9f34b10e0035fafa33c",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-invert",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-invert.375.syra.8": {
+      "pngSha256": "62c2f39a90b1940da265f8298408463fa70aa886cd55153e337df004df695ddc",
+      "measurementSha256": "f0f6f72820415a82329c3916b57579f2d75de567dbf3b1cef497d7d1ab96b715",
+      "rawMeasurementSha256": "f0f6f72820415a82329c3916b57579f2d75de567dbf3b1cef497d7d1ab96b715",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-invert",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-invert.768.guld.default": {
+      "pngSha256": "3ae4c88708ef2c393cdf1aaa04815aa2af6a6dbaf2572b3df8c06f880d721c02",
+      "measurementSha256": "6b2e0ce70feb849961a2f8ae8d0ebbf658b385556be60903c606afddf288c019",
+      "rawMeasurementSha256": "6b2e0ce70feb849961a2f8ae8d0ebbf658b385556be60903c606afddf288c019",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-invert",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-invert.768.guld.0": {
+      "pngSha256": "13ff0a1046a03fd4dab82544608cc39d1adacec6df264fa76c74de2537553199",
+      "measurementSha256": "230674de169ca4ef2fd61a411ae481425c105ce422718a5a2c4716aeb79f73c6",
+      "rawMeasurementSha256": "230674de169ca4ef2fd61a411ae481425c105ce422718a5a2c4716aeb79f73c6",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-invert",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-invert.768.guld.8": {
+      "pngSha256": "3ae4c88708ef2c393cdf1aaa04815aa2af6a6dbaf2572b3df8c06f880d721c02",
+      "measurementSha256": "6b2e0ce70feb849961a2f8ae8d0ebbf658b385556be60903c606afddf288c019",
+      "rawMeasurementSha256": "6b2e0ce70feb849961a2f8ae8d0ebbf658b385556be60903c606afddf288c019",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-invert",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-invert.768.syra.default": {
+      "pngSha256": "53bd28f28236fe680124268caf6ddcc75f38c91c6106f5aee3165c0092996c68",
+      "measurementSha256": "7cbfcab9fa90edb11ee2089bce909538a0001a6705f96a6178496737a8187358",
+      "rawMeasurementSha256": "7cbfcab9fa90edb11ee2089bce909538a0001a6705f96a6178496737a8187358",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-invert",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-invert.768.syra.0": {
+      "pngSha256": "c8b8821d9192357def367753436e59bf024bd0e83b8a489fd3ef5c2fec883401",
+      "measurementSha256": "1cbb98f0da3745e4af781a9a50dacbc7e017fbb8622bddfa4c12198710cc6b57",
+      "rawMeasurementSha256": "1cbb98f0da3745e4af781a9a50dacbc7e017fbb8622bddfa4c12198710cc6b57",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-invert",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-invert.768.syra.8": {
+      "pngSha256": "53bd28f28236fe680124268caf6ddcc75f38c91c6106f5aee3165c0092996c68",
+      "measurementSha256": "7cbfcab9fa90edb11ee2089bce909538a0001a6705f96a6178496737a8187358",
+      "rawMeasurementSha256": "7cbfcab9fa90edb11ee2089bce909538a0001a6705f96a6178496737a8187358",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-invert",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-invert.1280.guld.default": {
+      "pngSha256": "766bd50cbf1e6c2f5fddbc8a77c6acfbe69028ea0982978ab458510a0963300d",
+      "measurementSha256": "6a3d97a24b0963478fb7ecfd42bcfd32870558bdedabe08d0c97295e80d299c7",
+      "rawMeasurementSha256": "6a3d97a24b0963478fb7ecfd42bcfd32870558bdedabe08d0c97295e80d299c7",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-invert",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-invert.1280.guld.0": {
+      "pngSha256": "dda4e270380fd82b2d48f8629956690ca32a6bd9cca044e7c45e19f825748c73",
+      "measurementSha256": "d7457c633be5bc7c6f3d9d4b740f782311b0bc9b501c8a6026596126c8ebae8c",
+      "rawMeasurementSha256": "d7457c633be5bc7c6f3d9d4b740f782311b0bc9b501c8a6026596126c8ebae8c",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-invert",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-invert.1280.guld.8": {
+      "pngSha256": "766bd50cbf1e6c2f5fddbc8a77c6acfbe69028ea0982978ab458510a0963300d",
+      "measurementSha256": "6a3d97a24b0963478fb7ecfd42bcfd32870558bdedabe08d0c97295e80d299c7",
+      "rawMeasurementSha256": "6a3d97a24b0963478fb7ecfd42bcfd32870558bdedabe08d0c97295e80d299c7",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-invert",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-invert.1280.syra.default": {
+      "pngSha256": "ebd44c84db8df601a83209d57358eb30dbb99eb38721732405bd53f7f87f84c5",
+      "measurementSha256": "80e0fee32d3e5c758efa280551ce4be064144253e2744a675197c7073670c1c7",
+      "rawMeasurementSha256": "80e0fee32d3e5c758efa280551ce4be064144253e2744a675197c7073670c1c7",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-invert",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-invert.1280.syra.0": {
+      "pngSha256": "556cdf5ce5fbc6a7c5e9b02ec8b77acc770ff4fac30674ab5c41f703f81d0189",
+      "measurementSha256": "3dbd6367d1d2e77414b6ea6ae559c7451a642a24356fa0be2f95808e27571ffd",
+      "rawMeasurementSha256": "3dbd6367d1d2e77414b6ea6ae559c7451a642a24356fa0be2f95808e27571ffd",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-invert",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-invert.1280.syra.8": {
+      "pngSha256": "ebd44c84db8df601a83209d57358eb30dbb99eb38721732405bd53f7f87f84c5",
+      "measurementSha256": "80e0fee32d3e5c758efa280551ce4be064144253e2744a675197c7073670c1c7",
+      "rawMeasurementSha256": "80e0fee32d3e5c758efa280551ce4be064144253e2744a675197c7073670c1c7",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-invert",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-drop-shadow.375.guld.default": {
+      "pngSha256": "c4cb2fb70c106929c7496e5c543b7870bfde87c62e42e2f9023bbf93bf703a42",
+      "measurementSha256": "02a43a659c30a7ffeeb338d99fb5f50b1fbdcd1da117a16b981ca5e745618525",
+      "rawMeasurementSha256": "02a43a659c30a7ffeeb338d99fb5f50b1fbdcd1da117a16b981ca5e745618525",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-drop",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-drop-shadow.375.guld.0": {
+      "pngSha256": "d97e59b4b32dcbdc0d6303187eef5f69248cf8d86bf3d35b8b7c5e30af6c5c29",
+      "measurementSha256": "c75e404e533af1c8efaa3c92856fab376a666d6e075af4c92edaccef12d43087",
+      "rawMeasurementSha256": "c75e404e533af1c8efaa3c92856fab376a666d6e075af4c92edaccef12d43087",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-drop",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-drop-shadow.375.guld.8": {
+      "pngSha256": "963ad2de5ab0ed8559a93d78b89f0aad1caad7e8a31019a0362c192829dbf433",
+      "measurementSha256": "b9e5466a43a83894cc659d91a42ac3cf871360e5df26cb6b4fb7b6c6cc305bf9",
+      "rawMeasurementSha256": "b9e5466a43a83894cc659d91a42ac3cf871360e5df26cb6b4fb7b6c6cc305bf9",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-drop",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-drop-shadow.375.syra.default": {
+      "pngSha256": "bd9be3c898433a89c2ea23b6f938b8ed78ca84ed3e9e3a79bca4fc4df2f685a0",
+      "measurementSha256": "1aa2a0cad383efbf1b4a80031e88fa87493f239f3dfdcc1e3ec3d4934c152b2c",
+      "rawMeasurementSha256": "1aa2a0cad383efbf1b4a80031e88fa87493f239f3dfdcc1e3ec3d4934c152b2c",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-drop",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-drop-shadow.375.syra.0": {
+      "pngSha256": "ec878262aa018859e72c66098a2046977b7337d54a1bad60b3644d6dd51808dd",
+      "measurementSha256": "e64dcc724caff10b54ae0d9b65e7aaa2a08d099c3953ab4bbf6533a682db068c",
+      "rawMeasurementSha256": "e64dcc724caff10b54ae0d9b65e7aaa2a08d099c3953ab4bbf6533a682db068c",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-drop",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-drop-shadow.375.syra.8": {
+      "pngSha256": "469658214746b402efb84eeb280fda56cbdf675d4de7532d2205283b0db5afc6",
+      "measurementSha256": "bacadcb28dc6743c28cae1d7aa3436cb5eb47feee4241fd6c0cf1f1d6ab7e090",
+      "rawMeasurementSha256": "bacadcb28dc6743c28cae1d7aa3436cb5eb47feee4241fd6c0cf1f1d6ab7e090",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-drop",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-drop-shadow.768.guld.default": {
+      "pngSha256": "2e531c1d9edf620b0cd55d851497981f1c2d1d6020f9a573cc41d07d8e96c011",
+      "measurementSha256": "514a38bce22fdd8fd2c9372ab6247ae3d5e716d403d3c2b247e2ff367cdd7c4d",
+      "rawMeasurementSha256": "514a38bce22fdd8fd2c9372ab6247ae3d5e716d403d3c2b247e2ff367cdd7c4d",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-drop",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-drop-shadow.768.guld.0": {
+      "pngSha256": "bef4a7f8d451b1693efcf3d3c63af7b86f51b003ff0c400e10e39234ec3b12d6",
+      "measurementSha256": "6d96214dab307ed59ea3f674824a13c4b9aff367578a70b72b72083317306394",
+      "rawMeasurementSha256": "6d96214dab307ed59ea3f674824a13c4b9aff367578a70b72b72083317306394",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-drop",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-drop-shadow.768.guld.8": {
+      "pngSha256": "e1fc6c32c1146995fbde26fe0421d94926eb2e01dc81e4f6305f25aa13b7f6b5",
+      "measurementSha256": "8c107bf22c7e95ce722166987cb581b9783bdec988b57e1c0786ce5caad9bc32",
+      "rawMeasurementSha256": "8c107bf22c7e95ce722166987cb581b9783bdec988b57e1c0786ce5caad9bc32",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-drop",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-drop-shadow.768.syra.default": {
+      "pngSha256": "676ab315acf47fe1642672096b58721f7c0f6c7ec64c08cb429b678ea924473e",
+      "measurementSha256": "d330142a2b3019d463cdc82933383ab79c31c44fcd75c43534da3a5508bbeb1a",
+      "rawMeasurementSha256": "d330142a2b3019d463cdc82933383ab79c31c44fcd75c43534da3a5508bbeb1a",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-drop",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-drop-shadow.768.syra.0": {
+      "pngSha256": "542b4e79fcc772b58db506a2f9908fd7fc9ae93f7353e16e698c24b2e2c78c23",
+      "measurementSha256": "1a01dafe9c807f62ac7cacecb935e5a5a0505567df8beb12b8cd76f8d625bc28",
+      "rawMeasurementSha256": "1a01dafe9c807f62ac7cacecb935e5a5a0505567df8beb12b8cd76f8d625bc28",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-drop",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-drop-shadow.768.syra.8": {
+      "pngSha256": "6b5f5b15ca9c0dc4002c7b83a6fc165fd2dfc6c26a85f4975870783cdfbce1af",
+      "measurementSha256": "aee7a2472af2e03a2208d0c43788337825b6c83e513b4d7069868dcc08f70e55",
+      "rawMeasurementSha256": "aee7a2472af2e03a2208d0c43788337825b6c83e513b4d7069868dcc08f70e55",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-drop",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-drop-shadow.1280.guld.default": {
+      "pngSha256": "af99d5dbb7a92aa62a7c65e3d49a62817ae2d614334a6046a5e559ee30981a8a",
+      "measurementSha256": "cab339e4b6e6cafbe5b26d696723ec8c6b1ad832410c5eec0ec76eaf5ae23ac1",
+      "rawMeasurementSha256": "cab339e4b6e6cafbe5b26d696723ec8c6b1ad832410c5eec0ec76eaf5ae23ac1",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-drop",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-drop-shadow.1280.guld.0": {
+      "pngSha256": "b6fad4dcc9e08b66698a0dc20770a6c5a277417d01b899ad0b39298e3739370b",
+      "measurementSha256": "6dde54215ad50c0920fd1ff40f0e86caf4a9ac92f0ddec910192e722ab868093",
+      "rawMeasurementSha256": "6dde54215ad50c0920fd1ff40f0e86caf4a9ac92f0ddec910192e722ab868093",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-drop",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-drop-shadow.1280.guld.8": {
+      "pngSha256": "c5773bc4c71412c6a6006bd586a8af6cff3604075bc68e31cb0bf24ebe9172fa",
+      "measurementSha256": "c6d55181b800964a3d8da5d74ceb2b0629f7e8b821c9923616d028c48828000b",
+      "rawMeasurementSha256": "c6d55181b800964a3d8da5d74ceb2b0629f7e8b821c9923616d028c48828000b",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-drop",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-drop-shadow.1280.syra.default": {
+      "pngSha256": "5cfab058717b5276505599eac2260114b088f7898cc82ec17377efa7bf4bf80b",
+      "measurementSha256": "65215b657d50d27e21753c8b400ab1b913d171910cf790cb0f6ff1529b2b8d78",
+      "rawMeasurementSha256": "65215b657d50d27e21753c8b400ab1b913d171910cf790cb0f6ff1529b2b8d78",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-drop",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-drop-shadow.1280.syra.0": {
+      "pngSha256": "4854c13fa8626bdb5da33f3cac55fc6cee05709e9ffb064c9dfea6e8f4184da7",
+      "measurementSha256": "ed2a18e627df4df0769239ae215d5f6c29f47615df0edb87f9625e17c2703e66",
+      "rawMeasurementSha256": "ed2a18e627df4df0769239ae215d5f6c29f47615df0edb87f9625e17c2703e66",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-drop",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    },
+    "filter-drop-shadow.1280.syra.8": {
+      "pngSha256": "602c5bd49646242cfd22e5ca596251d54f5c2552ac9681c4559d7c813c147516",
+      "measurementSha256": "3be50d692cffe4320fe86752b4473bc4fdba836180bb6e15b4a8a0ad53b1c762",
+      "rawMeasurementSha256": "3be50d692cffe4320fe86752b4473bc4fdba836180bb6e15b4a8a0ad53b1c762",
+      "motivClasses": 0,
+      "classValues": [
+        "demo-yta swatch-solo",
+        "swatch f-drop",
+        "swatch-yta",
+        "swatch-lbl"
+      ]
+    }
+  }
+}
