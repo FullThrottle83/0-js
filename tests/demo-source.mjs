@@ -918,8 +918,14 @@ for (const f of FILTERS) {
       const selectors = await snippetSelectors(t.page);
       t.expect(selectors.includes(`.${f.cls} .swatch-yta`) && selectors.includes('.f-motiv .swatch-yta'),
         `${f.id}: fristående kodvalv: egen filterregel och delat motiv`);
-      t.expect(selectors.filter((s) => /\.f-/.test(s)).length === 2,
-        `${f.id}: fristående kodvalv: bara det egna filtret och den delade motivklassen (${selectors.filter((s) => /\.f-/.test(s)).join(', ')})`);
+      const filterSelectors = selectors.filter((s) => /\.f-/.test(s)).sort();
+      const expectedFilterSelectors = [
+        '.f-motiv .swatch-yta',
+        `.${f.cls} .swatch-yta`,
+        ...(f.id === 'filter-drop-shadow' ? ['.f-drop'] : []),
+      ].sort();
+      t.expect(JSON.stringify(filterSelectors) === JSON.stringify(expectedFilterSelectors),
+        `${f.id}: fristående kodvalv: enbart delat motiv, eget filter${f.id === 'filter-drop-shadow' ? ' och egen overflow-korrigering' : ''} (${filterSelectors.join(', ')})`);
       t.expect(!/\.(labbar|cm-row|rel-|gamut-|grad-|filter-row)/.test(selectors.join(' ')),
         `${f.id}: fristående kodvalv: ingen laboratorie-, blandnings-, relativ-, gamut- eller gradient-CSS`);
       // Det målade beviset: filtret måste synas i pixlarna på motivet.
@@ -932,12 +938,13 @@ for (const f of FILTERS) {
       t.expect(ok, `${f.id}: fristående kodvalv: ${message}`);
       t.expect(v.acc.startsWith('#'), `${f.id}: Grundpaketets accent används av motivet`);
       if (f.id === 'filter-drop-shadow') {
-        // Skuggan klipps på sidan av .swatch { overflow: hidden } (oförändrat
-        // beteende). Utan klippningen målar drop-shadow() ändå en varm gloria:
-        // beviset att deklarationen inte är overksam.
-        const glow = await paintPair(t, f.cls, { clip: false });
-        t.expect(glow.ringFiltered.luma > 5 && glow.ringFiltered.warm > 5 && glow.ringReference.luma < 1,
-          `drop-shadow: fristående kodvalv: skuggan målar utanför formen (ljus ${glow.ringFiltered.luma}, värme ${glow.ringFiltered.warm} mot ${glow.ringReference.luma} ofiltrerat)`);
+        // Regression: .swatch { overflow: hidden } used to erase the entire
+        // outer shadow. The assertion samples the host screenshot outside the
+        // swatch-yta bounds, so a brighter interior alone cannot satisfy it.
+        t.expect(await t.style('.swatch', 'overflow') === 'visible',
+          'drop-shadow: fristående kodvalv: endast drop-shadow-swatchen öppnar overflow');
+        t.expect(m.ringFiltered.luma > 1 && m.ringFiltered.warm > 1 && m.ringReference.luma < 1,
+          `drop-shadow: fristående kodvalv: skuggan målar utanför formen (ljus ${m.ringFiltered.luma}, värme ${m.ringFiltered.warm} mot ${m.ringReference.luma} ofiltrerat)`);
       }
     },
   };

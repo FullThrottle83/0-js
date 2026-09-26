@@ -683,7 +683,10 @@ const ordered = MIGRATED_IDS.map((id) => [id, sources.get(id)]);
       `#${f.id}: begär swatch + swatch-solo + filter-motiv`);
     assert(new RegExp(`class="swatch ${f.cls} ${MOTIF_CLASS}"`).test(src.markup),
       `#${f.id}: markupen bär den delade motivklassen`);
-    assert(canon(src.css) === canon(`.${f.cls} .swatch-yta { filter: ${f.decl}; }`),
+    const expectedOwnCss = f.id === 'filter-drop-shadow'
+      ? `.${f.cls} { overflow: visible; } .${f.cls} .swatch-yta { filter: ${f.decl}; border-radius: 9px 9px 0 0; }`
+      : `.${f.cls} .swatch-yta { filter: ${f.decl}; }`;
+    assert(canon(src.css) === canon(expectedOwnCss),
       `#${f.id}: demots egen CSS är exakt den egna filter-deklarationen`);
     assert(src.liveCss.includes(`.labbar.${f.cls}`) && src.liveCss.includes('var(--lv)'),
       `#${f.id}: laboratoriets --lv-regel är live-only`);
@@ -701,7 +704,8 @@ const ordered = MIGRATED_IDS.map((id) => [id, sources.get(id)]);
       `#${f.id}: kodvalvet bär varken sidscenografi eller främmande kapitel-CSS`);
     const selectors = [...css.matchAll(/([^{}]+)\{/g)].map((m) => m[1].trim());
     const allowed = ['.demo-yta', '.swatch', '.swatch-yta', '.swatch-lbl', '.swatch-solo',
-      '.swatch-solo > .swatch', '.swatch-solo .swatch-yta', `.${MOTIF_CLASS} .swatch-yta`, `.${f.cls} .swatch-yta`];
+      '.swatch-solo > .swatch', '.swatch-solo .swatch-yta', `.${MOTIF_CLASS} .swatch-yta`,
+      ...(f.id === 'filter-drop-shadow' ? [`.${f.cls}`] : []), `.${f.cls} .swatch-yta`];
     assert(selectors.length === allowed.length && selectors.every((s) => allowed.includes(s)),
       `#${f.id}: exakt ägande av kodvalvets selektorer (${selectors.join(' ')})`);
     for (const other of FILTERS.filter((o) => o.id !== f.id)) {
@@ -820,7 +824,11 @@ const ordered = MIGRATED_IDS.map((id) => [id, sources.get(id)]);
   });
   const FILTER_PATH = 'div:nth-child(5)>span:nth-child(1)';
   assert(INTENTIONAL_DIFFS.length === 8 && INTENTIONAL_DIFFS.every((d) => d.path === FILTER_PATH),
-    'undantagslistan omfattar exakt åtta poster, alla på en och samma nodtyp');
+    'undantagslistan omfattar exakt åtta poster, alla med klassändringen på samma nodtyp');
+  const drop = INTENTIONAL_DIFFS.find((d) => d.id === 'filter-drop-shadow');
+  assert(drop.styles?.length === 2
+    && drop.styles.map((s) => s.prop).join(',') === 'overflow,border-radius',
+    'drop-shadow-undantaget låser exakt overflow och ytan hörngeometri');
   for (const d of INTENTIONAL_DIFFS) {
     assert(MIGRATED_IDS.includes(d.id), `#${d.id}: undantaget gäller en migrerad demo`);
   }
@@ -829,6 +837,16 @@ const ordered = MIGRATED_IDS.map((id) => [id, sources.get(id)]);
   assert(notes.length === 1, `filter-blur: en avsiktlig skillnad normaliseras (${notes.length})`);
   const untouched = applyIntentionalDiffs(fake('swatch grad-1'), fake('swatch grad-1'), 'linear-gradient');
   assert(untouched.length === 0, 'linear-gradient: inget undantag, inget normaliseras');
+  const dropFake = (cls, overflow, radius) => ({
+    elements: [
+      { ...fake(cls).elements[0], style: { overflow } },
+      { path: 'div:nth-child(5)>span:nth-child(1)>span:nth-child(1)', style: { 'border-radius': radius } },
+    ],
+    html: `<span class="${cls}"><span></span></span>`, controls: [], unstable: [],
+  });
+  const dropNotes = applyIntentionalDiffs(dropFake('swatch f-drop', 'hidden', '0px'),
+    dropFake('swatch f-drop f-motiv', 'visible', '9px 9px 0px 0px'), 'filter-drop-shadow');
+  assert(dropNotes.length === 3, 'drop-shadow: klass, overflow och hörngeometri normaliseras explicit');
   const normalized = fake('swatch f-blur f-motiv');
   applyIntentionalDiffs(fake('swatch f-blur'), normalized, 'filter-blur');
   assert(normalized.elements[0].class === 'swatch f-blur'

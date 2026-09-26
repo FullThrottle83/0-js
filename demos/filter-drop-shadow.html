@@ -9,7 +9,11 @@
 <div class="demo-yta swatch-solo"><span class="swatch f-drop f-motiv"><span class="swatch-yta"></span><span class="swatch-lbl">drop-shadow</span></span></div>
 <style data-include="swatch swatch-solo filter-motiv"></style>
 <style>
-.f-drop .swatch-yta { filter: drop-shadow(0 0 8px var(--acc)) brightness(.9); }
+.f-drop { overflow: visible; }
+.f-drop .swatch-yta {
+  filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);
+  border-radius: 9px 9px 0 0;
+}
 </style>
 <style data-live>
 /* Reglerbart filter: --lv (0–8) blir 0–16 px skuggradie. Labbet är sidans

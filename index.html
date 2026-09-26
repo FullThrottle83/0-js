@@ -915,7 +915,11 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .labbar.f-invert .swatch-yta { filter: invert(calc(var(--lv) * 12.5%)); }
 /* /demo:filter-invert:css */
 /* demo:filter-drop-shadow:css */
-.f-drop .swatch-yta { filter: drop-shadow(0 0 8px var(--acc)) brightness(.9); }
+.f-drop { overflow: visible; }
+.f-drop .swatch-yta {
+  filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);
+  border-radius: 9px 9px 0 0;
+}
 
 /* Reglerbart filter: --lv (0–8) blir 0–16 px skuggradie. Labbet är sidans
    scenografi och kopieras inte. */
@@ -5094,7 +5098,11 @@ body:has(#f-firefox:checked) .raknare b::after { content: "109"; }
     repeating-linear-gradient(90deg, rgb(0 0 0 / .22) 0 6px, transparent 6px 18px),
     linear-gradient(120deg, var(--acc), #6ea8ff 60%, #ff6ab0);
 }
-.f-drop .swatch-yta { filter: drop-shadow(0 0 8px var(--acc)) brightness(.9); }</textarea></details>
+.f-drop { overflow: visible; }
+.f-drop .swatch-yta {
+  filter: drop-shadow(0 0 8px var(--acc)) brightness(.9);
+  border-radius: 9px 9px 0 0;
+}</textarea></details>
         <!-- demo-ctx:filter-drop-shadow --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-f">I registret: F</a></p><!-- /demo-ctx:filter-drop-shadow -->
     </article>
 
