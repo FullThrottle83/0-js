@@ -1,0 +1,21 @@
+<!--
+  demo: media-color-gamut
+  Kanonisk källa för både live-demot och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+  Grupp C: live-markupen med .prov-gamut är bättre än valvets .nd-gamut —
+  båda visar samma @media (color-gamut) men live visar båda svaren och
+  markerar det aktiva med prov-familjens gemensamma presentation. De sju
+  basreglerna ägs av det delade prov-fragmentet (demos/_delat/prov.css) och
+  begärs med data-include; de två @media-blocken ägs av demot.
+-->
+<div class="demo-yta prov prov-gamut">
+  <span class="prov-rad r-srgb">sRGB — standardomfång<b>ditt läge</b></span>
+  <span class="prov-rad r-p3">display-p3 — bred gamut<b>ditt läge</b></span>
+</div>
+<style data-include="prov"></style>
+<style>
+@media (color-gamut: p3)   { .prov-gamut .r-p3 { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
+  .prov-gamut .r-p3::before { content: "●"; color: var(--acc); } .prov-gamut .r-p3 b { opacity: 1; } }
+@media not all and (color-gamut: p3) { .prov-gamut .r-srgb { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
+  .prov-gamut .r-srgb::before { content: "●"; color: var(--acc); } .prov-gamut .r-srgb b { opacity: 1; } }
+</style>

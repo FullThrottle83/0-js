@@ -239,6 +239,11 @@ export const DEMO_SPEC = [
     shared: [],
     note: 'Grupp C: live-markupen och kodvalvet var samma markup; bara demots varningskommentar skiljde. Den ligger i källans markup (filens andra kommentar) och följer därför med till både kortet och kopian. .spoiler-reglerna ägs av demot och används av exakt ett kort',
   },
+  {
+    id: 'media-color-gamut', type: 'grupp-c', anchors: [], liveCss: false,
+    shared: ['prov'],
+    note: 'Grupp C: live-markupen med .prov-gamut är bättre än valvets .nd-gamut — båda visar samma @media (color-gamut) men live visar båda svaren och markerar det aktiva med prov-familjens gemensamma presentation. De sju basreglerna ägs av det delade prov-fragmentet, de två @media-blocken av demot',
+  },
 ];
 
 /** Alla migrerade id:n, i manifestets ordning. */

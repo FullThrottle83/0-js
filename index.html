@@ -544,6 +544,8 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 
 /* Levande media-prov: en rad per läge, det aktiva tänds. Så ser man både
    vilket svar din maskin ger OCH vilka alternativ frågan har. */
+/* delat:prov:css */
+/* delat prov: 7 basregler – gemensam presentation för 5 kort */
 .prov { display: grid; gap: .4rem; font-family: var(--mono); font-size: .76rem; }
 .prov-rad {
   display: flex; align-items: center; gap: .6rem; padding: .5rem .75rem;
@@ -554,6 +556,7 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
 .prov-rad.pa::before { content: "●"; color: var(--acc); }
 .prov-rad b { margin-left: auto; font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--acc); opacity: 0; }
 .prov-rad.pa b { opacity: 1; }
+/* /delat:prov:css */
 
 @media (hover: hover) { .prov-hover .r-ja { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
   .prov-hover .r-ja::before { content: "●"; color: var(--acc); } .prov-hover .r-ja b { opacity: 1; } }
@@ -573,10 +576,12 @@ body:has(#referens:target)    .site nav a[href="#referens"] {
   .prov-rm .r-reduce::before { content: "●"; color: var(--acc); } .prov-rm .r-reduce b { opacity: 1; } }
 @media (prefers-reduced-motion: no-preference) { .prov-rm .r-full { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
   .prov-rm .r-full::before { content: "●"; color: var(--acc); } .prov-rm .r-full b { opacity: 1; } }
+/* demo:media-color-gamut:css */
 @media (color-gamut: p3)   { .prov-gamut .r-p3 { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
   .prov-gamut .r-p3::before { content: "●"; color: var(--acc); } .prov-gamut .r-p3 b { opacity: 1; } }
 @media not all and (color-gamut: p3) { .prov-gamut .r-srgb { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
   .prov-gamut .r-srgb::before { content: "●"; color: var(--acc); } .prov-gamut .r-srgb b { opacity: 1; } }
+/* /demo:media-color-gamut:css */
 
 /* Hover-prov: en yta där man faktiskt känner efter om hover finns. */
 .hover-prov {
@@ -5567,24 +5572,37 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); }</te
     <article class="demo sup-chrome sup-edge sup-safari sup-firefox" id="media-color-gamut">
       <h3 class="demo-titel">@media (color-gamut) <span class="stod">— fråga skärmen om färgdjup</span></h3><ul class="stodrad" aria-label="Webbläsarstöd"><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-chrome"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Chrome · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-edge"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Edge · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-safari"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Safari · stöds</span></li><li class="bx s-ja"><svg aria-hidden="true"><use href="#bx-firefox"/></svg><span class="stod-mk" aria-hidden="true"></span><span class="bx-tip">Firefox · stöds</span></li><li class="stod-summa"><b>4</b>/4</li></ul>
       <p class="demo-beskrivning">Villkorsladda bred färgrymd bara när skärmen klarar den.</p>
+      <!-- demo:media-color-gamut:markup -->
       <div class="demo-yta prov prov-gamut">
         <span class="prov-rad r-srgb">sRGB — standardomfång<b>ditt läge</b></span>
         <span class="prov-rad r-p3">display-p3 — bred gamut<b>ditt läge</b></span>
       </div>
+      <!-- /demo:media-color-gamut:markup -->
       <p class="labb-hint">På en P3-skärm blir den nedre raden aktiv och mättade oklch-färger får mer lyskraft än sRGB kan visa.</p>
-<details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="15" aria-label="Kod för @media (color-gamut) — fråga skärmen om färgdjup">&lt;!-- HTML --&gt;
-&lt;div class="demo-yta nd-gamut"&gt;&lt;span class="srgb"&gt;sRGB-fallback aktivt&lt;/span&gt;&lt;b class="p3"&gt;✓ P3-skärm upptäckt — bred gamut på&lt;/b&gt;&lt;/div&gt;
+<details class="kod-valv"><summary><span class="kod-hint">klicka i rutan → ⌘C / Ctrl+C</span></summary><textarea class="kod" readonly spellcheck="false" rows="24" aria-label="Kod för @media (color-gamut) — fråga skärmen om färgdjup">&lt;!-- HTML --&gt;
+&lt;div class="demo-yta prov prov-gamut"&gt;
+  &lt;span class="prov-rad r-srgb"&gt;sRGB — standardomfång&lt;b&gt;ditt läge&lt;/b&gt;&lt;/span&gt;
+  &lt;span class="prov-rad r-p3"&gt;display-p3 — bred gamut&lt;b&gt;ditt läge&lt;/b&gt;&lt;/span&gt;
+&lt;/div&gt;
 
 /* CSS */
 
 .demo-yta {position: relative; border-radius: 4px;}
-.nd-gamut {display:grid; gap:.6rem; font-family:var(--mono); font-size:.8rem; color:var(--dim);}
-.nd-gamut b {display:block;}
-.nd-gamut .p3 {display:none; color:var(--acc);}
-@media (color-gamut: p3) {
-  .nd-gamut .p3 {display:block;}
-  .nd-gamut .srgb {text-decoration:line-through; opacity:.5;}
-}</textarea></details>
+/* delat prov: 7 basregler – gemensam presentation för 5 kort */
+.prov { display: grid; gap: .4rem; font-family: var(--mono); font-size: .76rem; }
+.prov-rad {
+  display: flex; align-items: center; gap: .6rem; padding: .5rem .75rem;
+  border-radius: 8px; border: 1px solid var(--line); background: var(--bg2); color: var(--dim);
+}
+.prov-rad::before { content: "○"; color: var(--line); flex: none; }
+.prov-rad.pa { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
+.prov-rad.pa::before { content: "●"; color: var(--acc); }
+.prov-rad b { margin-left: auto; font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--acc); opacity: 0; }
+.prov-rad.pa b { opacity: 1; }
+@media (color-gamut: p3)   { .prov-gamut .r-p3 { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
+  .prov-gamut .r-p3::before { content: "●"; color: var(--acc); } .prov-gamut .r-p3 b { opacity: 1; } }
+@media not all and (color-gamut: p3) { .prov-gamut .r-srgb { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
+  .prov-gamut .r-srgb::before { content: "●"; color: var(--acc); } .prov-gamut .r-srgb b { opacity: 1; } }</textarea></details>
         <!-- demo-ctx:media-color-gamut --><p class="demo-ctx"><a class="ctx-kap" href="#farg">Kapitel 01 · Färg</a><span class="ctx-sep" aria-hidden="true">·</span><a class="ctx-reg" href="#reg-at">I registret: @</a></p><!-- /demo-ctx:media-color-gamut -->
     </article>
 

@@ -680,6 +680,65 @@ const CHECKS = {
         'textspoiler: fristående kodvalv: varningskommentaren följde med i kopian');
     },
   },
+  'media-color-gamut': {
+    page: async (t, v) => {
+      t.expect(await t.count('.prov-rad') === 2, 'color-gamut: sidan: två rader för sRGB och P3');
+      t.expect(await t.page.evaluate(() => getComputedStyle(document.querySelector('#media-color-gamut .prov')).display) === 'grid', 'color-gamut: sidan: .prov är rutnät från det delade fragmentet');
+      t.expect(await t.style('.prov-rad', 'display') === 'flex', 'color-gamut: sidan: .prov-rad har flex från fragmentet');
+      t.expect(await t.style('.prov-rad', 'border-top-width') === '1px', 'color-gamut: sidan: .prov-rad har ramen från fragmentet');
+      const isP3 = await t.page.evaluate(() => window.matchMedia('(color-gamut: p3)').matches);
+      const active = isP3 ? '.r-p3' : '.r-srgb';
+      const inactive = isP3 ? '.r-srgb' : '.r-p3';
+      const accRgb = `rgb(${hexToRgb(v.acc).join(', ')})`;
+      const inkRgb = `rgb(${hexToRgb(v.ink).join(', ')})`;
+      const dimRgb = `rgb(${hexToRgb(v.dim).join(', ')})`;
+      const lineRgb = `rgb(${hexToRgb(v.line).join(', ')})`;
+      // Active row should be highlighted
+      t.expect(await t.style(active, 'border-color') === accRgb, `color-gamut: sidan: aktiv rad ${active} har acc-kant (${accRgb})`);
+      t.expect(await t.style(active, 'color') === inkRgb, `color-gamut: sidan: aktiv rad ${active} har ink-färg`);
+      t.expect(await t.style(active, 'background-color') !== 'rgba(0, 0, 0, 0)', 'color-gamut: sidan: aktiv rad har färgad bakgrund från media-queryn');
+      t.expect(await t.page.evaluate((sel) => getComputedStyle(document.querySelector(sel), '::before').content, `${t.prefix} ${active}`) === '"●"', `color-gamut: sidan: aktiv rad ${active} visar ●`);
+      t.expect(await t.style(`${active} b`, 'opacity') === '1', `color-gamut: sidan: aktiv rad ${active} visar ”ditt läge”`);
+      // Inactive should be dim
+      t.expect(await t.style(inactive, 'border-color') === lineRgb, `color-gamut: sidan: inaktiv rad ${inactive} har linje-kant`);
+      t.expect(await t.style(inactive, 'color') === dimRgb, `color-gamut: sidan: inaktiv rad ${inactive} har dim-färg`);
+      t.expect(await t.page.evaluate((sel) => getComputedStyle(document.querySelector(sel), '::before').content, `${t.prefix} ${inactive}`) === '"○"', `color-gamut: sidan: inaktiv rad ${inactive} visar ○`);
+      t.expect(await t.style(`${inactive} b`, 'opacity') === '0', `color-gamut: sidan: inaktiv rad ${inactive} döljer ”ditt läge”`);
+      // No overflow
+      const overflow = await t.page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1);
+      t.expect(overflow, 'color-gamut: sidan: ingen horisontell overflow');
+    },
+    isolated: async (t, v) => {
+      t.expect(await t.count('.prov-rad') === 2, 'color-gamut: fristående: två rader från källans markup');
+      t.expect(await t.page.evaluate(() => getComputedStyle(document.querySelector('.prov')).display) === 'grid', 'color-gamut: fristående: .prov-rutnätet från fragmentet');
+      t.expect(await t.style('.prov-rad', 'display') === 'flex', 'color-gamut: fristående: .prov-rad från fragmentet');
+      t.expect(await t.style('.prov-rad', 'border-top-width') === '1px', 'color-gamut: fristående: ramen från fragmentet');
+      const code = await t.page.evaluate(() => document.documentElement.outerHTML);
+      t.expect(code.includes('@media (color-gamut: p3)'), 'color-gamut: fristående: kodvalvet bär P3-queryn');
+      t.expect(code.includes('not all and (color-gamut: p3)'), 'color-gamut: fristående: kodvalvet bär sRGB-fallback-queryn');
+      const isP3 = await t.page.evaluate(() => window.matchMedia('(color-gamut: p3)').matches);
+      const active = isP3 ? '.r-p3' : '.r-srgb';
+      const accRgb = `rgb(${hexToRgb(v.acc).join(', ')})`;
+      t.expect(await t.style(active, 'border-color') === accRgb, `color-gamut: fristående: aktiv rad ${active} har acc-kant även fristående`);
+      t.expect((await unresolvedVars(t.page)).length === 0, `color-gamut: fristående: alla var() löses upp (${(await unresolvedVars(t.page)).join(', ') || 'inga olösta'})`);
+      const selectors = await snippetSelectors(t.page);
+      const provSelectors = selectors.filter((s) => s.startsWith('.prov')).sort();
+      const expectedProv = ['.prov', '.prov-rad', '.prov-rad::before', '.prov-rad.pa', '.prov-rad.pa::before', '.prov-rad b', '.prov-rad.pa b'].sort();
+      // The isolated sheet will have the prov base plus the two media-specific selectors
+      for (const sel of expectedProv) t.expect(provSelectors.includes(sel), `color-gamut: fristående: fragmentets selektor ${sel} finns`);
+      const innerSelectors = await t.page.evaluate(() => [...document.styleSheets].flatMap((s) => [...s.cssRules]).filter((r) => r.media).flatMap((r) => [...r.cssRules].map((rr) => rr.selectorText)));
+      t.expect(innerSelectors.includes('.prov-gamut .r-p3'), 'color-gamut: fristående: egen P3-selektor finns');
+      t.expect(innerSelectors.includes('.prov-gamut .r-srgb'), 'color-gamut: fristående: egen sRGB-selektor finns');
+      // No unrelated prov media
+      t.expect(!innerSelectors.some((s) => s.includes('.prov-hover') || s.includes('.prov-pekare') || s.includes('.prov-script') || s.includes('.prov-rm')), 'color-gamut: fristående: inga andra prov-media följer med');
+      // No swatch/filter etc
+      t.expect(!/\.swatch|\.f-|\.filter|\.grad-|\.cm-row|\.rel-|\.gamut-/.test(selectors.join(' ') + ' ' + innerSelectors.join(' ')), 'color-gamut: fristående: ingen orelaterad kapitel-CSS');
+      t.expect(await t.page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), 'color-gamut: fristående: ingen horisontell overflow i snippet');
+      // Verify snippet is understandable: contains both Swedish labels
+      const html = await t.page.evaluate(() => document.body.innerHTML);
+      t.expect(html.includes('sRGB') && html.includes('display-p3'), 'color-gamut: fristående: båda etiketterna finns i markupen');
+    },
+  },
 };
 
 // Each gradient has a distinct expected standalone declaration. The tests use
@@ -1128,6 +1187,95 @@ async function main() {
     `sidan: exakt åtta filterkort bär motivklassen (${motif.cards.join(', ')})`);
   assert(motif.surfaces.every((s) => s.layers === 4 && s.filter !== 'none'),
     `sidan: varje filteryta har fyra lager och ett aktivt filter (${JSON.stringify(motif.surfaces)})`);
+
+  /* Det delade prov-fragmentet: sju basregler, exakt fem konsumenter. */
+  const prov = await page.evaluate(() => {
+    const baseSelectors = ['.prov', '.prov-rad', '.prov-rad::before', '.prov-rad.pa', '.prov-rad.pa::before', '.prov-rad b', '.prov-rad.pa b'];
+    const rules = [...document.styleSheets].flatMap((s) => [...s.cssRules]).filter((r) => baseSelectors.includes(r.selectorText));
+    const provRules = [...document.styleSheets].flatMap((s) => [...s.cssRules]).filter((r) => r.selectorText === '.prov');
+    return {
+      count: rules.length,
+      sheets: provRules.length,
+      cards: [...document.querySelectorAll('article.demo')].filter((a) => a.querySelector('.prov')).map((a) => a.id),
+      mediaGamut: [...document.styleSheets].flatMap((s) => [...s.cssRules]).filter((r) => r.media && r.conditionText.includes('color-gamut') && [...r.cssRules].some((rr) => (rr.selectorText ?? '').includes('.prov-gamut'))).length,
+    };
+  });
+  assert(prov.count === 7, `sidan: prov-fragmentet publicerar exakt sju basregler (${prov.count})`);
+  assert(prov.sheets === 1, `sidan: .prov publiceras exakt en gång`);
+  assert(prov.cards.length === 5 && prov.cards.includes('media-color-gamut'), `sidan: exakt fem provkort bär prov-klassen (${prov.cards.join(', ')})`);
+  assert(prov.mediaGamut === 2, `sidan: media-color-gamut publicerar exakt två @media-block (${prov.mediaGamut})`);
+
+  /* Regression för de fyra återstående prov-korten (ej migrerade).
+     Kontrollerar att delad presentation (7 basregler) fortfarande gäller,
+     att förväntade rader finns kvar och att aktiv markering följer
+     webbläsarens faktiska matchMedia-tillstånd. Endast de tillstånd som
+     stöds i denna Chromium-miljö (153, headless) utvärderas; inga
+     emulerade tillstånd påstås. Jämfört med pre-migrerings-revisionen
+     e606522 (main) är den delade presentationen och radernas antal
+     oförändrade – 5 provkort bar .prov även då. */
+  const unmigratedChecks = [
+    {
+      id: 'prefers-reduced-motion',
+      expectRows: 2,
+      groups: [{ sel: '.prov-rm', rows: [{ cls: '.r-full', mq: '(prefers-reduced-motion: no-preference)' }, { cls: '.r-reduce', mq: '(prefers-reduced-motion: reduce)' }] }],
+    },
+    {
+      id: 'hover-hover',
+      expectRows: 2,
+      groups: [{ sel: '.prov-hover', rows: [{ cls: '.r-ja', mq: '(hover: hover)' }, { cls: '.r-nej', mq: '(hover: none)' }] }],
+    },
+    {
+      id: 'media-scripting',
+      expectRows: 2,
+      groups: [{ sel: '.prov-script', rows: [{ cls: '.r-ingen', mq: '(scripting: none)' }, { cls: '.r-ja', mq: '(scripting: enabled)' }] }],
+    },
+    {
+      id: 'media-hover-pointer',
+      expectRows: 5,
+      groups: [
+        { sel: '.prov-pekare', rows: [{ cls: '.r-fin', mq: '(pointer: fine)' }, { cls: '.r-grov', mq: '(pointer: coarse)' }, { cls: '.r-ingen', mq: '(pointer: none)' }] },
+        { sel: '.prov-hover', rows: [{ cls: '.r-ja', mq: '(hover: hover)' }, { cls: '.r-nej', mq: '(hover: none)' }] },
+      ],
+    },
+  ];
+  for (const { id, expectRows, groups } of unmigratedChecks) {
+    const card = `#${id}`;
+    const count = await page.evaluate((sel) => document.querySelectorAll(`${sel} .prov-rad`).length, card);
+    assert(count === expectRows, `sidan: #${id} har ${expectRows} prov-rader (${count})`);
+    // Delad presentation: .prov är rutnät, .prov-rad är flex med ram
+    const provDisplay = await page.evaluate((sel) => getComputedStyle(document.querySelector(`${sel} .prov`) ?? document.querySelector(`${sel} .demo-yta`)).display, card);
+    assert(provDisplay === 'grid', `sidan: #${id} .prov är rutnät från fragmentet (${provDisplay})`);
+    const radDisplay = await page.evaluate((sel) => getComputedStyle(document.querySelector(`${sel} .prov-rad`)).display, card);
+    assert(radDisplay === 'flex', `sidan: #${id} .prov-rad är flex (${radDisplay})`);
+    for (const g of groups) {
+      const activeCls = await page.evaluate(({ card, rows }) => {
+        for (const r of rows) if (window.matchMedia(r.mq).matches) return r.cls;
+        return null;
+      }, { card, rows: g.rows });
+      // Rapportera vilket tillstånd som faktiskt utvärderades
+      const mqs = g.rows.map((r) => `${r.cls}≙${r.mq}`).join(', ');
+      assert(activeCls !== null, `sidan: #${id} ${g.sel} har ett matchande media-tillstånd (${mqs})`);
+      for (const r of g.rows) {
+        const sel = `${card} ${g.sel} ${r.cls}`;
+        const isActive = r.cls === activeCls;
+        const border = await page.evaluate((s) => getComputedStyle(document.querySelector(s)).borderColor, sel);
+        const before = await page.evaluate((s) => getComputedStyle(document.querySelector(s), '::before').content, sel);
+        const bOpacity = await page.evaluate((s) => getComputedStyle(document.querySelector(`${s} b`)).opacity, sel);
+        const accRgb = `rgb(${hexToRgb(vars.acc).join(', ')})`;
+        const lineRgb = `rgb(${hexToRgb(vars.line).join(', ')})`;
+        if (isActive) {
+          assert(border === accRgb, `sidan: #${id} aktiv rad ${r.cls} har acc-kant (${border} vs ${accRgb}) [tillstånd: ${r.mq}]`);
+          assert(before === '"●"', `sidan: #${id} aktiv rad ${r.cls} visar ● [${r.mq}]`);
+          assert(bOpacity === '1', `sidan: #${id} aktiv rad ${r.cls} visar ”ditt läge” [${r.mq}]`);
+        } else {
+          assert(border === lineRgb, `sidan: #${id} inaktiv rad ${r.cls} har linje-kant (${border})`);
+          assert(before === '"○"', `sidan: #${id} inaktiv rad ${r.cls} visar ○`);
+          assert(bOpacity === '0', `sidan: #${id} inaktiv rad ${r.cls} döljer ”ditt läge”`);
+        }
+      }
+    }
+  }
+  console.log('  (prov-regression: 4 omigrerade kort verifierade mot faktiska matchMedia – se ovan)');
 
   await browser.close();
   console.log('');

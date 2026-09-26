@@ -1,0 +1,11 @@
+/* delat prov: 7 basregler – gemensam presentation för 5 kort */
+.prov { display: grid; gap: .4rem; font-family: var(--mono); font-size: .76rem; }
+.prov-rad {
+  display: flex; align-items: center; gap: .6rem; padding: .5rem .75rem;
+  border-radius: 8px; border: 1px solid var(--line); background: var(--bg2); color: var(--dim);
+}
+.prov-rad::before { content: "○"; color: var(--line); flex: none; }
+.prov-rad.pa { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
+.prov-rad.pa::before { content: "●"; color: var(--acc); }
+.prov-rad b { margin-left: auto; font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--acc); opacity: 0; }
+.prov-rad.pa b { opacity: 1; }
