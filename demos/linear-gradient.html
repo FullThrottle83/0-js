@@ -1,0 +1,18 @@
+<!--
+  demo: linear-gradient
+  Kanonisk källa för både live-demot och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+  Grupp B: swatch-familjen och .swatch-solo är delade (demos/_delat/) och
+  begärs med data-include. .grad-1 är demots enda egen regel; labbets
+  reglerbara vinkel är sidans scenografi och ligger i data-live.
+-->
+<div class="demo-yta swatch-solo"><span class="swatch grad-1"><span class="swatch-yta"></span><span class="swatch-lbl">linear</span></span></div>
+<style data-include="swatch swatch-solo"></style>
+<style>
+.grad-1 .swatch-yta { background: linear-gradient(135deg, var(--acc), transparent); }
+</style>
+<style data-live>
+/* Reglerbar gradient: --lv styr vinkeln. Labbet är sidans scenografi och
+   hör inte hemma i det kopierbara exemplet. */
+.labbar.grad-1 .swatch-yta { background: linear-gradient(calc(var(--lv) * 45deg), var(--acc), transparent); }
+</style>

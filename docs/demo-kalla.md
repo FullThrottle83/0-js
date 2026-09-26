@@ -347,6 +347,51 @@ migrering:
 Kodvalven blir kortare och korrekta (t.ex. `display: block` på `.swatch-yta`).
 Det är en avsiktlig textändring och ska nämnas i respektive PR.
 
+#### Status: batch 2 utförd — 2 av 16 (`color-mix`, `linear-gradient`)
+
+Båda besloven ovan är vidtagna och byggda. Vad som faktiskt gäller:
+
+* **Två fragment**, inte ett: `demos/_delat/swatch.css` (`.swatch`,
+  `.swatch-yta`, `.swatch-lbl` — begärs av alla 16) och
+  `demos/_delat/swatch-solo.css` (`.swatch-solo`, `.swatch-solo > .swatch`,
+  `.swatch-solo .swatch-yta` — begärs bara av de 13 som visar EN ruta).
+  Ett enda fragment hade betytt att `color-mix`-valvet bar regler det inte
+  använder, alltså precis det felet migreringen ska rätta till.
+* **Källformatet** för en labb-demo är tre `<style>`-element: ett tomt
+  `<style data-include="swatch swatch-solo"></style>`, ett vanligt `<style>`
+  med demots egna regler och ett `<style data-live>` med `.labbar …`.
+* **Bygget** infogar varje fragment i stilbladet *exakt en gång*, och i
+  kodvalvet endast det som källan begär. Ett fragment som ingen källa
+  begär, eller en markör som saknas/är överbliven, är ett byggfel — inte en
+  tyst lucka. Cirkulära includes nekas.
+* **Labb-överstyrningarna** (`--lv`, `.labbar .swatch-yta`,
+  `.labbar .grad-1 .swatch-yta` …) står kvar i `index.html` som sidans
+  scenografi och följer aldrig med i ett kodvalv.
+* **Drift upptäcks.** Ändras `demos/_delat/swatch.css` utan ombyggnad fäller
+  `npm run build:check`; `scripts/build.test.mjs` har en explicit regression
+  för `.swatch-yta`-driften (17 påståenden går röda om `display: block`
+  stryks ur fragmentet, gröna igen när det står där).
+
+Kvar att migrera i Grupp B (14): `rgb-from`, `oklch-display-p3`, de fyra
+övriga gradient-demona (`radial-gradient`, `conic-gradient`,
+`repeating-linear-gradient`, `repeating-radial-gradient`) och de åtta
+filter-demona. Filter-demona är den enda besvärliga resten: den fyrskiktade
+`background`-motivet sitter i en nio-väljarlista som spänner över alla åtta
+ids, så den måste antingen bli ett tredje fragment (`_delat/filter-motiv.css`)
+som alla åtta begär, eller flyttas till varje demos eget `<style>`. Ett
+eget fragment är rätt val — det är exakt samma ägandefråga som
+`.swatch`/`.swatch-solo`, bara med åtta konsumenter i stället för tretton.
+
+Bevis för piloten:
+
+| Påstående | Hur det verifierats |
+| --- | --- |
+| Live-renderingen är oförändrad | 36 elementskärmbilder (2 demos × 3 bredder × 2 teman × 3 lägen), byte-identiska före/efter. `docs/migrering/grupp-b-pilot/` |
+| Beräknade stilar och geometri oförändrade | `npm run test:parity` — 18 486 värden mot baslinjen, 0 strukturella avvikelser för de 16 demona |
+| Den kopierade koden fungerar fristående | `tests/demo-source.mjs` laddar det faktiska kodvalvet i ett eget dokument med Grundpaketet och mäter `.swatch`/`.swatch-yta`/`.swatch-solo`/`.cm-row`/`.grad-1`, alla `var()` och att inga orelaterade labbregler finns med |
+| Delning kan inte drifta igen | Ändras `demos/_delat/swatch.css` utan ombyggnad fäller `npm run build:check`; 17 påståenden i `scripts/build.test.mjs` går röda om `display: block` på `.swatch-yta` stryks ur fragmentet |
+| Ingen regel publiceras två gånger | `scripts/build.test.mjs` §3b(e) skannar hela stilbladet efter upprepade regler |
+
 ### Grupp C — snippet som avviker från live-markupen (7 demos: `media-color-gamut`, `round-mod`, `textspoiler`, `prefers-reduced-motion`, `hover-hover`, `media-scripting`, `media-hover-pointer`)
 
 Här är kodvalvet en *förenklad* variant (t.ex. `.nd-gamut` medan sidan visar

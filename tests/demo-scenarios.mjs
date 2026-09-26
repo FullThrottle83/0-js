@@ -83,6 +83,17 @@ export const SCENARIOS = {
   donutdiagram: [
     { name: 'jmf-av', apply: async ({ card }) => { await card.locator('.jmf-knapp').click(); } },
   ],
+  /* Grupp B — labbdemos. Reglaget (.labb) är sidans scenografi och ligger
+     utanför källan, men det är ändå den interaktion som påverkar demot:
+     :has() sätter --lv och de live-only-reglerna läser den. */
+  'color-mix': [
+    { name: 'lv-0', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="0"]').check(); } },
+    { name: 'lv-8', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="8"]').check(); } },
+  ],
+  'linear-gradient': [
+    { name: 'lv-0', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="0"]').check(); } },
+    { name: 'lv-8', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="8"]').check(); } },
+  ],
 };
 
 /** Scenarier för ett id (tom lista om demot inte är interaktivt). */

@@ -1,0 +1,34 @@
+<!--
+  demo: color-mix
+  Kanonisk källa för både live-demot och kodvalvet i index.html.
+  Bygg: npm run build · Kontroll: npm run build:check
+  Grupp B: swatch-familjen är delad (demos/_delat/swatch.css) och begärs med
+  data-include. .cm-row och de fem stegen är demots egna regler; labbets
+  reglerbara maxandel är sidans scenografi och ligger i data-live.
+-->
+<div class="demo-yta cm-row">
+  <span class="swatch"><span class="swatch-yta"></span><span class="swatch-lbl">0%</span></span>
+  <span class="swatch"><span class="swatch-yta"></span><span class="swatch-lbl">25%</span></span>
+  <span class="swatch"><span class="swatch-yta"></span><span class="swatch-lbl">50%</span></span>
+  <span class="swatch"><span class="swatch-yta"></span><span class="swatch-lbl">75%</span></span>
+  <span class="swatch"><span class="swatch-yta"></span><span class="swatch-lbl">100%</span></span>
+</div>
+<style data-include="swatch"></style>
+<style>
+.cm-row { display:grid; grid-template-columns:repeat(5,1fr); gap:.5rem; }
+.cm-row span:nth-child(1) .swatch-yta { background: color-mix(in oklch, var(--acc) 0%, var(--bg2)); }
+.cm-row span:nth-child(2) .swatch-yta { background: color-mix(in oklch, var(--acc) 25%, var(--bg2)); }
+.cm-row span:nth-child(3) .swatch-yta { background: color-mix(in oklch, var(--acc) 50%, var(--bg2)); }
+.cm-row span:nth-child(4) .swatch-yta { background: color-mix(in oklch, var(--acc) 75%, var(--bg2)); }
+.cm-row span:nth-child(5) .swatch-yta { background: color-mix(in oklch, var(--acc) 100%, var(--bg2)); }
+</style>
+<style data-live>
+/* Reglerbar blandning: --lv flyttar hela rampens topp, så de fem stegen
+   visar interpolationen mellan 0 % och den valda maxandelen. Labbet är
+   sidans scenografi och hör inte hemma i det kopierbara exemplet. */
+.labbar .cm-row span:nth-child(1) .swatch-yta { background: color-mix(in oklch, var(--acc) 0%, var(--bg2)); }
+.labbar .cm-row span:nth-child(2) .swatch-yta { background: color-mix(in oklch, var(--acc) calc(var(--lv) * 3.125%), var(--bg2)); }
+.labbar .cm-row span:nth-child(3) .swatch-yta { background: color-mix(in oklch, var(--acc) calc(var(--lv) * 6.25%), var(--bg2)); }
+.labbar .cm-row span:nth-child(4) .swatch-yta { background: color-mix(in oklch, var(--acc) calc(var(--lv) * 9.375%), var(--bg2)); }
+.labbar .cm-row span:nth-child(5) .swatch-yta { background: color-mix(in oklch, var(--acc) calc(var(--lv) * 12.5%), var(--bg2)); }
+</style>

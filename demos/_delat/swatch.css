@@ -1,0 +1,9 @@
+/* DELAT FRAGMENT — swatch-familjen (kapitel 01 · färg). Ägs av alla 16
+   labbdemos i Grupp B: color-mix, rgb(from …), oklch/display-p3, de fem
+   gradient-demona och de åtta filter-demona. Redigeras bara här.
+   BUGGFIX 2026-08-30 — .swatch-yta är ett span och alltså inline; height
+   biter inte på inline-element, så display:block krävs. Utan den kollapsar
+   rutorna till 0 px höjd och bara etiketterna syns. */
+.swatch { display: block; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+.swatch-yta { display: block; height: 3.2rem; }
+.swatch-lbl { display:block; padding:.35rem .55rem; font-family: var(--mono); font-size:.68rem; color: var(--dim); background: var(--bg2); }

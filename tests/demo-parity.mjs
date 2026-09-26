@@ -23,13 +23,21 @@
  *   node tests/demo-parity.mjs                 jämför index.html mot baslinjen
  *   node tests/demo-parity.mjs --capture       skriv baslinjen ur NUVARANDE
  *                                              dokument — körs FÖRE en
- *                                              migrering och committas
+ *                                              migrering och committas.
+ *                                              Med --merge (och --demo <id>)
+ *                                              läggs bara de valda demos till i
+ *                                              en befintlig baslinje; de övriga
+ *                                              posterna lämnas orörda
  *   node tests/demo-parity.mjs --strict        kräv samma Chromium-bygge och
  *                                              noll geometriavvikelse
  *   node tests/demo-parity.mjs --require-same-browser
  *                                              fäll om aktuell webbläsare inte
  *                                              är baslinjens bygge
  *   node tests/demo-parity.mjs --document <fil>  annat dokument än index.html
+ *   node tests/demo-parity.mjs --demo <id>       bara en demo (används med
+ *                                              --capture --merge för att lägga
+ *                                              nya demos till en befintlig
+ *                                              baslinje utan att röra de andra)
  *   node tests/demo-parity.mjs --shots <katalog>  spara skärmbilder (bevis,
  *                                              committas inte)
  *
@@ -323,9 +331,23 @@ export function diffMeasurements(a, b, pathName = '', { strict = false, geometry
   return { hard, soft, geometry, reported, compared };
 }
 
+/**
+ * Merge new pre-migration measurements without ever replacing historical
+ * entries. A re-capture of an existing id must be an explicit, reviewed
+ * operation, never a side effect of --merge.
+ */
+export function mergeBaselineDemos(existingDemos, measured) {
+  const duplicateIds = Object.keys(measured).filter((id) => Object.hasOwn(existingDemos, id));
+  if (duplicateIds.length) {
+    throw new Error(`--merge får inte skriva över befintlig historisk baslinje: ${duplicateIds.join(', ')}`);
+  }
+  return { ...existingDemos, ...measured };
+}
+
 async function main() {
   const args = process.argv.slice(2);
   const capture = args.includes('--capture');
+  const merge = args.includes('--merge');
   const shotsIdx = args.includes('--shots') ? args.indexOf('--shots') : -1;
   const shotsDir = shotsIdx === -1 ? null : args[shotsIdx + 1];
   const strict = args.includes('--strict');
@@ -335,6 +357,14 @@ async function main() {
   const documentPath = documentIdx === -1 ? join(root, 'index.html') : args[documentIdx + 1];
   const demoIdx = args.includes('--demo') ? args.indexOf('--demo') : -1;
   const only = demoIdx === -1 ? null : args[demoIdx + 1];
+  if (merge && !capture) {
+    console.error('✗ --merge kräver --capture.');
+    process.exit(1);
+  }
+  if (merge && !existsSync(BASELINE)) {
+    console.error('✗ --merge kräver en befintlig baslinje; fånga en separat pre-migrerings-baslinje först.');
+    process.exit(1);
+  }
 
   let chromium;
   try {
@@ -384,7 +414,6 @@ async function main() {
   await browser.close();
 
   if (capture) {
-    mkdirSync(dirname(BASELINE), { recursive: true });
     const payload = {
       _readme: [
         'Mätbaslinje för tests/demo-parity.mjs. Fångad FÖRE migreringen av de demos som listas i scripts/demo-spec.mjs.',
@@ -400,6 +429,42 @@ async function main() {
       documentSha256,
       demos: measured,
     };
+    // --merge: lägg bara de valda demos till i en BEFINTLIG baslinje. De
+    // poster som redan finns lämnas orörda — en historisk baslinje ska inte
+    // skrivas om för att dölja vad en senare migration ändrat. Varje
+    // sammanslagning loggas i mergeLog, så att en post med ett annat
+    // ursprungsdokument än toppnivåns hash går att spåra.
+    if (merge && existsSync(BASELINE)) {
+      const existing = JSON.parse(readFileSync(BASELINE, 'utf8'));
+      if (existing.chromium !== version) {
+        console.error(`✗ --merge kräver samma Chromium-bygge som baslinjen (${existing.chromium} ≠ ${version}).`);
+        process.exit(1);
+      }
+      let combined;
+      try {
+        combined = mergeBaselineDemos(existing.demos, measured);
+      } catch (e) {
+        console.error(`✗ ${e.message}`);
+        process.exit(1);
+      }
+      const before = Object.keys(existing.demos).sort().join(',');
+      existing.demos = combined;
+      const after = Object.keys(existing.demos).sort().join(',');
+      existing.mergeLog = [...(existing.mergeLog ?? []), {
+        capturedAt: payload.capturedAt,
+        chromium: version,
+        document: payload.document,
+        documentSha256,
+        added: Object.keys(measured).sort(),
+      }];
+      writeFileSync(BASELINE, JSON.stringify(existing, null, 1) + '\n');
+      console.log('Baslinje sammanslagen: tests/baseline/demos.json');
+      console.log(`  före: ${before}`);
+      console.log(`  efter: ${after}`);
+      console.log(`  tillagt ur ${payload.document} (sha256 ${documentSha256.slice(0, 8)}…): ${Object.keys(measured).sort().join(', ')}`);
+      return;
+    }
+    mkdirSync(dirname(BASELINE), { recursive: true });
     writeFileSync(BASELINE, JSON.stringify(payload, null, 1) + '\n');
     console.log(`Baslinje skriven: tests/baseline/demos.json (${ids.length} demos, Chromium ${version})`);
     return;

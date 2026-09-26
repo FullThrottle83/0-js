@@ -88,6 +88,37 @@ function tools(page, rootSel, cardPrefix) {
   };
 }
 
+/**
+ * Alla var() i den fristående testsidans CSS måste lösa upp till ett värde.
+ * Returnerar de namn som INTE gör det — en kopia som tappat en deklaration
+ * (eller som lutar sig mot en variabel som bara finns på sidan) fångas här.
+ */
+async function unresolvedVars(page) {
+  return page.evaluate(() => {
+    const probe = getComputedStyle(document.querySelector('.demo-yta'));
+    const out = [];
+    for (const sheet of document.styleSheets) {
+      for (const rule of sheet.cssRules) {
+        if (!rule.style) continue;
+        for (const prop of rule.style) {
+          for (const m of rule.style.getPropertyValue(prop).matchAll(/var\(\s*(--[a-z0-9-]+)/g)) {
+            if (!probe.getPropertyValue(m[1]).trim()) out.push(m[1]);
+          }
+        }
+      }
+    }
+    return [...new Set(out)];
+  });
+}
+
+/** Alla väljare i den fristående testsidans CSS. */
+async function snippetSelectors(page) {
+  return page.evaluate(() => [...document.styleSheets]
+    .flatMap((s) => [...s.cssRules])
+    .filter((r) => r.selectorText)
+    .map((r) => r.selectorText));
+}
+
 /** Vänta tills en pågående övergång har satt sig (två lika mätningar i rad). */
 async function settled(page, read, arg) {
   let prev = null;
@@ -369,6 +400,84 @@ const CHECKS = {
       t.expect(await t.style('.ld-light', 'background-color') === 'rgb(239, 233, 220)', 'light-dark: fristående kodvalv: ljust kort');
       t.expect(await t.style('.ld-dark', 'background-color') === 'rgb(23, 20, 28)', 'light-dark: fristående kodvalv: mörkt kort');
       t.expect(await t.count('.ld-box') === 2, 'light-dark: fristående kodvalv: båda korten finns i markupen');
+    },
+  },
+  /* ---- batch 2 (Grupp B-pilot): delad swatch-CSS ---------------------- */
+  'color-mix': {
+    page: async (t, v) => {
+      // Den delade swatch-familjen finns på sidan …
+      t.expect(await t.count('.swatch') === 5, 'color-mix: sidan: fem svatchar i raden');
+      t.expect(await t.style('.swatch', 'display') === 'block', 'color-mix: sidan: .swatch är block (buggfix 2026-08-30)');
+      t.expect(await t.style('.swatch', 'border-radius') === '10px', 'color-mix: sidan: .swatch har ramen från fragmentet');
+      t.expect(await t.style('.swatch-yta', 'display') === 'block', 'color-mix: sidan: .swatch-yta är block — annars kollapsar höjden');
+      t.expect(await t.style('.swatch-yta', 'height') === '51.1875px', 'color-mix: sidan: .swatch-yta har 3.2rem höjd');
+      t.expect(await t.style('.swatch-lbl', 'background-color') === `rgb(${hexToRgb(v.bg2).join(', ')})`,
+        'color-mix: sidan: .swatch-lbl får bakgrunden ur Grundpaketet');
+      // … och demots egna regler ger en femkolumnsramp.
+      t.expect(await t.rootStyle('display') === 'grid', 'color-mix: sidan: .cm-row är ett rutnät');
+      t.expect((await t.rootStyle('grid-template-columns')).split(' ').length === 5,
+        'color-mix: sidan: .cm-row har fem kolumner');
+      const bgs = await t.page.evaluate((p) => [...document.querySelectorAll(`${p} .swatch-yta`)].map((e) => getComputedStyle(e).backgroundColor), t.prefix);
+      t.expect(bgs.length === 5 && new Set(bgs).size === 5, `color-mix: sidan: fem distinkta färgsteg (${bgs.join(' | ')})`);
+      // Labbet är sidans scenografi: --lv styr de live-only-reglerna.
+      await t.page.locator(t.cardSel('.labb-steg input[data-v="0"]')).check();
+      await settle(t);
+      t.expect(await t.rootStyle('--lv') === '0', 'color-mix: sidan: labbet sätter --lv: 0 via :has()');
+      // Med --lv: 0 ligger hela rampens topp kvar: alla fem steg blir lika.
+      const flat = await t.page.evaluate((p) => [...document.querySelectorAll(`${p} .swatch-yta`)].map((e) => getComputedStyle(e).backgroundColor), t.prefix);
+      t.expect(new Set(flat).size === 1,
+        `color-mix: sidan: --lv: 0 jämnar ut hela rampen (${new Set(flat).size} distinkta steg, alla ${flat[0]})`);
+    },
+    isolated: async (t, v) => {
+      t.expect(await t.count('.swatch') === 5, 'color-mix: fristående kodvalv: fem svatchar finns i markupen');
+      t.expect(await t.style('.swatch', 'display') === 'block', 'color-mix: fristående kodvalv: .swatch är block');
+      t.expect(await t.style('.swatch', 'border-top-width') === '1px', 'color-mix: fristående kodvalv: .swatch har ramen ur fragmentet');
+      t.expect(await t.style('.swatch-yta', 'height') === '51.1875px', 'color-mix: fristående kodvalv: .swatch-yta har 3.2rem höjd');
+      t.expect(await t.style('.swatch-yta', 'display') === 'block', 'color-mix: fristående kodvalv: .swatch-yta är block');
+      t.expect(await t.rootStyle('display') === 'grid', 'color-mix: fristående kodvalv: .cm-row är ett rutnät');
+      t.expect(await t.rootStyle('gap') === '8px', 'color-mix: fristående kodvalv: .cm-row har .5rem gap');
+      const bgs = await t.page.evaluate(() => [...document.querySelectorAll('.swatch-yta')].map((e) => getComputedStyle(e).backgroundColor));
+      t.expect(bgs.length === 5 && new Set(bgs).size === 5, `color-mix: fristående kodvalv: fem distinkta färgsteg (${bgs.join(' | ')})`);
+      t.expect(await t.rootStyle('--lv') === '', 'color-mix: fristående kodvalv: ingen --lv-scenografi följer med');
+      // Ingen variabel i kopian får vara olöst (annars saknas en deklaration).
+      t.expect((await unresolvedVars(t.page)).length === 0,
+        `color-mix: fristående kodvalv: alla var() löses upp (${(await unresolvedVars(t.page)).join(', ') || 'inga olösta'})`);
+      // … och kopian får inte bära annan laboratorie-CSS än sin egen.
+      const sel = (await snippetSelectors(t.page)).join(' ');
+      t.expect(!/\.(rel-|gamut-|grad-|f-|filter-row)/.test(sel),
+        `color-mix: fristående kodvalv: inga orelaterade labbregler (${sel.slice(0, 90)}…)`);
+    },
+  },
+  'linear-gradient': {
+    page: async (t, v) => {
+      t.expect(await t.count('.swatch') === 1, 'linear-gradient: sidan: en enda svatch');
+      t.expect(await t.style('.swatch', 'display') === 'block', 'linear-gradient: sidan: .swatch är block');
+      t.expect(await t.style('.swatch-yta', 'height') === '96px', 'linear-gradient: sidan: .swatch-solo ger 6rem höjd');
+      t.expect(await t.rootStyle('max-width') === '352px', 'linear-gradient: sidan: .swatch-solo ger 22rem bredd');
+      t.expect((await t.style('.swatch-yta', 'background-image')).startsWith('linear-gradient(135deg'),
+        'linear-gradient: sidan: .grad-1 ritar gradienten');
+      t.expect((await t.style('.swatch-yta', 'background-image')).includes('rgb(255, 194, 94)'),
+        'linear-gradient: sidan: gradienten börjar i accentfärgen ur Grundpaketet');
+      await t.page.locator(t.cardSel('.labb-steg input[data-v="0"]')).check();
+      await settle(t);
+      t.expect(await t.rootStyle('--lv') === '0', 'linear-gradient: sidan: labbet sätter --lv: 0');
+      t.expect((await t.style('.swatch-yta', 'background-image')).startsWith('linear-gradient(0deg'),
+        'linear-gradient: sidan: --lv: 0 ger vinkel 0 (live-only-regeln)');
+    },
+    isolated: async (t, v) => {
+      t.expect(await t.count('.swatch') === 1, 'linear-gradient: fristående kodvalv: en enda svatch');
+      t.expect(await t.style('.swatch', 'border-top-width') === '1px', 'linear-gradient: fristående kodvalv: .swatch har ramen ur fragmentet');
+      t.expect(await t.style('.swatch-yta', 'height') === '96px', 'linear-gradient: fristående kodvalv: .swatch-solo ger 6rem höjd');
+      t.expect(await t.rootStyle('max-width') === '352px', 'linear-gradient: fristående kodvalv: .swatch-solo ger 22rem bredd');
+      t.expect((await t.style('.swatch-yta', 'background-image')).startsWith('linear-gradient(135deg'),
+        'linear-gradient: fristående kodvalv: .grad-1 ritar gradienten');
+      t.expect(await t.rootStyle('--lv') === '', 'linear-gradient: fristående kodvalv: ingen --lv-scenografi följer med');
+      t.expect((await unresolvedVars(t.page)).length === 0,
+        `linear-gradient: fristående kodvalv: alla var() löses upp (${(await unresolvedVars(t.page)).join(', ') || 'inga olösta'})`);
+      const sel = (await snippetSelectors(t.page)).join(' ');
+      t.expect(!/\.(rel-|gamut-|grad-[2-9]|f-(blur|contrast|saturate|hue|sepia|gray|invert|drop)|filter-row|labbar)/.test(sel),
+        `linear-gradient: fristående kodvalv: inga orelaterade labbregler (${sel.slice(0, 90)}…)`);
+      t.expect(sel.includes('.grad-1'), 'linear-gradient: fristående kodvalv: demots egen .grad-1-regel finns kvar');
     },
   },
   donutdiagram: {

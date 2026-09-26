@@ -20,6 +20,10 @@
  *            för läsbarhet; byggtestet härleder dem ur källfilen)
  *   liveCss  true om källfilen har <style data-live> (sidans scenografi som
  *            medvetet INTE följer med i det kopierbara kodvalvet)
+ *   shared   namn på de delade fragmenten i demos/_delat/ som källan begär
+ *            med <style data-include="…">. Tom lista för demos som inte delar
+ *            CSS med något annat kort. Byggtestet verifierar att listan är
+ *            exakt det källfilen faktiskt efterfrågar.
  *   note     kort motivering till varför demot kunde migreras mekaniskt
  */
 
@@ -29,6 +33,7 @@ export const DEMO_SPEC = [
     type: 'pilot',
     anchors: [],
     liveCss: true,
+    shared: [],
     note: 'jämförarens av-läge är live-only (jmfbar) och ligger i <style data-live>',
   },
   {
@@ -36,6 +41,7 @@ export const DEMO_SPEC = [
     type: 'pilot',
     anchors: ['tp-1', 'tp-2', 'tp-3'],
     liveCss: false,
+    shared: [],
     note: 'ankarlänkar och panel-id:n är en del av demot, inte av sidan',
   },
   {
@@ -43,6 +49,7 @@ export const DEMO_SPEC = [
     type: 'pilot',
     anchors: [],
     liveCss: false,
+    shared: [],
     note: '@property-registreringen följer med i källan och därmed i kodvalvet',
   },
   {
@@ -50,6 +57,7 @@ export const DEMO_SPEC = [
     type: 'batch-1',
     anchors: [],
     liveCss: false,
+    shared: [],
     note: 'tre regler, ingen delad CSS, inga sidreferenser till .nd-accent',
   },
   {
@@ -57,6 +65,7 @@ export const DEMO_SPEC = [
     type: 'batch-1',
     anchors: [],
     liveCss: false,
+    shared: [],
     note: 'en enda regel (.nd-caret input) utan kopplingar till andra kort',
   },
   {
@@ -64,6 +73,7 @@ export const DEMO_SPEC = [
     type: 'batch-1',
     anchors: [],
     liveCss: false,
+    shared: [],
     note: 'fyra :open/:summary-regler, interaktivt via details utan skript',
   },
   {
@@ -71,6 +81,7 @@ export const DEMO_SPEC = [
     type: 'batch-1',
     anchors: [],
     liveCss: false,
+    shared: [],
     note: '@supports-blocken hör till demot och kodvalvet blir komplett först nu',
   },
   {
@@ -78,6 +89,7 @@ export const DEMO_SPEC = [
     type: 'batch-1',
     anchors: [],
     liveCss: false,
+    shared: [],
     note: 'fem regler kring .pwd-field/.pwd-meter, interaktivt via :valid',
   },
   {
@@ -85,6 +97,7 @@ export const DEMO_SPEC = [
     type: 'batch-1',
     anchors: [],
     liveCss: false,
+    shared: [],
     note: 'fem regler inkl. leverantörs-pseudoelementen ::-webkit/::-moz-slider-thumb',
   },
   {
@@ -92,6 +105,7 @@ export const DEMO_SPEC = [
     type: 'batch-1',
     anchors: [],
     liveCss: false,
+    shared: [],
     note: 'sju regler med :has() och calc-size(auto, size), interaktivt via kryssruta',
   },
   {
@@ -99,6 +113,7 @@ export const DEMO_SPEC = [
     type: 'batch-1',
     anchors: [],
     liveCss: false,
+    shared: [],
     note: 'fyra regler; ::after-content med attr(data-url) verifieras i webbläsare',
   },
   {
@@ -106,6 +121,7 @@ export const DEMO_SPEC = [
     type: 'batch-1',
     anchors: [],
     liveCss: false,
+    shared: [],
     note: 'fyra regler; --varning och id:t #nd-varna hör till demot',
   },
   {
@@ -113,6 +129,7 @@ export const DEMO_SPEC = [
     type: 'batch-1',
     anchors: [],
     liveCss: true,
+    shared: [],
     note: 'jämförarens av-läge (.ld-box) är live-only och ligger i <style data-live>',
   },
   {
@@ -120,7 +137,24 @@ export const DEMO_SPEC = [
     type: 'batch-1',
     anchors: [],
     liveCss: true,
+    shared: [],
     note: 'jämförarens av-läge (.donut) är live-only och ligger i <style data-live>',
+  },
+  {
+    id: 'color-mix',
+    type: 'batch-2',
+    anchors: [],
+    liveCss: true,
+    shared: ['swatch'],
+    note: 'Grupp B: delar swatch-familjen med 15 andra labbkort; .cm-row och de fem stegen är demots egna, .labbar-överstyrningen är live-only',
+  },
+  {
+    id: 'linear-gradient',
+    type: 'batch-2',
+    anchors: [],
+    liveCss: true,
+    shared: ['swatch', 'swatch-solo'],
+    note: 'Grupp B: samma swatch-familie plus .swatch-solo (delat med tolv gradient-/filterkort); .grad-1 är demots egen regel, .labbar.grad-1 är live-only',
   },
 ];
 
