@@ -369,7 +369,10 @@ export const INTENTIONAL_DIFFS = [
   { id: 'filter-sepia', path: 'div:nth-child(5)>span:nth-child(1)', before: 'swatch f-sepia', after: 'swatch f-sepia f-motiv' },
   { id: 'filter-grayscale', path: 'div:nth-child(5)>span:nth-child(1)', before: 'swatch f-gray', after: 'swatch f-gray f-motiv' },
   { id: 'filter-invert', path: 'div:nth-child(5)>span:nth-child(1)', before: 'swatch f-invert', after: 'swatch f-invert f-motiv' },
-  { id: 'filter-drop-shadow', path: 'div:nth-child(5)>span:nth-child(1)', before: 'swatch f-drop', after: 'swatch f-drop f-motiv' },
+  { id: 'filter-drop-shadow', path: 'div:nth-child(5)>span:nth-child(1)', before: 'swatch f-drop', after: 'swatch f-drop f-motiv', styles: [
+    { path: 'div:nth-child(5)>span:nth-child(1)', prop: 'overflow', before: 'hidden', after: 'visible' },
+    { path: 'div:nth-child(5)>span:nth-child(1)>span:nth-child(1)', prop: 'border-radius', before: '0px', after: '9px 9px 0px 0px' },
+  ] },
 ];
 
 /**
@@ -398,6 +401,19 @@ export function applyIntentionalDiffs(baselineState, measuredState, id) {
     measuredState.elements[i].class = d.before;
     measuredState.html = measuredState.html.replace(`class="${d.after}"`, `class="${d.before}"`);
     notes.push(`${d.path}: class "${d.before}" → "${d.after}" (avsiktlig gemensam motivklass)`);
+    for (const s of d.styles ?? []) {
+      const baselineEl = baselineState.elements.find((e) => e.path === s.path);
+      const measuredEl = measuredState.elements.find((e) => e.path === s.path);
+      if (!baselineEl || !measuredEl) throw new Error(`${id}: avsiktlig stilskillnad pekar på en nod som inte mäts (${s.path})`);
+      const before = baselineEl.style?.[s.prop];
+      const after = measuredEl.style?.[s.prop];
+      if (before !== s.before || after !== s.after) {
+        throw new Error(`${id} ${s.path} ${s.prop}: avsiktlig stilskillnad stämmer inte — baslinjen har "${before}" `
+          + `(väntat "${s.before}"), dokumentet har "${after}" (väntat "${s.after}")`);
+      }
+      measuredEl.style[s.prop] = s.before;
+      notes.push(`${s.path}: ${s.prop} "${s.before}" → "${s.after}" (avsiktlig drop-shadow-geometri)`);
+    }
   }
   return notes;
 }

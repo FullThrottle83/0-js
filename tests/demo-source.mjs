@@ -692,8 +692,8 @@ const referenceFor = (t, prop, declaration) => t.page.evaluate(([prefix, prop, d
  * inte bort — så den enda skillnaden är filtret. Pixlarna läses ur riktiga
  * elementskärmbilder; inget påstående bygger på deklarationstext.
  */
-async function paintPair(t, cls, { clip = true } = {}) {
-  await t.page.evaluate(([prefix, cls, clip]) => {
+async function paintPair(t, cls, { clip = true, live = false } = {}) {
+  await t.page.evaluate(([prefix, cls, clip, live]) => {
     const root = document.querySelector(prefix);
     for (const [key, keep] of [['a', true], ['b', false]]) {
       const host = document.createElement('div');
@@ -703,12 +703,13 @@ async function paintPair(t, cls, { clip = true } = {}) {
       host.style.cssText = `position:fixed;left:0;top:${key === 'a' ? 0 : 150}px;`
         + 'background:#000;padding:12px;width:30rem;box-sizing:content-box';
       const clone = root.cloneNode(true);
+      if (live) clone.classList.add('labbar', cls);
       if (!keep) clone.querySelector('.swatch').classList.remove(cls);
       if (!clip) clone.querySelectorAll('.swatch').forEach((s) => { s.style.overflow = 'visible'; });
       host.append(clone);
       document.body.append(host);
     }
-  }, [t.prefix, cls, clip]);
+  }, [t.prefix, cls, clip, live]);
 
   const shots = {};
   for (const key of ['a', 'b']) {
@@ -899,6 +900,16 @@ for (const f of FILTERS) {
           `${f.id}: sidan: --lv: ${lv} ger ${f.lab(lv)} (live-only-regeln)`);
       }
       t.expect(seen[0] !== seen[1], `${f.id}: sidan: laboratoriet ändrar filtret (${seen.join(' → ')})`);
+      if (f.id === 'filter-drop-shadow') {
+        await t.page.locator(t.cardSel('.labb-steg input[data-v="0"]')).check();
+        await settle(t);
+        const zero = await paintPair(t, f.cls, { live: true });
+        await t.page.locator(t.cardSel('.labb-steg input[data-v="8"]')).check();
+        await settle(t);
+        const eight = await paintPair(t, f.cls, { live: true });
+        t.expect(zero.ringFiltered.luma < 1 && eight.ringFiltered.luma > zero.ringFiltered.luma + 5,
+          `drop-shadow: sidan: --lv 0 saknar yttre halo men --lv 8 målar den (${zero.ringFiltered.luma} → ${eight.ringFiltered.luma})`);
+      }
     },
     isolated: async (t, v) => {
       const surface = await t.page.evaluate((prefix) => {
@@ -932,12 +943,27 @@ for (const f of FILTERS) {
       t.expect(ok, `${f.id}: fristående kodvalv: ${message}`);
       t.expect(v.acc.startsWith('#'), `${f.id}: Grundpaketets accent används av motivet`);
       if (f.id === 'filter-drop-shadow') {
-        // Skuggan klipps på sidan av .swatch { overflow: hidden } (oförändrat
-        // beteende). Utan klippningen målar drop-shadow() ändå en varm gloria:
-        // beviset att deklarationen inte är overksam.
-        const glow = await paintPair(t, f.cls, { clip: false });
-        t.expect(glow.ringFiltered.luma > 5 && glow.ringFiltered.warm > 5 && glow.ringReference.luma < 1,
-          `drop-shadow: fristående kodvalv: skuggan målar utanför formen (ljus ${glow.ringFiltered.luma}, värme ${glow.ringFiltered.warm} mot ${glow.ringReference.luma} ofiltrerat)`);
+        // Regression: .swatch { overflow: hidden } used to erase the entire
+        // outer shadow. The assertion samples the host screenshot outside the
+        // swatch-yta bounds, so a brighter interior alone cannot satisfy it.
+        t.expect(await t.style('.swatch', 'overflow') === 'visible',
+          'drop-shadow: fristående kodvalv: endast drop-shadow-swatchen öppnar overflow');
+        t.expect(await t.style('.swatch-yta', 'border-top-left-radius') === '9px'
+          && await t.style('.swatch-yta', 'border-top-right-radius') === '9px',
+          'drop-shadow: fristående kodvalv: ytan behåller rundade övre hörn');
+        t.expect(m.ringFiltered.luma > 5 && m.ringFiltered.warm > 5 && m.ringReference.luma < 1,
+          `drop-shadow: fristående kodvalv: skuggan målar utanför formen (ljus ${m.ringFiltered.luma}, värme ${m.ringFiltered.warm} mot ${m.ringReference.luma} ofiltrerat)`);
+        for (const width of [375, 1280]) {
+          for (const colorScheme of ['light', 'dark']) {
+            await t.page.setViewportSize({ width, height: 900 });
+            await t.page.emulateMedia({ colorScheme });
+            const themed = await paintPair(t, f.cls);
+            t.expect(themed.ringFiltered.luma > 5,
+              `drop-shadow: fristående kodvalv: yttre halo vid ${width}px/${colorScheme} (${themed.ringFiltered.luma})`);
+          }
+        }
+        await t.page.setViewportSize({ width: 1280, height: 900 });
+        await t.page.emulateMedia({ colorScheme: 'light' });
       }
     },
   };
