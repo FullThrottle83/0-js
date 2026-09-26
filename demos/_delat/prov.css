@@ -1,0 +1,21 @@
+/* DELAT FRAGMENT — prov-familjen (kapitel 09 · responsiv & adaptiv). Ägs av
+   de fem media-proven: media-color-gamut, prefers-reduced-motion,
+   hover-hover, media-scripting och media-hover-pointer. Redigeras bara här.
+   De sju basreglerna (.prov, .prov-rad, .prov-rad::before, .prov-rad.pa,
+   .prov-rad.pa::before, .prov-rad b, .prov-rad.pa b) är gemensam presentation
+   för alla fem kort: rutnät, radlayout, cirkelmarkör och "ditt läge"-brickan.
+   De elva @media-blocken är INTE här — de hör till enskilda demos och ligger
+   i respektive källfils style-element. Att lägga alla elva i ett delat fragment
+   hade gjort varje kopierat exempel onödigt stort och döljt att t.ex.
+   hover-hover och media-hover-pointer delar samma två hover-block medan de
+   övriga nio är unika. Se docs/demo-kalla.md §7 för ägarkartan. */
+.prov { display: grid; gap: .4rem; font-family: var(--mono); font-size: .76rem; }
+.prov-rad {
+  display: flex; align-items: center; gap: .6rem; padding: .5rem .75rem;
+  border-radius: 8px; border: 1px solid var(--line); background: var(--bg2); color: var(--dim);
+}
+.prov-rad::before { content: "○"; color: var(--line); flex: none; }
+.prov-rad.pa { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--ink); }
+.prov-rad.pa::before { content: "●"; color: var(--acc); }
+.prov-rad b { margin-left: auto; font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--acc); opacity: 0; }
+.prov-rad.pa b { opacity: 1; }

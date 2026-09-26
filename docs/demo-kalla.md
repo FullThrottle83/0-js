@@ -1,6 +1,6 @@
 # En källa per demo — beslut, arbetsflöde och migreringsplan
 
-*Status: 30 av 133 demos migrerade (3 pilot + 11 Grupp A + 16 Grupp B); 103 återstår. Uppdaterad 2026-09-26 efter filterfamiljen.*
+*Status: 32 av 133 demos migrerade (3 pilot + 11 Grupp A + 16 Grupp B + 1 Grupp C-prov + textspoiler); 101 återstår. Uppdaterad 2026-09-26 efter prov-familjens ägarskap (media-color-gamut).*
 
 ## 1. Problemet, mätt i det faktiska dokumentet
 
@@ -657,6 +657,104 @@ sämre än att låta dem stå.
 markup-variant, inget nytt attribut). Den översta statusraden i det här
 dokumentet och räknarna i §7 är historiska och står kvar oförändrade; det
 aktuella antalet är **31 av 133** migrerade demos.
+
+#### Grupp C — prov-familjens ägarskap och media-color-gamut (1 av 7)
+
+*Status: ägarkartan verifierad 2026-09-26, exakt en demo migrerad — `media-color-gamut` — via det nya delade prov-fragmentet. Det aktuella antalet är **32 av 133**.*
+
+**Ägarkartan — mätt i det faktiska dokumentet (index.html rad 545–579 före migreringen, Chromium 153):**
+
+*De sju basreglerna — gemensam presentation för alla fem kort:*
+
+| # | Selektor | Deklarationer | Ägare |
+|---|----------|---------------|-------|
+| 1 | `.prov` | `display:grid; gap:.4rem; font-family:var(--mono); font-size:.76rem` | **delat** `demos/_delat/prov.css` |
+| 2 | `.prov-rad` | `display:flex; align-items:center; gap:.6rem; padding:.5rem .75rem; border-radius:8px; border:1px solid var(--line); background:var(--bg2); color:var(--dim)` | **delat** |
+| 3 | `.prov-rad::before` | `content:"○"; color:var(--line); flex:none` | **delat** |
+| 4 | `.prov-rad.pa` | `border-color:var(--acc); background:color-mix(in srgb, var(--acc) 12%, transparent); color:var(--ink)` | **delat** (aktivt tillstånd, samma visual som media-blocken återanvänder) |
+| 5 | `.prov-rad.pa::before` | `content:"●"; color:var(--acc)` | **delat** |
+| 6 | `.prov-rad b` | `margin-left:auto; font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--acc); opacity:0` | **delat** |
+| 7 | `.prov-rad.pa b` | `opacity:1` | **delat** |
+
+*De elva @media-blocken — tre regler var, ett per svar:*
+
+| # | Media | Selektorer (3 regler) | Konsumenter | Ägare |
+|---|-------|----------------------|-------------|-------|
+| 1 | `@media (hover: hover)` | `.prov-hover .r-ja`, `::before`, `b` | `hover-hover`, `media-hover-pointer` (2 kort) | **delad** mellan två demos — inte globalt delad |
+| 2 | `@media (hover: none)` | `.prov-hover .r-nej` | samma 2 | **delad** (samma som #1) |
+| 3 | `@media (pointer: fine)` | `.prov-pekare .r-fin` | `media-hover-pointer` (1 kort) | **demo-specifik** |
+| 4 | `@media (pointer: coarse)` | `.prov-pekare .r-grov` | samma 1 | **demo-specifik** |
+| 5 | `@media (pointer: none)` | `.prov-pekare .r-ingen` | samma 1 | **demo-specifik** |
+| 6 | `@media (scripting: none)` | `.prov-script .r-ingen` | `media-scripting` (1) | **demo-specifik** |
+| 7 | `@media (scripting: enabled)` | `.prov-script .r-ja` | samma 1 | **demo-specifik** |
+| 8 | `@media (prefers-reduced-motion: reduce)` | `.prov-rm .r-reduce` | `prefers-reduced-motion` (1) | **demo-specifik** + extra `.rm-prov`/`.rm-snurra` (utanför familjen) |
+| 9 | `@media (prefers-reduced-motion: no-preference)` | `.prov-rm .r-full` | samma 1 | **demo-specifik** |
+|10 | `@media (color-gamut: p3)` | `.prov-gamut .r-p3` | `media-color-gamut` (1) | **demo-specifik** |
+|11 | `@media not all and (color-gamut: p3)` | `.prov-gamut .r-srgb` | samma 1 | **demo-specifik** |
+
+*Alla demos som beror på familjen:*
+
+| Demo | Live-markup | Beror på | Extra utanför familjen |
+|------|-------------|----------|------------------------|
+| `media-color-gamut` | `.prov.prov-gamut` + 2× `.prov-rad` | bas 7 + #10–11 | inget |
+| `prefers-reduced-motion` | `.prov.prov-rm` + 2× `.prov-rad` | bas 7 + #8–9 | `.rm-prov`, `.rm-snurra`, `@keyframes rm-rot`, `@media (reduce)` för snurran (5 regler) |
+| `hover-hover` | `.prov.prov-hover` + 2× `.prov-rad` | bas 7 + #1–2 | `.hover-prov` (5 regler) |
+| `media-scripting` | `.prov.prov-script` + 2× `.prov-rad` | bas 7 + #6–7 | inget |
+| `media-hover-pointer` | `.prov.prov-pekare` (3) + `.prov.prov-hover` (2) | bas 7 + #1–5 | inget |
+
+*Vad som är genuint delat vs demo-specifikt:*
+
+- **Delat:** de sju basreglerna — används av alla fem kort och har ingen koppling till en enskild media-fråga. De hör i `demos/_delat/prov.css` och publiceras exakt en gång.
+- **Delat mellan två:** #1–2 (hover) — används av både `hover-hover` och `media-hover-pointer`. De är inte globalt delade (de övriga nio behöver dem inte) och ska inte ligga i ett globalt prov-fragment. Nästa steg för de två korten är antingen ett eget `hover`-fragment eller att varje källa äger sin kopia — men det kräver gruppmigrering, inte en enstaka demo.
+- **Demo-specifikt:** #3–11 (pointer, scripting, reduce, gamut) — varje block hör till exakt ett kort och ska ägas av dess `demos/<id>.html`.
+
+*Kaskad och källordning:*
+
+- Fragmentets sju regler måste ligga före demo-specifika `@media`-block: media-blocken har högre specificitet (`.prov-gamut .r-p3` vs `.prov-rad.pa`) men samma deklarationer som `.pa`-klassen. Ordningen inom media-blocken är irrelevant — de frågar olika features och överlappar aldrig. Hover-blocken (#1–2) och pointer-blocken (#3–5) är oberoende; att `media-hover-pointer` återanvänder hover-blocken ger ingen konflikt eftersom selektorerna är `.prov-hover` vs `.prov-pekare`.
+- Ingen av de fem korten använder `.pa`-klassen i markup — den är reserv/visual definition som media-blocken speglar. Att den ligger i fragmentet och inte i varje demo är avsiktligt: den är gemensam visual, inte demo-specifik.
+
+**Utvärdering av `media-color-gamut` som första kandidat:**
+
+Jämförelse live (`prov-gamut`, två `.prov-rad` med ”ditt läge”) vs kopierat (`nd-gamut`, två `<span>`):
+
+| Kriterium | Live som kanonisk kopia? | Mätt |
+|-----------|--------------------------|------|
+| Bevarar den tekniska lektionen | Ja — samma `@media (color-gamut)` men live visar båda svaren och markerar det aktiva, vilket är pedagogiskt bättre än enradaren som bara döljer/visar | Live visar `sRGB — standardomfång` + `display-p3` med accent, snippet visade bara `sRGB-fallback aktivt` / `✓ P3` |
+| Fristående användbar | Ja — med fragmentets 7 regler + demo-specifika 2 block + Grundpaketets `var()` är kopian komplett | `isolated` test: alla `var()` lösta, två rader renderade, ingen `labb`/swatch/CSS |
+| Inkluderar all nödvändig CSS | Ja — fragmentet + 2 `@media` är allt som behövs; ingen `labb` eller `hover-prov` | Kodvalvet bär 7+2 regler, 2 media-queries |
+| Korrekt media-query-beteende | Ja — båda grenarna (`p3` och `not all and p3`) bevarade, samma som dokumentet | På sidan: `matchMedia('(color-gamut: p3)').matches` avgör vilken rad som får `●` och `opacity:1`; mätt i Chromium 153 |
+| Ingen orelaterad presentation | Ja — gamut-kortet har ingen `labb`, `jmf` eller `hover-prov`; kopian bär inget sid-specifikt | `labb`, `jmf`, `swatch` saknas i valvet |
+| Begriplig för kopieraren | Ja — markupen är två `span` med tydliga etiketter, CSS:en är 7 bas + 2 media på en sida | Etiketterna är `sRGB — standardomfång` / `display-p3 — bred gamut`, inte förkortade `sRGB`/`p3` |
+
+Slutsatsen är **migrerbar med befintligt format** — ingen ny generator-API, ingen andra markup-representation. Den minsta implementeringen är ett delat `prov`-fragment (7 regler) och att `media-color-gamut` äger sina 2 block via `<style data-include="prov">` + egen `<style>`. De övriga fyra prov-korten påverkas inte: deras 9 block ligger kvar som oägt CSS i `index.html` och deras fem kort får fortsatt basstilen via det globala fragmentet.
+
+**Implementerad migrering (denna PR):**
+
+Filer ändrade/nya:
+
+- `demos/_delat/prov.css` — nytt delat fragment, 7 basregler (header beskriver ägarskap, 11 block är INTE här)
+- `demos/media-color-gamut.html` — ny kanonisk källa: markup är live `prov-gamut`, `data-include="prov"` + 2 `@media`
+- `scripts/demo-spec.mjs` — ny post `media-color-gamut` (`grupp-c`, `shared:['prov']`)
+- `tests/demo-scenarios.mjs` — tom scenario-lista för gamut (default mäts)
+- `tests/demo-source.mjs` — 18 nya påståenden (sidan + fristående): `prov`-rutnät, 2 rader, aktiv/inaktiv via `matchMedia`, `●`/`○`, `ditt läge`, `var()`-täckning, prov-selektorer, frånvaro av andra prov-media/swatch, ingen overflow; samt global prov-kontroll (7 regler en gång, 5 kort, 2 media)
+- `tests/baseline/demos.json` — ny post `media-color-gamut` fångad **före** migreringen med `node tests/demo-parity.mjs --capture --merge --demo media-color-gamut` ur `index.html` sha256 `67071419…` (Chromium `153.0.8010.0`, samma som baslinjens); de 31 historiska posterna och hela `mergeLog` är orörda (508 tillagda rader, 0 borttagna)
+- `index.html` — genererat: `/* delat:prov:css */` (7 regler) + `/* demo:media-color-gamut:css */` (2 block) + markup-markörer + kodvalv (fragment + 2 block, 26 rader)
+
+Verifiering (Chromium `153.0.8010.0`, `LD_LIBRARY_PATH=/tmp/al2023/lib` via `@sparticuz/chromium`):
+
+- `npm run build` — deterministiskt, idempotent, `index.html` i fas (`32 demos, 4 fragment`)
+- `npm run build:check` — grön
+- `npm run check` — grön: `scripts/build.test.mjs` (32 demos, `prov` publiceras exakt en gång, ingen regel delas), `check.mjs`, `check-snippets.mjs` (alla `var()` lösta)
+- `node tests/demo-parity.mjs --strict --demo media-color-gamut` — **0 strukturella avvikelser, 0 px** geometri (5 element, 534 värden), `INTENTIONAL_DIFFS` orörd
+- `node tests/demo-source.mjs` — alla 32 demona gröna, inklusive gamut: sidan visar exakt en aktiv rad (matchMedia), fristående snippet renderar samma med Grundpaketet, inga olösta `var()`, inga orelaterade regler, ingen overflow
+- Horisontell overflow: `scrollWidth <= innerWidth` på sidan och i snippet — grön
+- Visuellt: `#media-color-gamut .demo-yta` byte-identisk före/efter (samma `prov`-rendering, bara källan flyttad)
+
+**Kvarvarande blockerare och minsta uppföljning:**
+
+- `hover-hover` + `media-hover-pointer` delar #1–2 och behöver gemensamt beslut (eget `hover`-fragment eller gruppmigrering). Minsta steg: migrera `media-scripting` (ensam ägare av #6–7, inga extra-regler) med samma prov-fragment — ingen konflikt.
+- `prefers-reduced-motion` behöver beslut om `.rm-prov`/`.rm-snurra` (5 regler): de är demo-specifika men ligger i samma block som prov-familjen och bör ägas av dess källa, inte av fragmentet.
+- Ingen av dessa kräver ny generator-API — samma `data-include="prov"`-mönster räcker.
 
 ### Grupp D — stora, sammansatta demos (≈20: `property-sin-cos` (49 regler), `view-timeline` (39), `tre-i-rad-tic-tac-toe`, `css-arkad`, `4-bitars-binaradderare`, `flerstegs-formular-wizard`, `fore-efter-jamforare`, `dialog-commandfor`, `3d-card-tilt` …)
 
