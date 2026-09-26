@@ -94,6 +94,14 @@ export const SCENARIOS = {
     { name: 'lv-0', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="0"]').check(); } },
     { name: 'lv-8', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="8"]').check(); } },
   ],
+  'rgb-from': [
+    { name: 'lv-0', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="0"]').check(); } },
+    { name: 'lv-8', apply: async ({ card }) => { await card.locator('.labb-steg input[data-v="8"]').check(); } },
+    { name: 'theme-syra', apply: async ({ page }) => { await page.locator('#tema-syra').check(); } },
+  ],
+  'oklch-display-p3': [
+    { name: 'theme-syra', apply: async ({ page }) => { await page.locator('#tema-syra').check(); } },
+  ],
 };
 
 /** Scenarier för ett id (tom lista om demot inte är interaktivt). */

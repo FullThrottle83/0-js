@@ -1,6 +1,6 @@
 # En källa per demo — beslut, arbetsflöde och migreringsplan
 
-*Status: pilot + batch 1 (14 av 133 demos migrerade). Datum: 2026-09-25.*
+*Status: 18 av 133 demos migrerade (3 pilot + 11 Grupp A + 4 Grupp B); 115 återstår. Uppdaterad 2026-09-26 efter Grupp B:s andra migration.*
 
 ## 1. Problemet, mätt i det faktiska dokumentet
 
@@ -303,13 +303,14 @@ textbreddsberoende).
 | `grundpaketet` | Valvet *är* källan för `:root`-variablerna som `check-snippets.mjs` läser; kräver tom markup-del. | Egen liten utbyggnad av källformatet. |
 | Grupp B (16 labb-demos), Grupp C (7 avvikande valv) | Delad kapitel-CSS respektive valv som skiljer sig från live-markupen. | Enligt planen i §7 — beslut först, migrering sedan. |
 
-## 7. Migreringsplan för återstående 119 demos
+## 7. Migreringsplan för återstående 115 demos
 
 Grupperat efter vad analysen faktiskt visade, inte efter kapitel.
-Läget efter batch 1: **14 av 133** kort är källgenererade (3 pilot + 11 i §6b),
-**119** återstår. Nästa batch kan börja med `container-type-size-behallarenheter-cqi`
-och de övriga rena kandidaterna i Grupp A; besluten i §6b avgör när
-`dvh-svh-lvh` och de fyra media-demon kan följa.
+Läget efter Grupp B:s andra batch: **18 av 133** kort är källgenererade
+(3 pilot + 11 Grupp A + 4 Grupp B), **115** återstår. Nästa batch kan börja
+med `container-type-size-behallarenheter-cqi` och de övriga rena kandidaterna
+i Grupp A; besluten i §6b avgör när `dvh-svh-lvh` och de fyra media-demon kan
+följa.
 
 ### Grupp A — mekanisk (≈84 demos, t.ex. `light-dark`, `radioflikar`, `details`, `dialog`, `popover-*`, `donutdiagram`)
 
@@ -372,15 +373,71 @@ Båda besloven ovan är vidtagna och byggda. Vad som faktiskt gäller:
   för `.swatch-yta`-driften (17 påståenden går röda om `display: block`
   stryks ur fragmentet, gröna igen när det står där).
 
-Kvar att migrera i Grupp B (14): `rgb-from`, `oklch-display-p3`, de fyra
-övriga gradient-demona (`radial-gradient`, `conic-gradient`,
-`repeating-linear-gradient`, `repeating-radial-gradient`) och de åtta
-filter-demona. Filter-demona är den enda besvärliga resten: den fyrskiktade
-`background`-motivet sitter i en nio-väljarlista som spänner över alla åtta
-ids, så den måste antingen bli ett tredje fragment (`_delat/filter-motiv.css`)
-som alla åtta begär, eller flyttas till varje demos eget `<style>`. Ett
-eget fragment är rätt val — det är exakt samma ägandefråga som
-`.swatch`/`.swatch-solo`, bara med åtta konsumenter i stället för tretton.
+#### Grupp B fortsättning — 2 av 16 nya (`rgb-from`, `oklch-display-p3`)
+
+Den här batchen verifierar att samma fragmentmodell fungerar för två färgdemos
+till; totalt är nu **4 av Grupp B:s 16** canonical och **12 återstår** (de fyra
+övriga gradienterna och de åtta filterdemos).
+
+| Ägare | Regler | Inte ägt av demot |
+| --- | --- | --- |
+| `swatch.css` (begärs av båda) | `.swatch`, `.swatch-yta`, `.swatch-lbl` | `.swatch-solo` och dess 6rem-yta — båda nya demos har rader av swatches, inte en ensam swatch |
+| `rgb-from` | `.rel-row`; `.rel-a`–`.rel-e` med relativa RGB/HSL-deklarationer | `.labbar .rel-*`-överstyrningarna använder sidans `--lv`-reglage; de ligger i `<style data-live>` och saknas i det kopierade exemplet |
+| `oklch-display-p3` | `.gamut-row`; `.gamut-a`–`.gamut-d` | Figur/illustration, labbkontroller och kortets scenografi |
+
+**Drift som hittades före flytten:** de båda gamla textarea-snippets bar hela
+kapitelblocket — även `swatch-solo`, `color-mix`, alla gradient- och
+filterregler — fast live-korten inte behövde dem. De kopierade swatch-reglerna
+var dessutom föråldrade: snippet hade `.swatch {border-radius…}` och
+`.swatch-yta {height: 3.2rem;}` utan den live-versionens `display: block`.
+Den canonicala kopian innehåller nu exakt det delade fragmentet och demots
+egna regler; `rgb-from` kopierar inte `--lv`-scenografin. Båda snippets får
+nödvändiga variabler från Grundpaketet (`--line`, `--mono`, `--dim`, `--bg2`;
+`rgb-from` använder dessutom `--acc`). Gamut-proverna använder bokstavliga
+färger. Live-implementeringen har varken `@supports`-gren eller fallback för
+de nya färgfunktionerna; testet kontrollerar stödet och den deklarerade
+beräknade färgen i Chromium, i stället för att hitta på en ny fallback.
+
+**Baselineproveniens:** först fångad före ändring av `index.html` och källorna,
+utifrån commit `e6defed8ae34bcac5dcc1812afe5368e0cb4250a` (`index.html`
+SHA-256 `c611b52d…`). Playwright körde npm-paketet
+`@sparticuz/chromium@153.0.0`; `browser.version()` bekräftade Chromium
+`153.0.8010.0`, samma som den befintliga baslinjen. `--capture --merge` kördes
+separat för vardera demot. Tillstånden är rgb standard, `lv-0`, `lv-8` och
+temat syra; gamut standard och syra. De 16 redan existerande mätposterna har
+verifierats genom att jämföra deras SHA-256-innehåll före och efter merge;
+`--merge` har bara tillfogat de två nya mätposterna. Före/efter-bilder mättes
+i samma Chromium vid 375, 768 och 1280px, i guld + syra och relevanta
+labbtillstånd: alla 24 PNG-par är byte-identiska (se
+`docs/migrering/grupp-b-relative-colors/`).
+
+Kaskadreglerna flyttas i samma positioner i kapitelblocket: scenografins
+`.labbar .rel-*` har fortsatt högre specificitet än demo-reglerna. Testerna
+låser både snippet-ägarskapet, avsaknaden av dubbletter och samtliga 12
+omigrerade Group B-kort. Ingen filtermotivs-fragment introduceras.
+
+**Efterkontroll:** `tests/demo-parity.mjs --strict --require-same-browser
+--demo rgb-from` jämförde 5 636 värden och `--demo oklch-display-p3` 2 290;
+båda gav 0 stil-/DOM-avvikelser och 0 px geometriavvikelse i samtliga
+baseline-tillstånd. `tests/demo-source.mjs` laddar de genererade textarea-
+texterna tillsammans med Grundpaketet som egna dokument och kontrollerar
+färgresultat, grid/swatch-geometri, olösta variabler samt frånvaro av
+scenografi och främmande laboratorieregler. Den fulla `npm run test:browser`
+verifierar alla 18 migrerade kort och ger 0 strukturella baselineavvikelser.
+Den rapporterar 7 geometri-varningar på äldre kort (target, appearance-base-
+select och calc-size) mellan den historiska Linux-fontmiljön och denna körning;
+dessa finns inte i de två nya demonas strikta jämförelser. Alla 24 skärmbildspar
+för de nya demona är däremot byte-identiska.
+
+Kvar att migrera i Grupp B (12): de fyra gradientdemona (`radial-gradient`,
+`conic-gradient`, `repeating-linear-gradient`, `repeating-radial-gradient`)
+och de åtta filterdemona. Filterdemona är den enda besvärliga resten: det
+fyrskiktade `background`-motivet sitter i en nio-väljarlista som spänner över
+alla åtta ids, så det måste antingen bli ett tredje fragment
+(`_delat/filter-motiv.css`) som alla åtta begär, eller flyttas till varje
+demos eget `<style>`. Ett eget fragment är rätt val — det är exakt samma
+ägandefråga som `.swatch`/`.swatch-solo`, bara med åtta konsumenter i stället
+för tretton.
 
 Bevis för piloten:
 

@@ -1,0 +1,30 @@
+<!--
+  demo: rgb-from
+  Kanonisk källa för live-demot och dess kodvalv i index.html.
+  Grupp B: svatchfamiljen delas från demos/_delat/swatch.css; de relativa
+  färgreglerna nedan ägs av detta demo. Labbrattens --lv-överstyrningar är
+  endast sidans scenografi och följer inte med i kodvalvet.
+-->
+<div class="demo-yta rel-row">
+  <span class="swatch rel-a"><span class="swatch-yta"></span><span class="swatch-lbl">bas</span></span>
+  <span class="swatch rel-b"><span class="swatch-yta"></span><span class="swatch-lbl">alpha .45</span></span>
+  <span class="swatch rel-c"><span class="swatch-yta"></span><span class="swatch-lbl">mörkare</span></span>
+  <span class="swatch rel-d"><span class="swatch-yta"></span><span class="swatch-lbl">avmättad</span></span>
+  <span class="swatch rel-e"><span class="swatch-yta"></span><span class="swatch-lbl">+150° nyans</span></span>
+</div>
+<style data-include="swatch"></style>
+<style>
+.rel-row { display:grid; grid-template-columns:repeat(5,1fr); gap:.5rem; }
+.rel-a .swatch-yta { background: var(--acc); }
+.rel-b .swatch-yta { background: rgb(from var(--acc) r g b / .45); }
+.rel-c .swatch-yta { background: hsl(from var(--acc) h s calc(l - 22)); }
+.rel-d .swatch-yta { background: hsl(from var(--acc) h calc(s - 40) calc(l + 14)); }
+.rel-e .swatch-yta { background: hsl(from var(--acc) calc(h + 150) s l); }
+</style>
+<style data-live>
+/* Reglerskala för relativa kanaler: endast laboratoriumsreglagen på sidan. */
+.labbar .rel-b .swatch-yta { background: rgb(from var(--acc) r g b / calc(1 - var(--lv) * .11)); }
+.labbar .rel-c .swatch-yta { background: hsl(from var(--acc) h s calc(l - var(--lv) * 5.5)); }
+.labbar .rel-d .swatch-yta { background: hsl(from var(--acc) h calc(s - var(--lv) * 10) calc(l + var(--lv) * 3.5)); }
+.labbar .rel-e .swatch-yta { background: hsl(from var(--acc) calc(h + var(--lv) * 45) s l); }
+</style>

@@ -54,6 +54,16 @@ const N = MIGRATED_IDS.length;
 const USED = usedFragments(sources, fragments);
 /** Stilbladet = allt i <head> före <body>, kodvalvens text bortrensad. */
 const stylesheet = (doc) => doc.slice(0, doc.indexOf('<body'));
+const snippetLabel = (doc, id) => {
+  const start = doc.search(new RegExp(`<article class="demo[^"]*" id="${id}">`));
+  if (start < 0) return '';
+  const article = doc.slice(start, doc.indexOf('</article>', start));
+  return article.match(/<textarea class="kod"[^>]*aria-label="([^"]+)"/)?.[1] ?? '';
+};
+const snippetFor = (doc, id) => {
+  const label = snippetLabel(doc, id);
+  return extractSnippets(doc).find((v) => v.label === label)?.code ?? '';
+};
 const canon = (s) => s.replace(/\s+/g, ' ').replace(/\s*:\s*/g, ':').replace(/\s*,\s*/g, ',')
   .replace(/\s*;\s*/g, ';').replace(/\s*\{\s*/g, '{').replace(/\s*\}\s*/g, '}').replace(/;}/g, '}').trim();
 
@@ -265,9 +275,8 @@ const ordered = MIGRATED_IDS.map((id) => [id, sources.get(id)]);
     `stilbladet publicerar ingen regel två gånger${repeated.length ? `: ${repeated[0][0].slice(0, 54)}` : ''}`);
 
   // Vem som helst av de migrerade demona får bara bära de fragment den begär.
-  const vaults = extractSnippets(html);
   for (const [id, src] of ordered) {
-    const vault = vaults.find((v) => v.label.includes(id))?.code ?? '';
+    const vault = snippetFor(html, id);
     // Jämförelsen sker på normaliserad text (canon) — valvet har radbrytningar.
     const vaultCss = canon(vault);
     for (const [name, frag] of fragments) {
@@ -351,6 +360,16 @@ const ordered = MIGRATED_IDS.map((id) => [id, sources.get(id)]);
   assert(gen !== html, 'ändrad källa ⇒ genererat dokument skiljer sig från committat');
   assert(staleDemos(html, gen, edited, fragments).join(',') === target,
     `stale-rapporten pekar ut exakt rätt demo (${target})`);
+  for (const id of ['rgb-from', 'oklch-display-p3']) {
+    const src = sources.get(id);
+    const changed = new Map(sources).set(id, {
+      ...src,
+      css: src.css.replace('{', '{ /* ändrad källa */'),
+    });
+    const generated = build(html, changed, fragments);
+    assert(generated !== html && staleDemos(html, generated, changed, fragments).join(',') === id,
+      `stale-detektering pekar ut endast ${id} när dess canonicala CSS ändras`);
+  }
 
   // b) Ett DELAT fragment ändras utan ombyggnad.
   const fragName = USED[0];
@@ -364,7 +383,7 @@ const ordered = MIGRATED_IDS.map((id) => [id, sources.get(id)]);
   // … och det gäller för VARJE demo som begär fragmentet.
   for (const [id, src] of ordered) {
     if (!src.includes.includes(fragName)) continue;
-    const vault = extractSnippets(genFrag).find((v) => v.label.includes(id))?.code ?? '';
+    const vault = snippetFor(genFrag, id);
     assert(vault.includes('/* redigerad */'), `#${id}: ändrat fragment når ända in i kodvalvet`);
   }
 
@@ -562,12 +581,50 @@ const ordered = MIGRATED_IDS.map((id) => [id, sources.get(id)]);
   assert(lgVault.split('\n').length < 30, `linear-gradient: kodvalvet är ${lgVault.split('\n').length} rader (var 44)`);
 }
 
-/* 12. De övriga 14 Grupp B-demona är orörda ------------------------------ */
+/* 11b. Grupp B batch 3: relativa färger + bred färgrymd ------------------ */
 {
-  const GROUP_B_REST = ['rgb-from', 'oklch-display-p3', 'radial-gradient', 'conic-gradient',
+  const rgb = sources.get('rgb-from');
+  const gamut = sources.get('oklch-display-p3');
+  const vault = (id) => snippetFor(html, id);
+  const rgbVault = vault('rgb-from');
+  const gamutVault = vault('oklch-display-p3');
+
+  assert(rgb.includes.join() === 'swatch' && gamut.includes.join() === 'swatch',
+    'rgb-from och oklch-display-p3 begär bara det delade swatch-fragmentet');
+  assert(rgb.liveCss && !gamut.liveCss,
+    'endast rgb-from har live-only CSS för labbets scenografi');
+  assert(rgb.css.includes('.rel-row') && rgb.css.includes('rgb(from var(--acc)')
+    && rgb.css.includes('hsl(from var(--acc)'),
+  'rgb-from äger sitt rutnät och relativa RGB/HSL-färger');
+  assert(rgb.liveCss.includes('.labbar .rel-b') && rgb.liveCss.includes('var(--lv)')
+    && !rgbVault.includes('.labbar') && !rgbVault.includes('var(--lv)'),
+  'rgb-from håller --lv-överstyrningar i live-CSS, utanför kodvalvet');
+  assert(gamut.css.includes('.gamut-row') && gamut.css.includes('color(display-p3 1 .55 .1)')
+    && gamut.css.includes('oklch(85% .25 145)'),
+  'oklch-display-p3 äger fyrkolumnslayouten samt sina oklch- och display-p3-färger');
+  for (const code of [rgbVault, gamutVault]) {
+    assert(code.includes('.swatch { display: block;') && code.includes('.swatch-yta { display: block;'),
+      'kodvalvet innehåller den uppdaterade swatch-regeln ur fragmentet');
+    assert(!/\.swatch-solo|\.cm-row|\.grad-|\.filter-row|\.f-(?:blur|contrast|saturate|hue|sepia|gray|invert|drop)/.test(code),
+      'kodvalvet innehåller inte solo-, blandnings-, gradient- eller filterregler');
+    assert(!code.includes('KAPITEL 01') && !code.includes('.labbar'),
+      'kodvalvet innehåller varken kapitelbanderollen eller labbscenografin');
+  }
+  assert(rgbVault.includes('.rel-row') && rgbVault.includes('.rel-e .swatch-yta'),
+    'rgb-from-kodvalvet innehåller bara sina egna relativa färgregler');
+  assert(gamutVault.includes('.gamut-row') && gamutVault.includes('.gamut-d .swatch-yta'),
+    'oklch-display-p3-kodvalvet innehåller sina fyra gamut-regler');
+  assert(!rgbVault.includes('.gamut-') && !gamutVault.includes('.rel-'),
+    'relativfärg- och gamut-kodvalven bär inte varandras CSS');
+}
+
+/* 12. De övriga 12 Grupp B-demona är orörda ------------------------------ */
+{
+  const GROUP_B_REST = ['radial-gradient', 'conic-gradient',
     'repeating-linear-gradient', 'repeating-radial-gradient', 'filter-blur', 'filter-contrast',
     'filter-saturate', 'filter-hue-rotate', 'filter-sepia', 'filter-grayscale', 'filter-invert',
     'filter-drop-shadow'];
+  assert(GROUP_B_REST.length === 12, 'exakt tolv Group B-demos återstår efter migrationen');
   const built = build(html, sources, fragments);
   for (const id of GROUP_B_REST) {
     assert(!MIGRATED_IDS.includes(id), `${id} är fortfarande omigrerat (senare batch)`);
@@ -578,10 +635,14 @@ const ordered = MIGRATED_IDS.map((id) => [id, sources.get(id)]);
   }
   // Live-CSS för de omigrerade finns kvar i stilbladet.
   const sheet = stylesheet(built);
-  for (const sel of ['.rel-row', '.gamut-row', '.grad-row', '.filter-row', '.rel-a .swatch-yta',
-    '.gamut-a .swatch-yta', '.grad-2 .swatch-yta', '.f-blur .swatch-yta']) {
-    assert(sheet.includes(sel), `stilbladet behåller ${sel} (används av omigrerade Grupp B-demos)`);
+  for (const sel of ['.grad-row', '.filter-row', '.filter-row .swatch-yta',
+    '.grad-2 .swatch-yta', '.f-blur .swatch-yta']) {
+    assert(sheet.includes(sel), `stilbladet behåller ${sel} (används av de 12 omigrerade Group B-demos)`);
   }
+  const sheetBlocks = topLevelBlocks(sheet);
+  assert(sheetBlocks.filter((b) => b.startsWith('.rel-row{')).length === 1
+    && sheetBlocks.filter((b) => b.startsWith('.gamut-row{')).length === 1,
+  'de unika rgb-from- och gamut-layoutreglerna publiceras exakt en gång ur källorna');
 }
 
 /* 13. Historiska mätbaslinjer får aldrig skrivas över av --merge -------- */
